@@ -213,8 +213,8 @@ window.M3UTranslations = {
     "en": "First use: create an administrator account"
   },
   "m54": {
-    "zh": "登录频道编辑器",
-    "en": "Sign in to the channel editor"
+    "zh": "登录",
+    "en": "Sign in"
   },
   "m55": {
     "zh": "设置一次即可，服务器地址会自动识别。",
