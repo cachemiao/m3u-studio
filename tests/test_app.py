@@ -7,7 +7,7 @@ from PIL import Image
 def server(tmp_path, monkeypatch):
     monkeypatch.setenv('DATA_DIR', str(tmp_path))
     monkeypatch.setenv('ADMIN_PASSWORD', 'test-password-12345')
-    monkeypatch.setenv('PUBLIC_BASE_URL', 'http://192.168.6.3:18080')
+    monkeypatch.setenv('PUBLIC_BASE_URL', 'http://192.168.6.3:8324')
     spec = importlib.util.spec_from_file_location('iptv_server', Path(__file__).parents[1] / 'app/server.py')
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -151,10 +151,10 @@ def test_account_migration_persistence_ignores_changed_env(server,auth,monkeypat
 
 def test_automatic_base_uses_access_host(server,auth):
     c=client(server,auth)
-    c.post('/api/auth/login',json={'username':'admin','password':'test-password-12345'},headers=auth,base_url='http://192.168.6.189:18080')
-    assert c.get('/api/state',headers={'Host':'192.168.6.189:18080'}).json['base_url']=='http://192.168.6.189:18080'
+    c.post('/api/auth/login',json={'username':'admin','password':'test-password-12345'},headers=auth,base_url='http://192.168.6.189:8324')
+    assert c.get('/api/state',headers={'Host':'192.168.6.189:8324'}).json['base_url']=='http://192.168.6.189:8324'
     c.put('/api/state',json=sample(),headers=auth)
-    assert 'http://192.168.8.189:18080/logo/CCTV1.png' in c.get('/tv.m3u',headers={'Host':'192.168.8.189:18080'}).text
+    assert 'http://192.168.8.189:8324/logo/CCTV1.png' in c.get('/tv.m3u',headers={'Host':'192.168.8.189:8324'}).text
 
 
 def test_fcc_export_import_and_clear(server,auth):
