@@ -4,7 +4,7 @@ services:
     image: m3u-studio:local
     container_name: iptv-manager
     ports:
-      - "18080:18080"
+      - "8324:8324"
     environment:
       ADMIN_USER: ${ADMIN_USER:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
