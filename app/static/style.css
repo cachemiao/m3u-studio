@@ -19,9 +19,9 @@ main{min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bot
 .channel-title{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.channel-title .pill{margin-left:0}
 .handle{touch-action:none;user-select:none;-webkit-user-select:none}
 .touch-dragging{opacity:.65;border-color:var(--accent)}
-.auth-screen{height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;background:radial-gradient(ellipse at top,var(--auth-glow),transparent 70%),var(--page)}
+.auth-screen{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;background:radial-gradient(ellipse at top,var(--auth-glow),transparent 70%),var(--page)}
 .auth-card{width:min(400px,100%);padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 14px 60px #173e3910}
-.auth-card h1{margin-top:20px;font-size:22px}.auth-card>.primary{width:100%;margin-top:8px}.error{color:var(--danger);min-height:20px;font-size:13px}
+.auth-card h1{margin:26px 0 6px;font-size:20px;line-height:1.4}.auth-card>.primary{width:100%;margin-top:8px}.error{color:var(--danger);min-height:20px;font-size:13px}
 @media(max-width:800px){
 .app-shell>header{flex:0 0 auto}.layout{display:flex;flex-direction:column}
 aside{flex:0 0 auto;max-height:30dvh;padding:8px 12px;display:block;overflow:hidden}
@@ -108,4 +108,15 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end;gap:8px}
 .preference-menu button:hover,.preference-menu button:focus-visible{background:var(--soft)}
 .preference-menu button[aria-checked="true"]{color:var(--accent);background:var(--active)}
 .preference-menu button[aria-checked="true"]::after{content:'✓';margin-left:12px}
-.auth-card>.icon-menu{display:flex;justify-content:flex-end;margin-top:12px}
+.auth-brand-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.auth-brand-row .brand{font-size:22px;gap:9px}
+.auth-brand-row .brand-icon{width:30px;height:30px}
+.auth-brand-row .icon-menu{flex-shrink:0}
+.auth-brand-row .icon-button{width:34px;height:34px;min-width:34px;padding:7px}
+.auth-card #authHint{margin:0 0 20px;line-height:1.6}
+.auth-card label{margin:16px 0}
+.auth-card #authError:empty{display:none}
+.auth-card>.primary{margin-top:8px}
+@media(max-width:400px){.auth-card{padding:24px}.auth-brand-row{gap:10px}.auth-brand-row .brand{font-size:20px;gap:7px}.auth-brand-row .brand-icon{width:28px;height:28px}}
+
+@media(max-width:360px){.auth-brand-row{gap:6px}.auth-brand-row .brand{font-size:16px;gap:6px}.auth-brand-row .brand-icon{width:24px;height:24px}.auth-brand-row .appearance-controls{gap:6px}.auth-brand-row .icon-button{width:32px;height:32px;min-width:32px}}
