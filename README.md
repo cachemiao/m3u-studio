@@ -71,7 +71,7 @@ docker pull cachemiao/m3u-studio:latest
 ```sh
 docker run -d \
   --name m3u-studio \
-  -p 18080:18080 \
+  -p 8324:8324 \
   -v m3u-studio-data:/data \
   -e TZ=Asia/Shanghai \
   --restart unless-stopped \
@@ -80,14 +80,14 @@ docker run -d \
   cachemiao/m3u-studio:latest
 ```
 
-- `-p 18080:18080`：网页和订阅使用 18080 端口。如有冲突，可改为 `-p 18081:18080`，然后通过 18081 访问。
+- `-p 8324:8324`：网页和订阅使用 8324 端口。如有冲突，可改为 `-p 8325:8324`，然后通过 8325 访问。
 - `-v m3u-studio-data:/data`：将账号、频道配置、台标和历史备份保存在 Docker 数据卷中，重建容器后继续使用。
 - `-e TZ=Asia/Shanghai`：设置容器时区。
 - `--restart unless-stopped`：Docker 启动后自动启动服务，手动停止的容器保持停止。
 
 ### 3. 打开网页
 
-访问 **`http://设备IP:18080`**，首次打开时创建管理用户名和密码，密码至少 8 个字符。全新安装无需设置 `TOKEN`、管理员环境变量或 `.env` 文件。
+访问 **`http://设备IP:8324`**，首次打开时创建管理用户名和密码，密码至少 8 个字符。全新安装无需设置 `TOKEN`、管理员环境变量或 `.env` 文件。
 
 [Docker Hub 镜像与标签](https://hub.docker.com/r/cachemiao/m3u-studio) · [GitHub Releases](https://github.com/cachemiao/m3u-studio/releases)
 
@@ -101,7 +101,7 @@ services:
     image: cachemiao/m3u-studio:latest
     container_name: m3u-studio
     ports:
-      - "18080:18080"
+      - "8324:8324"
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -129,7 +129,7 @@ docker compose pull
 docker compose up -d
 ```
 
-访问 **`http://设备IP:18080`**。此示例与上面的 `docker run` 使用同名数据卷；两种方式选择一种即可。若要从 `docker run` 改用 Compose，先停止并移除原容器，再在新目录执行上述命令，保留数据卷。
+访问 **`http://设备IP:8324`**。此示例与上面的 `docker run` 使用同名数据卷；两种方式选择一种即可。若要从 `docker run` 改用 Compose，先停止并移除原容器，再在新目录执行上述命令，保留数据卷。
 
 ### 使用宿主机目录保存数据
 
@@ -144,7 +144,7 @@ sudo chown -R 10001:10001 data
 
 ## 升级与常用命令
 
-`latest` 指向最新正式版；如需固定版本，将镜像改为 `cachemiao/m3u-studio:0.4.0`。升级前先备份数据，重建时使用原数据卷或原目录挂载。
+`latest` 指向最新正式版；如需固定版本，将镜像改为 `cachemiao/m3u-studio:0.4.1`。升级前先备份数据，重建时使用原数据卷或原目录挂载。
 
 **Compose 升级**（在部署目录执行）：
 
@@ -173,7 +173,7 @@ docker rm m3u-studio
 健康检查：
 
 ```sh
-curl -fsS http://127.0.0.1:18080/healthz
+curl -fsS http://127.0.0.1:8324/healthz
 ```
 
 返回 `{"status":"ok"}` 表示服务正常；如果修改了映射端口，请同步修改检查地址。
@@ -295,7 +295,7 @@ Node 仅用于运行前端逻辑测试。运行状态可通过以下命令检查
 
 ```sh
 docker compose logs --tail=80
-curl -fsS http://127.0.0.1:18080/healthz
+curl -fsS http://127.0.0.1:8324/healthz
 ```
 
 - [详细使用指南](docs/使用指南.md)
