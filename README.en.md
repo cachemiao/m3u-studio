@@ -63,7 +63,7 @@ docker pull cachemiao/m3u-studio:latest
 ```sh
 docker run -d \
   --name m3u-studio \
-  -p 18080:18080 \
+  -p 8324:8324 \
   -v m3u-studio-data:/data \
   -e TZ=Asia/Shanghai \
   --restart unless-stopped \
@@ -72,14 +72,14 @@ docker run -d \
   cachemiao/m3u-studio:latest
 ```
 
-- `-p 18080:18080`: web interface and subscriptions. Change to `-p 18081:18080` if the host port is occupied, then access port 18081.
+- `-p 8324:8324`: web interface and subscriptions. Change to `-p 8325:8324` if the host port is occupied, then access port 8325.
 - `-v m3u-studio-data:/data`: persist accounts, playlists, logos and backups in a Docker named volume. Reuse this volume when recreating the container.
 - `-e TZ=Asia/Shanghai`: container timezone; change as needed.
 - `--restart unless-stopped`: restart automatically with Docker unless manually stopped.
 
 ### 3. Open the web interface
 
-Visit **`http://YOUR_SERVER_IP:18080`**. On first use, create an administrator account with a password of at least 8 characters. No administrator environment variables or `.env` file are needed for a new installation.
+Visit **`http://YOUR_SERVER_IP:8324`**. On first use, create an administrator account with a password of at least 8 characters. No administrator environment variables or `.env` file are needed for a new installation.
 
 [Docker Hub](https://hub.docker.com/r/cachemiao/m3u-studio) · [Releases](https://github.com/cachemiao/m3u-studio/releases)
 
@@ -93,7 +93,7 @@ services:
     image: cachemiao/m3u-studio:latest
     container_name: m3u-studio
     ports:
-      - "18080:18080"
+      - "8324:8324"
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -119,7 +119,7 @@ docker compose pull
 docker compose up -d
 ```
 
-Open **`http://YOUR_SERVER_IP:18080`**. Choose either Docker Run or Compose. To switch from Docker Run to Compose, stop and remove the existing container first, keeping the data volume.
+Open **`http://YOUR_SERVER_IP:8324`**. Choose either Docker Run or Compose. To switch from Docker Run to Compose, stop and remove the existing container first, keeping the data volume.
 
 ### Bind-mount a host directory
 
@@ -134,7 +134,7 @@ For Docker Run, use `-v "$PWD/data:/data"`; for Compose, use `- ./data:/data`. A
 
 ## Upgrade and maintenance
 
-`latest` follows the latest stable release. To pin a version, use a version tag, for example `cachemiao/m3u-studio:0.4.0`. Back up before upgrading and retain the original data mount.
+`latest` follows the latest stable release. To pin a version, use a version tag, for example `cachemiao/m3u-studio:0.4.1`. Back up before upgrading and retain the original data mount.
 
 **Compose upgrade:**
 
@@ -163,7 +163,7 @@ Run the startup command again with the same `m3u-studio-data:/data` mount.
 Health check (adjust the port if changed):
 
 ```sh
-curl -fsS http://127.0.0.1:18080/healthz
+curl -fsS http://127.0.0.1:8324/healthz
 ```
 
 The expected response is `{"status":"ok"}`. Stable GitHub releases automatically publish versioned Docker images and `latest`. Existing installations update only when you pull the image and recreate the container.
