@@ -80,9 +80,32 @@ header{flex-wrap:wrap;padding:8px 12px}header>div:last-child{width:100%;justify-
 
 /* Shared colors keep every dialog and native control consistent with the theme. */
 :root[data-theme="dark"]{color-scheme:dark;--accent:#79cec2;--accent-solid:#226e65;--on-accent:#fff;--border:#343434;--text:#e7e7e7;--page:#101010;--surface:#1c1c1c;--soft:#252525;--muted:#ababab;--label:#cccccc;--active:#303030;--danger:#ffaaa5;--focus:#79cec2;--handle:#929292;--pill-bg:#303735;--pill-text:#b2cdc4;--replay-bg:#2c3245;--replay-text:#bacbff;--fcc-bg:#403521;--fcc-text:#f3cf92;--empty-border:#484848;--logo-bg:#242424;--backdrop:#000000b3;--shadow:#00000070;--auth-glow:#292929;--toast:#333333}
-dialog{background:var(--surface);color:var(--text)}input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}input[type="checkbox"]{accent-color:var(--accent-solid)}button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--focus);outline-offset:3px}::selection{background:var(--active);color:var(--text)}:root{scrollbar-color:var(--handle) var(--surface)}.setting-row>#themePreference{width:140px;flex-shrink:0}#themeToggle{min-width:76px}#toast{color:#fff}
+dialog{background:var(--surface);color:var(--text)}input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}input[type="checkbox"]{accent-color:var(--accent-solid)}button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--focus);outline-offset:3px}::selection{background:var(--active);color:var(--text)}:root{scrollbar-color:var(--handle) var(--surface)}.setting-row>#themePreference{width:140px;flex-shrink:0}#toast{color:#fff}
 
 /* Project identity: the same mark appears in the browser tab and app header. */
 .brand{display:inline-flex;align-items:center;gap:9px;letter-spacing:-.5px;white-space:nowrap}.brand-icon{display:block;width:32px;height:32px;flex-shrink:0}@media(max-width:800px){header .brand{font-size:17px;gap:6px}header .brand-icon{width:26px;height:26px}}
 
 .brand-play{fill:var(--text)}
+
+/* English labels need room without pushing controls off a narrow screen. */
+header>div:last-child{flex-wrap:wrap;justify-content:flex-end;gap:8px}
+@media(min-width:801px) and (max-width:1200px){header{height:auto;min-height:76px;padding-top:10px;padding-bottom:10px}.app-shell>header{flex-basis:auto}.toolbar-controls{flex-wrap:wrap}.toolbar-controls input{min-width:160px}}
+:root[lang="en"] .nav-item button{overflow-wrap:anywhere}
+@media(max-width:800px){
+ :root[lang="en"] .toolbar-controls{display:flex;flex-wrap:wrap;justify-content:flex-start}
+ :root[lang="en"] .toolbar-controls #search{flex:1 0 100%;width:100%;margin:0}
+ :root[lang="en"] .setting-row{flex-wrap:wrap}
+ :root[lang="en"] .setting-row>div{min-width:0}
+}
+/* Compact language and theme menus share the same header position. */
+.appearance-controls{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.icon-menu{display:inline-flex}.icon-button,#themeToggle{width:38px;height:38px;min-width:38px;padding:8px;display:inline-flex;align-items:center;justify-content:center}
+.icon-button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.icon-button svg[hidden]{display:none}
+.preference-menu{position:fixed;inset:auto;margin:0;width:168px;padding:5px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);box-shadow:0 8px 28px var(--shadow)}
+.preference-menu:popover-open{display:grid;gap:2px}
+.preference-menu button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:9px 12px;border:0;border-radius:6px;text-align:left;background:transparent}
+.preference-menu button:hover,.preference-menu button:focus-visible{background:var(--soft)}
+.preference-menu button[aria-checked="true"]{color:var(--accent);background:var(--active)}
+.preference-menu button[aria-checked="true"]::after{content:'✓';margin-left:12px}
+.auth-card>.icon-menu{display:flex;justify-content:flex-end;margin-top:12px}
