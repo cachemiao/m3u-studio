@@ -408,3 +408,14 @@ def test_short_name_validation_does_not_publish(server,auth):
     s=sample();s['lists'][0]['slug']='';s['lists'][1]['slug']=''
     assert c.put('/api/state',json=s,headers=auth).status_code==200
     assert c.get('/lists/neimeng/tv.m3u').status_code==200
+
+
+def test_import_language_does_not_translate_user_data(server, auth):
+    c = client(server, auth)
+    content = '#EXTM3U\n#EXTINF:-1,我的频道\nhttp://example.com/live\n#EXTINF:-1 group-title="央视",CCTV1\nhttp://example.com/one'
+    english = c.post('/api/import', json={'text': content}, headers={**auth, 'Accept-Language': 'en-US'}).json
+    chinese = c.post('/api/import', json={'text': content}, headers={**auth, 'Accept-Language': 'zh-CN'}).json
+    assert english['groups'] == ['Ungrouped', '央视']
+    assert chinese['groups'] == ['未分组', '央视']
+    assert english['channels'][0]['name'] == '我的频道'
+    assert english['channels'][0]['url'] == 'http://example.com/live'
