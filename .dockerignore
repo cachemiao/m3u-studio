@@ -1,0 +1,9 @@
+data
+.env
+__pycache__
+.pytest_cache
+tests
+*.zip
+
+# Do not rebundle assets left in an old checkout after upgrading.
+app/builtin/
