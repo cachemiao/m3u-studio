@@ -376,10 +376,11 @@ def history_snapshot(revision):
 migrate_history()
 
 ATTR = re.compile(r'([\w-]+)="([^"]*)"')
-def parse_playlist(text):
+def parse_playlist(text, language="zh"):
+    ungrouped = "Ungrouped" if language == "en" else "未分组"
     if not isinstance(text, str): raise ValueError('请提供文本')
     channels, groups, epg = [], [], ''
-    group, pending = '未分组', None
+    group, pending = ungrouped, None
     for line in text.lstrip('\ufeff').splitlines():
         line = line.strip()
         if not line: continue
@@ -393,7 +394,7 @@ def parse_playlist(text):
                 elif char == ',' and not quoted: split = i; break
             if split is None: raise ValueError('EXTINF 缺少频道名称')
             a = dict(ATTR.findall(line[:split]))
-            pending = {'name': line[split+1:], 'group': a.get('group-title') or '未分组',
+            pending = {'name': line[split+1:], 'group': a.get('group-title') or ungrouped,
                 'logo': a.get('tvg-logo', ''), 'epg_id': a.get('tvg-id', ''), 'epg': '',
                 'catchup_url': a.get('catchup-source', ''), 'catchup': a.get('catchup', 'default'),
                 'days': a.get('catchup-days', '7')}
@@ -420,7 +421,7 @@ def parse_playlist(text):
 
 @app.route('/api/import', methods=['POST'])
 def import_file():
-    try: return jsonify(parse_playlist(request.get_json().get('text')))
+    try: return jsonify(parse_playlist(request.get_json().get('text'), 'en' if request.headers.get('Accept-Language', '').startswith('en') else 'zh'))
     except (ValueError, TypeError, AttributeError) as error: return jsonify(error=str(error)), 400
 
 @app.route('/api/backup')
