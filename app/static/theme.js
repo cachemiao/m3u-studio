@@ -11,12 +11,8 @@
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
     const select = document.getElementById('themePreference');
     if (select) select.value = preference;
-    const toggle = document.getElementById('themeToggle');
-    if (toggle) {
-      toggle.textContent = dark ? '☀ 浅色' : '☾ 暗色';
-      toggle.setAttribute('aria-label', dark ? '切换为浅色主题' : '切换为暗色主题');
-      toggle.title = '切换主题；可在设置中选择跟随系统';
-    }
+    document.querySelectorAll('[data-theme-icon]').forEach(icon=>icon.toggleAttribute('hidden',icon.dataset.themeIcon!==(dark?'dark':'light')));
+    document.querySelectorAll('[data-theme-choice]').forEach(node=>node.setAttribute('aria-checked',String(node.dataset.themeChoice===preference)));
   }
   function setPreference(value) {
     if (!valid(value)) return;
@@ -24,6 +20,7 @@
     try { localStorage.setItem(key, value); } catch {}
     apply();
   }
+  window.addEventListener('m3u-language-change',apply);
   apply();
   media.addEventListener('change', () => { if (preference === 'system') apply(); });
   window.addEventListener('storage', event => {
@@ -32,9 +29,7 @@
     apply();
   });
   document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      setPreference(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-    });
+    document.querySelectorAll('[data-theme-choice]').forEach(node=>node.addEventListener('click',()=>setPreference(node.dataset.themeChoice)));
     document.getElementById('themePreference').addEventListener('change', event => setPreference(event.target.value));
     apply();
   });
