@@ -1,8 +1,26 @@
-# M3U Studio
+<p align="center">
+  <img src="app/static/favicon.svg" width="96" height="96" alt="M3U Studio Logo">
+</p>
 
-一个可以用 Docker 自托管的 IPTV 频道编辑器。在浏览器里整理频道、分组和台标，生成 M3U / TXT 订阅，方便在不同播放器中使用。
+<h1 align="center">M3U Studio</h1>
 
-适合同时维护多套频道列表，例如不同运营商、地区或设备的播放源。当前版本：**v0.3.4**。
+<p align="center">IPTV 频道管理与订阅服务器</p>
+
+<p align="center">
+  <a href="https://github.com/cachemiao/m3u-studio/releases"><img src="https://img.shields.io/github/v/release/cachemiao/m3u-studio?color=0f766e" alt="最新版本"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/cachemiao/m3u-studio" alt="MIT 许可证"></a>
+  <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=0f766e" alt="Docker 拉取量"></a>
+</p>
+
+一个易于部署的、基于 **Python / Flask** 的 IPTV 频道管理与订阅服务器，支持 **M3U 和 TXT** 格式。通过网页管理多套频道列表、分组、台标和 EPG，生成可自定义短地址的订阅链接，支持 **Docker 一键部署**。
+
+本项目出于个人学习与兴趣开发，代码采用 **MIT 许可证**开源，不提供直播源或第三方台标素材。如有涉及侵权的内容，请通过 Issue 联系作者处理。
+
+使用中遇到问题或有功能建议，欢迎提交 [Issue](https://github.com/cachemiao/m3u-studio/issues)。
+
+> 请不要在国内媒体平台宣传本项目！
+
+---
 
 ## 界面预览
 
