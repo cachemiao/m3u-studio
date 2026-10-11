@@ -134,7 +134,7 @@ For Docker Run, use `-v "$PWD/data:/data"`; for Compose, use `- ./data:/data`. A
 
 ## Upgrade and maintenance
 
-`latest` follows the latest stable release. To pin a version, use a version tag, for example `cachemiao/m3u-studio:0.4.1`. Back up before upgrading and retain the original data mount.
+`latest` follows the latest stable release. To pin a version, use a version tag, for example `cachemiao/m3u-studio:0.4.2`. Back up before upgrading and retain the original data mount.
 
 **Compose upgrade:**
 
