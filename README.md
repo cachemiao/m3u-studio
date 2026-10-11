@@ -12,6 +12,8 @@
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=0f766e" alt="Docker 拉取量"></a>
 </p>
 
+<p align="center"><strong>简体中文</strong> · <a href="README.en.md">English</a></p>
+
 一个易于部署的、基于 **Python / Flask** 的 IPTV 频道管理与订阅服务器，支持 **M3U 和 TXT** 格式。通过网页管理多套频道列表、分组、台标和 EPG，生成可自定义短地址的订阅链接，支持 **Docker 一键部署**。
 
 本项目出于个人学习与兴趣开发，代码采用 **MIT 许可证**开源，不提供直播源或第三方台标素材。如有涉及侵权的内容，请通过  [Issue](https://github.com/cachemiao/m3u-studio/issues) 联系作者处理。
@@ -25,7 +27,7 @@
 
 ## 界面预览
 
-首次打开默认暗色，支持浅色、黑灰暗色和跟随系统主题，电脑与手机均可使用。
+首次打开默认暗色，支持浅色、黑灰暗色和跟随系统主题，电脑与手机均可使用。界面支持中文 / English，可在登录页或顶部切换；首次按浏览器语言选择，之后记住本浏览器偏好。切换语言不改变频道、分组、列表名称或播放地址。
 
 截图展示个人部署中的联通与移动列表（部分截图保留更名前的界面），以及自行添加的台标。公开版台标库初始为空，不附带电视台台标图片。
 
@@ -49,7 +51,7 @@
 - **批量编辑**：批量调整分组、EPG、FCC，或替换直播与回放地址中的文字，预览后应用。
 - **EPG、回放与 FCC**：编辑频道 EPG ID、节目表地址、回放参数与 FCC 参数，按格式导出。
 - **撤销与历史**：草稿支持撤销 / 重做，保留最近 30 份发布前配置；支持 JSON 配置备份与恢复。
-- **主题与移动端**：浅色 / 暗色快捷切换，记住浏览器偏好；手机支持频道编辑和拖拽。
+- **语言、主题与移动端**：简体中文 / English，浅色 / 深色 / 跟随系统图标菜单，记住浏览器偏好；手机支持频道编辑和拖拽。
 - **本地部署**：账号、配置和上传图片保存在本地数据目录，前端不依赖外部 CDN。
 
 本项目提供频道编辑与订阅分发。播放地址和节目表由使用者自行提供，UDP 转 HTTP 等播放服务需单独部署。
@@ -142,7 +144,7 @@ sudo chown -R 10001:10001 data
 
 ## 升级与常用命令
 
-`latest` 指向最新正式版；如需固定版本，将镜像改为 `cachemiao/m3u-studio:0.3.4`。升级前先备份数据，重建时使用原数据卷或原目录挂载。
+`latest` 指向最新正式版；如需固定版本，将镜像改为 `cachemiao/m3u-studio:0.4.0`。升级前先备份数据，重建时使用原数据卷或原目录挂载。
 
 **Compose 升级**（在部署目录执行）：
 
@@ -286,7 +288,7 @@ find app/builtin -type f -name '*.png' -exec cp -n {} data/logo/ \;
 ```sh
 python -m pip install -r requirements.txt pytest
 python -m pytest tests -q
-node --test tests/test_editor_core.cjs tests/test_logo_upload.cjs
+node --test tests/*.cjs
 ```
 
 Node 仅用于运行前端逻辑测试。运行状态可通过以下命令检查：
