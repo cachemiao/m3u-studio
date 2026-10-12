@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/cachemiao/m3u-studio/releases"><img src="https://img.shields.io/github/v/release/cachemiao/m3u-studio?color=0f766e" alt="Latest release"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/cachemiao/m3u-studio" alt="MIT License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/cachemiao/m3u-studio" alt="GNU GPL v2.0 License"></a>
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=0f766e" alt="Docker pulls"></a>
   <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=0f766e" alt="GitHub Stars"></a>
   <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-Channel-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram channel"></a>
@@ -19,7 +19,7 @@
 
 An easy-to-deploy IPTV channel management and subscription server built with **Python / Flask**, supporting **M3U and TXT**. Manage multiple playlists, groups, channel logos and EPG in your browser, then publish subscriptions with customizable short URLs. Deploy with **Docker**.
 
-Developed as a personal learning and hobby project, with source code released under the **MIT License**. The project does not include live stream sources or third-party channel logo images. Please contact the author through an [Issue](https://github.com/cachemiao/m3u-studio/issues) about any potentially infringing content.
+Developed as a personal learning and hobby project, with source code released under the **GNU GPL v2.0 License**. The project does not include live stream sources or third-party channel logo images. Please contact the author through an [Issue](https://github.com/cachemiao/m3u-studio/issues) about any potentially infringing content.
 
 Questions, bug reports and feature requests are welcome in [Issues](https://github.com/cachemiao/m3u-studio/issues).
 
@@ -307,6 +307,14 @@ Questions and suggestions are welcome in Issues. Please include the version, dep
 
 ## License and logo images
 
-Code is licensed under [MIT](LICENSE), Copyright (c) 2026 cachemiao.
+Code is licensed under [GNU GPL v2.0 only](LICENSE) (`GPL-2.0-only`), Copyright (c) 2026 cachemiao.
+
+- Commercial use and selling copies are allowed.
+- Private modifications and internal use do not require publishing source code.
+- When distributing modified versions covered by GPL, license them under GPL v2.0 and provide the corresponding source code to recipients as required by the license.
+- When distributing binaries, comply with GPL v2.0's source-code provision requirements, such as supplying corresponding source or a valid written offer.
+- Retain copyright notices and the license. The software is provided without warranty.
+
+This license change applies from the commit that introduces it. Previously published MIT versions retain their original MIT permissions; this change does not revoke them.
 
 Channel logos, names and third-party trademarks are not original project code; the code license does not grant additional rights to those materials. The project does not distribute TV station logo images. Upload only images you are entitled to use in Logo library management. Naming images after their channels helps automatic matching.

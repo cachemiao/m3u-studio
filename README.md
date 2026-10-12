@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/cachemiao/m3u-studio/releases"><img src="https://img.shields.io/github/v/release/cachemiao/m3u-studio?color=0f766e" alt="最新版本"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/cachemiao/m3u-studio" alt="MIT 许可证"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/cachemiao/m3u-studio" alt="GNU GPL v2.0 许可证"></a>
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=0f766e" alt="Docker 拉取量"></a>
   <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=0f766e" alt="GitHub Stars"></a>
   <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-%E9%A2%91%E9%81%93-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram 频道"></a>
@@ -19,7 +19,7 @@
 
 一个易于部署的、基于 **Python / Flask** 的 IPTV 频道管理与订阅服务器，支持 **M3U 和 TXT** 格式。通过网页管理多套频道列表、分组、台标和 EPG，生成可自定义短地址的订阅链接，支持 **Docker 一键部署**。
 
-本项目出于个人学习与兴趣开发，代码采用 **MIT 许可证**开源，不提供直播源或第三方台标素材。如有涉及侵权的内容，请通过  [Issue](https://github.com/cachemiao/m3u-studio/issues) 联系作者处理。
+本项目出于个人学习与兴趣开发，代码采用 **GNU GPL v2.0 许可证**开源，不提供直播源或第三方台标素材。如有涉及侵权的内容，请通过  [Issue](https://github.com/cachemiao/m3u-studio/issues) 联系作者处理。
 
 使用中遇到问题或有功能建议，欢迎提交 [Issue](https://github.com/cachemiao/m3u-studio/issues)。
 
@@ -313,6 +313,14 @@ curl -fsS http://127.0.0.1:8324/healthz
 
 ## 许可证与台标素材
 
-本项目代码采用 [MIT 许可证](LICENSE)，Copyright (c) 2026 cachemiao。
+本项目代码采用 [GNU GPL v2.0 许可证](LICENSE)（仅第 2 版，`GPL-2.0-only`），Copyright (c) 2026 cachemiao。
+
+- ✅ 允许个人使用、商业部署和销售软件副本。
+- ✅ 修改后仅自己或企业内部使用，无需公开源代码。
+- ⚠️ 对外分发受 GPL 覆盖的修改版时，须继续采用 GPL v2.0，并按许可证要求向接收者提供对应源代码。
+- ⚠️ 分发二进制文件时，须遵守 GPL v2.0 的源码提供要求，例如附带对应源码或提供有效的书面源码获取承诺。
+- ⚠️ 须保留版权声明和许可证；软件不提供任何保证。
+
+本次许可变更从引入该变更的提交起生效。此前已按 MIT 发布的版本仍保留原 MIT 授权，本次变更不撤销这些授权。
 
 台标图片、频道名称与第三方商标不属于本项目原创代码，代码许可证不授予这些素材的额外使用权。本项目不随软件分发电视台台标。用户可在“台标库管理”中上传自己有权使用的图片，建议以频道名称命名，便于自动匹配。
