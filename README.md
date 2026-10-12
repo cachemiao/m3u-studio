@@ -10,6 +10,9 @@
   <a href="https://github.com/cachemiao/m3u-studio/releases"><img src="https://img.shields.io/github/v/release/cachemiao/m3u-studio?color=0f766e" alt="最新版本"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/cachemiao/m3u-studio" alt="MIT 许可证"></a>
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=0f766e" alt="Docker 拉取量"></a>
+  <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=0f766e" alt="GitHub Stars"></a>
+  <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-%E9%A2%91%E9%81%93-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram 频道"></a>
+  <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-%E7%BE%A4%E7%BB%84-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram 群组"></a>
 </p>
 
 <p align="center"><strong>简体中文</strong> · <a href="README.en.md">English</a></p>
