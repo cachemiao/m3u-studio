@@ -55,6 +55,7 @@
 - **本地部署**：账号、配置和上传图片保存在本地数据目录，前端不依赖外部 CDN。
 
 本项目提供频道编辑与订阅分发。播放地址和节目表由使用者自行提供，UDP 转 HTTP 等播放服务需单独部署。
+FCC需要使用[rtp2httpd](https://github.com/stackia/rtp2httpd)并配置对应的[FCC地址](https://rtp2httpd.com/reference/cn-fcc-collection)
 
 ## Docker 一键启动【推荐】
 
