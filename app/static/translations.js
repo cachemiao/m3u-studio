@@ -113,7 +113,7 @@ window.M3UTranslations = {
     "en": "Add channel"
   },
   "m29": {
-    "zh": "新列表名称，例如：内蒙古联通",
+    "zh": "新列表名称，例如：联通",
     "en": "New playlist name, e.g. Home TV"
   },
   "m30": {
@@ -241,8 +241,8 @@ window.M3UTranslations = {
     "en": "Passwords do not match"
   },
   "m61": {
-    "zh": "有未保存更改，确认退出？",
-    "en": "You have unsaved changes. Sign out?"
+    "zh": "有未保存更改，确认退出？已应用的草稿会保留在本浏览器。",
+    "en": "You have unsaved changes. Sign out? Applied draft changes will stay in this browser."
   },
   "m62": {
     "zh": "两次新密码不一致",
@@ -1264,5 +1264,121 @@ window.M3UTranslations = {
     "zh": "不支持替换此字段",
     "en": "This field cannot be replaced"
   },
-  "m317": {"zh":"语言", "en":"Language"}
+  "m317": {"zh":"语言", "en":"Language"},
+  "m318": {
+    "zh": "发现本浏览器在 {p0} 保存的未发布草稿。{p1}恢复到编辑器？确定恢复，取消丢弃。",
+    "en": "An unpublished draft was saved in this browser at {p0}. {p1}Restore it? OK restores; Cancel discards."
+  },
+  "m319": {
+    "zh": "服务器配置已变化，恢复后请核对差异再发布。",
+    "en": "The server configuration has changed. Review differences before publishing. "
+  },
+  "m320": {
+    "zh": "无法保存或恢复本地草稿，请及时发布或导出 JSON 备份。",
+    "en": "Local draft storage or recovery is unavailable. Publish or export a JSON backup."
+  },
+  "m321": {
+    "zh": "本地草稿已恢复，可撤销；核对后保存并发布。",
+    "en": "Local draft restored. You can undo; review before publishing."
+  },
+  "m322": {
+    "zh": "共选中 {p0} 个，将修改 {p1} 个，跳过 {p2} 个（未变化或已不存在）{p3}；尚未应用或发布。",
+    "en": "Selected {p0}; will change {p1}; skip {p2} (unchanged or no longer present){p3}. Not applied or published."
+  },
+  "m323": {
+    "zh": "已修改 {p0} 个，跳过 {p1} 个。可撤销；保存发布后生效。",
+    "en": "Changed {p0}; skipped {p1}. Undo is available; publish to update subscriptions."
+  },
+  "m324": {
+    "zh": "撤销",
+    "en": "Undo"
+  },
+  "m325": {
+    "zh": "留空时订阅使用频道名称作为 EPG ID，由播放器与节目表匹配。",
+    "en": "When blank, subscriptions use the channel name as the EPG ID for matching by the player."
+  },
+  "m326": {
+    "zh": "批量检测",
+    "en": "Batch check"
+  },
+  "m327": {
+    "zh": "服务器响应耗时，仅供参考。并发 4 路，超时 5 秒；HTTP/HLS 仅有限读取，不代表实际播放效果。",
+    "en": "Server response time, for reference only. Concurrency 4, timeout 5s; bounded HTTP/HLS reads do not verify playback."
+  },
+  "m328": {
+    "zh": "检测进度",
+    "en": "Check progress"
+  },
+  "m329": {
+    "zh": "只看失败项",
+    "en": "Failures only"
+  },
+  "m330": {
+    "zh": "重试失败项",
+    "en": "Retry failures"
+  },
+  "m331": {
+    "zh": "取消检测",
+    "en": "Cancel check"
+  },
+  "m332": {
+    "zh": "超时",
+    "en": "Timeout"
+  },
+  "m333": {
+    "zh": "不可访问",
+    "en": "Unavailable"
+  },
+  "m334": {
+    "zh": "暂不支持",
+    "en": "Unsupported"
+  },
+  "m335": {
+    "zh": "未检测",
+    "en": "Not checked"
+  },
+  "m336": {
+    "zh": "等待检测",
+    "en": "Pending"
+  },
+  "m337": {
+    "zh": "检测中：{p0}/{p1}，失败 {p2} 项",
+    "en": "Checking: {p0}/{p1}, {p2} failures"
+  },
+  "m338": {
+    "zh": "已取消：{p0}/{p1}，失败 {p2} 项",
+    "en": "Cancelled: {p0}/{p1}, {p2} failures"
+  },
+  "m339": {
+    "zh": "检测完成：{p0}/{p1}，失败 {p2} 项",
+    "en": "Finished: {p0}/{p1}, {p2} failures"
+  },
+  "m340": {
+    "zh": "{p0} · 本次检测 {p1} 个频道",
+    "en": "{p0} · Checking {p1} channels"
+  },
+  "m341": {
+    "zh": "检测中…",
+    "en": "Checking…"
+  },
+  "m342": {
+    "zh": "再次检测",
+    "en": "Check again"
+  },
+  "m343": {
+    "zh": "重新检测 {p0} 的响应耗时",
+    "en": "Recheck response time for {p0}"
+  },
+  "m345": {
+    "zh": "开始检测",
+    "en": "Start check"
+  },
+  "m346": {
+    "zh": "尚未开始，点击“开始检测”检测本次频道。",
+    "en": "Not started. Click Start check to check these channels."
+  },
+  "m344": {
+    "zh": "最多同时检测 4 个频道，请稍候。",
+    "en": "Up to 4 channels can be checked at once. Please wait."
+  }
 };

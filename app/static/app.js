@@ -3,12 +3,14 @@ const $=s=>document.querySelector(s), el=(tag,text,cls)=>{const n=document.creat
 let state, selected, group='', dirty=false, editing=null, uploadTarget=null, dragId=null, authMode='login', username='', sidebarDrag=null;
 const core=AliceEditorCore, draftHistory=core.createHistory();
 let publishedFingerprint='', selectedChannels=new Set(), selectionList=null, visibleChannels=[], logoLibrary=null, batchContext=null, batchCandidate=null, logoContext=null, logoMatches=[];
+let workspaceOwner=null, draftStore=null, draftStorageWarned=false, batchStats=null;
 const current=()=>state?.lists.find(x=>x.id===selected), uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
-function toast(message){window.M3UI18n.setText($('#toast'),message);$('#toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').style.display='none',5000)}
+function toast(message,undo=false){window.M3UI18n.setText($('#toast'),message);if(undo)$('#toast').append(button(t('m324'),()=>$('#undo').click(),'small'));$('#toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').style.display='none',5000)}
 async function api(path,options={}){const r=await fetch(path,{...options,headers:{'X-IPTV-Request':'1','Accept-Language':window.M3UI18n.locale,...options.headers}});const data=await r.json();if(!r.ok){if(r.status===401&&!path.startsWith('/api/auth/'))showAuth(false);const error=Error(data.error||String(t("m1")));error.status=r.status;error.data=data;throw error;}return data}
 const json=(method,data)=>({method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
 function changed(){draftHistory.record(state);syncDirty();render()}
-function syncDirty(){dirty=core.fingerprint(state)!==publishedFingerprint;window.M3UI18n.setText($('#status'),window.M3UI18n.dynamic(()=>dirty?t("m2"):t("m3")));$('#undo').disabled=!draftHistory.canUndo;$('#redo').disabled=!draftHistory.canRedo}
+function persistDraft(){if(!draftStore||!state)return;try{if(dirty)draftStore.save(state,publishedFingerprint);else draftStore.clear()}catch{if(!draftStorageWarned){draftStorageWarned=true;toast(t('m320'))}}}
+function syncDirty(){dirty=core.fingerprint(state)!==publishedFingerprint;persistDraft();window.M3UI18n.setText($('#status'),window.M3UI18n.dynamic(()=>dirty?t("m2"):t("m3")));$('#undo').disabled=!draftHistory.canUndo;$('#redo').disabled=!draftHistory.canRedo}
 function applyContent(content){state.lists=content.lists;state.epg=content.epg;if(!current())selected=state.lists[0]?.id;if(!current()?.groups.includes(group))group='';syncDirty();render()}
 function button(text,action,cls){const n=el('button',text,cls);n.type='button';n.onclick=action;return n}
 function render(){if(!state)return;const list=current();$('#lists').replaceChildren();state.lists.forEach(x=>{const row=el('div',undefined,'nav-item'+(x.id===selected?' active':''));row.append(button(x.name,()=>{selected=x.id;group='';render()}));bindSidebarDrag(row,'list',x.id);$('#lists').append(row)});
@@ -21,7 +23,7 @@ visibleChannels=channels;if(selectionList!==selected){selectedChannels.clear();s
 channels.forEach(ch=>{const row=el('article',undefined,'channel');row.dataset.id=ch.id;const check=el('input');check.type='checkbox';check.className='channel-select';window.M3UI18n.setAttribute(check,'aria-label',window.M3UI18n.dynamic(()=>t("m14")+ch.name));check.checked=selectedChannels.has(ch.id);check.onchange=()=>{if(check.checked)selectedChannels.add(ch.id);else selectedChannels.delete(ch.id);updateSelection()};const handle=el('span','⠿','handle');handle.draggable=!query;window.M3UI18n.setAttribute(handle,'title',window.M3UI18n.dynamic(()=>query?t("m15"):t("m16")));handle.ondragstart=e=>{sidebarDrag=null;dragId=ch.id;e.dataTransfer.setData('text/plain',ch.id)};handle.ondragend=()=>{dragId=null;clearDragMarks()};bindTouchDrag(handle,ch.id,!query);
 row.ondragover=e=>{if(dragId&&!query){e.preventDefault();row.classList.add('dragover')}};row.ondragleave=()=>row.classList.remove('dragover');row.ondrop=e=>{e.preventDefault();if(query)return;const box=row.getBoundingClientRect();relocate(dragId,ch.id,ch.group,e.clientY>box.top+box.height/2);dragId=null;clearDragMarks()};
 const logo=button('',()=>{openLogoPicker({listId:selected,channelId:ch.id},ch)},'logo');window.M3UI18n.setAttribute(logo,'title',window.M3UI18n.dynamic(()=>t("m17")));window.M3UI18n.setAttribute(logo,'aria-label',window.M3UI18n.dynamic(()=>t("m18")+ch.name));if(ch.logo){const img=el('img');img.src=ch.logo;img.alt=ch.name;img.onerror=()=>{img.hidden=true;logo.append(el('small',t("m19")))};logo.append(img)}else window.M3UI18n.setText(logo,'＋Logo');
-const info=el('div');const title=el('div',ch.name,'channel-title');title.append(el('span',ch.group,'pill'));if(ch.catchup_url)title.append(el('span',t("m20"),'pill replay'));if(ch.fcc_url)title.append(el('span','FCC','pill fcc'));const stream=el('div',ch.url,'stream');window.M3UI18n.setAttribute(stream,'title',ch.url);info.append(title,stream);
+const info=el('div');const title=el('div',ch.name,'channel-title');title.append(el('span',ch.group,'pill'));if(ch.catchup_url)title.append(el('span',t("m20"),'pill replay'));if(ch.fcc_url)title.append(el('span','FCC','pill fcc'));const checkItem=sourceItem(selected,ch),checkedSource=sourceDisplayResult(checkItem.key);if(checkedSource)title.append(sourceBadge(checkedSource,checkItem));const stream=el('div',ch.url,'stream');window.M3UI18n.setAttribute(stream,'title',ch.url);info.append(title,stream);
 const actions=el('div',undefined,'actions');actions.append(button(t("m21"),()=>openEditor(ch)),button(t("m22"),()=>{if(confirm(t("m23")+ch.name+(window.M3UI18n.language==='zh'?'？':'?'))){list.channels=list.channels.filter(c=>c.id!==ch.id);changed()}},'danger'));row.append(check,handle,logo,info,actions);$('#channels').append(row)})}
 function clearDragMarks(){document.querySelectorAll('.dragover,.touch-dragging').forEach(n=>n.classList.remove('dragover','touch-dragging'))}
 function relocate(id,targetId,targetGroup,after=false){const list=current();const moved=list?.channels.find(c=>c.id===id);if(!moved||id===targetId)return;const target=list.channels.find(c=>c.id===targetId);if(!target&&!list.groups.includes(targetGroup))return;list.channels=list.channels.filter(c=>c!==moved);moved.group=target?target.group:targetGroup;if(target)list.channels.splice(list.channels.indexOf(target)+(after?1:0),0,moved);else list.channels.push(moved);changed()}
@@ -73,18 +75,27 @@ $('#settings').onclick=()=>{$('#globalEpg').value=state.epg;$('#links').replaceC
 $('#listSettings').onclick=()=>{const list=current();$('#listName').value=list.name;$('#listSlug').value=list.slug||'';$('#listEpg').value=list.epg;$('#listEnabled').checked=list.enabled;window.M3UI18n.setText($('#listId'),window.M3UI18n.dynamic(()=>t("m45")+list.id+t("m46")));$('#listDialog').showModal()};$('#listForm').onsubmit=e=>{e.preventDefault();const slug=$('#listSlug').value.trim().toLowerCase();if(slug&&(!/^[a-z0-9][a-z0-9_-]{0,23}$/.test(slug)||['tv','api','static','logo','lists','healthz'].includes(slug)))return toast(t("m47"));if(slug&&state.lists.some(list=>list.id!==selected&&(list.slug||'').toLowerCase()===slug))return toast(t("m48"));Object.assign(current(),{slug,name:$('#listName').value.trim(),epg:$('#listEpg').value.trim(),enabled:$('#listEnabled').checked});$('#listDialog').close();changed()};$('#deleteList').onclick=()=>{if(!confirm(t("m49")))return;state.lists=state.lists.filter(l=>l.id!==selected);selected=state.lists[0]?.id;group='';$('#listDialog').close();changed()};
 $('#backup').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=el('a');a.href=URL.createObjectURL(blob);a.download='iptv-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast(t("m50"))};
 $('#restore').onclick=()=>$('#restoreFile').click();$('#restoreFile').onchange=async e=>{try{const file=e.target.files[0];if(!file)return;const raw=JSON.parse(await file.text());if(!Array.isArray(raw.lists))throw Error(t("m51"));if(!confirm(t("m52")))return;state.lists=raw.lists;state.epg=raw.epg||'';selected=state.lists[0]?.id;group='';$('#preferencesDialog').close();changed()}catch(err){toast(window.M3UI18n.error(err.message))}e.target.value=''};
-document.querySelectorAll('.close').forEach(b=>b.onclick=()=>b.closest('dialog').close());window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
-function showAuth(setup){authMode=setup?'setup':'login';$('#appShell').hidden=true;$('#authScreen').hidden=false;window.M3UI18n.setText($('#authTitle'),window.M3UI18n.dynamic(()=>setup?t("m53"):t("m54")));window.M3UI18n.setText($('#authHint'),window.M3UI18n.dynamic(()=>setup?t("m55"):t("m56")));window.M3UI18n.setText($('#authSubmit'),window.M3UI18n.dynamic(()=>setup?t("m57"):t("m58")));$('#confirmLabel').hidden=!setup;const fields=$('#authForm').elements;fields.password.minLength=setup?8:0;fields.password.autocomplete=setup?'new-password':'current-password';fields.confirm_password.required=setup;fields.password.value='';fields.confirm_password.value='';window.M3UI18n.setText($('#authError'),'')}
-async function loadWorkspace(){if(!dirty||!state){state=await api('/api/state');publishedFingerprint=core.fingerprint(state);draftHistory.reset(state);selectedChannels.clear();selected=state.lists[0]?.id;group=''}$('#authScreen').hidden=true;$('#appShell').hidden=false;window.M3UI18n.setText($('#status'),window.M3UI18n.dynamic(()=>dirty?t("m2"):t("m59")));render()}
+document.querySelectorAll('.close').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+const formBaselines=new WeakMap();
+const formFingerprint=form=>JSON.stringify([...new FormData(form)].map(([key,value])=>[key,value instanceof File?[value.name,value.size,value.lastModified]:value]));
+for(const id of ['channelForm','importForm','settingsForm','listForm']){const form=$('#'+id),dialog=form.closest('dialog');new MutationObserver(()=>{if(dialog.open)formBaselines.set(form,formFingerprint(form));else formBaselines.delete(form)}).observe(dialog,{attributes:true,attributeFilter:['open']})}
+function pendingFormChanges(){return ['channelForm','importForm','settingsForm','listForm'].some(id=>{const form=$('#'+id);return form.closest('dialog').open&&formBaselines.has(form)&&formFingerprint(form)!==formBaselines.get(form)})}
+window.addEventListener('beforeunload',e=>{if(dirty||pendingFormChanges()){e.preventDefault();e.returnValue=''}});
+function showAuth(setup){stopSourceCheck();stopSingleChecks();if($('#sourceCheckDialog').open)$('#sourceCheckDialog').close();authMode=setup?'setup':'login';$('#appShell').hidden=true;$('#authScreen').hidden=false;window.M3UI18n.setText($('#authTitle'),window.M3UI18n.dynamic(()=>setup?t("m53"):t("m54")));window.M3UI18n.setText($('#authHint'),window.M3UI18n.dynamic(()=>setup?t("m55"):t("m56")));window.M3UI18n.setText($('#authSubmit'),window.M3UI18n.dynamic(()=>setup?t("m57"):t("m58")));$('#confirmLabel').hidden=!setup;const fields=$('#authForm').elements;fields.password.minLength=setup?8:0;fields.password.autocomplete=setup?'new-password':'current-password';fields.confirm_password.required=setup;fields.password.value='';fields.confirm_password.value='';window.M3UI18n.setText($('#authError'),'')}
+async function loadWorkspace(){if(!dirty||!state||workspaceOwner!==username){if(state&&dirty)persistDraft();dirty=false;workspaceOwner=username;state=await api('/api/state');publishedFingerprint=core.fingerprint(state);draftHistory.reset(state);selectedChannels.clear();selected=state.lists[0]?.id;group='';
+ try{draftStore=core.createDraftStore(window.localStorage,'m3u-studio-draft:'+username);const saved=draftStore.read();
+  if(saved){if(core.fingerprint(saved.content)===publishedFingerprint)draftStore.clear();else if(confirm(t('m318',{p0:new Date(saved.savedAt).toLocaleString(window.M3UI18n.locale),p1:saved.baseline===publishedFingerprint?'':t('m319')}))){const checked=await api('/api/validate',json('POST',saved.content));state.lists=checked.lists;state.epg=checked.epg;selected=state.lists[0]?.id;draftHistory.record(state);syncDirty();toast(t('m321'))}else draftStore.clear()}
+ }catch{toast(t('m320'))}
+ }$('#authScreen').hidden=true;$('#appShell').hidden=false;window.M3UI18n.setText($('#status'),window.M3UI18n.dynamic(()=>dirty?t("m2"):t("m59")));render()}
 $('#authForm').onsubmit=async e=>{e.preventDefault();const f=e.target.elements;if(authMode==='setup'&&f.password.value!==f.confirm_password.value){window.M3UI18n.setText($('#authError'),window.M3UI18n.dynamic(()=>t("m60")));return}$('#authSubmit').disabled=true;try{const result=await api('/api/auth/'+authMode,json('POST',{username:f.username.value,password:f.password.value}));username=result.username;f.password.value='';f.confirm_password.value='';await loadWorkspace()}catch(err){window.M3UI18n.setText($('#authError'),window.M3UI18n.dynamic(()=>window.M3UI18n.error(err.message)))}finally{$('#authSubmit').disabled=false}};
-$('#logout').onclick=async()=>{if(dirty&&!confirm(t("m61")))return;try{await api('/api/auth/logout',json('POST',{}));state=null;dirty=false;selectedChannels.clear();publishedFingerprint='';showAuth(false)}catch(err){toast(window.M3UI18n.error(err.message))}};
+$('#logout').onclick=async()=>{if(dirty&&!confirm(t("m61")))return;try{await api('/api/auth/logout',json('POST',{}));stopSourceCheck();stopSingleChecks();sourceCheckResults.clear();persistDraft();state=null;dirty=false;draftStore=null;selectedChannels.clear();publishedFingerprint='';showAuth(false)}catch(err){toast(window.M3UI18n.error(err.message))}};
 $('#preferences').onclick=()=>$('#preferencesDialog').showModal();
 $('#accountSettings').onclick=()=>{const form=$('#accountForm');form.reset();form.elements.username.value=username;$('#accountDialog').showModal()};
 $('#accountForm').onsubmit=async e=>{e.preventDefault();const form=e.target;if(form.elements.password.value!==form.elements.confirm_password.value)return toast(t("m62"));try{const result=await api('/api/auth/account',json('PUT',Object.fromEntries(new FormData(form))));username=result.username;form.reset();$('#accountDialog').close();toast(t("m63"))}catch(err){toast(window.M3UI18n.error(err.message))}};
 function updateSelection(){
  const all=visibleChannels.length>0&&visibleChannels.every(ch=>selectedChannels.has(ch.id));
  $('#selectVisible').checked=all;$('#selectVisible').indeterminate=!all&&visibleChannels.some(ch=>selectedChannels.has(ch.id));$('#selectVisible').disabled=!visibleChannels.length;
- window.M3UI18n.setText($('#selectionCount'),window.M3UI18n.dynamic(()=>t("m64",{p0:(selectedChannels.size)})));$('#clearSelection').disabled=!selectedChannels.size;$('#batchEdit').disabled=!selectedChannels.size;$('#autoLogo').disabled=!(selectedChannels.size||visibleChannels.length);
+ window.M3UI18n.setText($('#selectionCount'),window.M3UI18n.dynamic(()=>t("m64",{p0:(selectedChannels.size)})));$('#clearSelection').disabled=!selectedChannels.size;$('#batchEdit').disabled=!selectedChannels.size;$('#checkSources').disabled=!current()?.channels.length||!!sourceSingleRuns.size;$('#autoLogo').disabled=!(selectedChannels.size||visibleChannels.length);
  $('#undo').disabled=!draftHistory.canUndo;$('#redo').disabled=!draftHistory.canRedo;
 }
 $('#selectVisible').onchange=e=>{visibleChannels.forEach(ch=>{if(e.target.checked)selectedChannels.add(ch.id);else selectedChannels.delete(ch.id)});render()};
@@ -97,7 +108,7 @@ window.addEventListener('keydown',e=>{
 });
 function previewRow(name,description){const row=el('div',undefined,'preview-row');row.append(el('strong',name),el('p',description,'hint'));return row}
 const maskUrl=value=>(value||'').replace(/(\w+:\/\/)[^/@\s]+@/g,'$1••••@');
-function invalidateBatch(){batchCandidate=null;$('#batchApply').disabled=true;$('#batchPreview').replaceChildren();window.M3UI18n.setText($('#batchMessage'),window.M3UI18n.dynamic(()=>t("m66")))}
+function invalidateBatch(){batchCandidate=null;batchStats=null;$('#batchApply').disabled=true;$('#batchPreview').replaceChildren();window.M3UI18n.setText($('#batchMessage'),window.M3UI18n.dynamic(()=>t("m66")))}
 function batchInputFingerprint(){return JSON.stringify({group:$('#batchGroup').value,epg:$('#batchEpg').value,fcc:$('#batchFcc').value,from:$('#replaceFrom').value,to:$('#replaceTo').value,toggles:batchControls.map(([id])=>$('#'+id).checked),live:$('#replaceLive').checked,catchup:$('#replaceCatchup').checked})}
 const batchControls=[['changeGroup',['batchGroup']],['changeEpg',['batchEpg']],['changeFcc',['batchFcc']],['changeReplace',['replaceFrom','replaceTo','replaceLive','replaceCatchup']]];
 for(const [toggle,fields] of batchControls)$('#'+toggle).onchange=()=>{fields.forEach(id=>$('#'+id).disabled=!$('#'+toggle).checked);invalidateBatch()};
@@ -116,22 +127,22 @@ $('#batchForm').onsubmit=async e=>{
  const btn=$('#batchPreviewButton');btn.disabled=true;
  try{
   if(core.fingerprint(state)!==batchContext.fingerprint)throw Error(t("m70"));
-  const {draft,count}=core.batchEdit(state,batchContext.listId,batchContext.ids,changes);
-  if(!count){window.M3UI18n.setText($('#batchMessage'),window.M3UI18n.dynamic(()=>t("m71")));return}
+  const {draft,count,total,skipped}=core.batchEdit(state,batchContext.listId,batchContext.ids,changes);
+  if(!count){window.M3UI18n.setText($('#batchMessage'),t('m322',{p0:total,p1:0,p2:skipped,p3:''}));return}
   const checked=await api('/api/validate',json('POST',draft));
   if(!$('#batchDialog').open||batchContext!==context)return;
   // Form input while validation was pending makes the returned preview stale.
   if(inputFingerprint!==batchInputFingerprint()){toast(t("m72"));return}
-  batchCandidate=checked;const before=current(),beforeById=new Map(before.channels.map(ch=>[ch.id,ch])),ids=new Set(batchContext.ids),after=checked.lists.find(l=>l.id===batchContext.listId);let displayed=0;
+  batchCandidate=checked;batchStats={count,total,skipped};const before=current(),beforeById=new Map(before.channels.map(ch=>[ch.id,ch])),ids=new Set(batchContext.ids),after=checked.lists.find(l=>l.id===batchContext.listId);let displayed=0;
   for(const ch of after.channels){const old=beforeById.get(ch.id);if(!ids.has(ch.id)||!['group','epg','fcc_url','url','catchup_url'].some(key=>old[key]!==ch[key]))continue;if(displayed++>=100)continue;
    const descriptions=()=>{const lines=[];for(const key of ['group','epg','fcc_url','url','catchup_url'])if(old[key]!==ch[key])lines.push(`${({group:t("m73"),epg:'EPG',fcc_url:'FCC',url:t("m74"),catchup_url:t("m20")})[key]}${window.M3UI18n.language==='zh'?'：':': '}${maskUrl(old[key])||t("m75")} → ${maskUrl(ch[key])||t("m75")}`);
    return lines.join('\n')};
    $('#batchPreview').append(previewRow(ch.name,window.M3UI18n.dynamic(descriptions)));
   }
-  window.M3UI18n.setText($('#batchMessage'),window.M3UI18n.dynamic(()=>t("m77",{p0:(count),p1:(displayed>100?t("m76"):'')})));$('#batchApply').disabled=false;
+  window.M3UI18n.setText($('#batchMessage'),window.M3UI18n.dynamic(()=>t('m322',{p0:total,p1:count,p2:skipped,p3:displayed>100?t('m76'):''})));$('#batchApply').disabled=false;
  }catch(err){toast(window.M3UI18n.error(err.message))}finally{btn.disabled=false}
 };
-$('#batchApply').onclick=()=>{if(!batchCandidate)return;if(core.fingerprint(state)!==batchContext.fingerprint)return toast(t("m78"));state.lists=batchCandidate.lists;state.epg=batchCandidate.epg;$('#batchDialog').close();changed();toast(t("m79"))};
+$('#batchApply').onclick=()=>{if(!batchCandidate)return;if(core.fingerprint(state)!==batchContext.fingerprint)return toast(t("m78"));state.lists=batchCandidate.lists;state.epg=batchCandidate.epg;$('#batchDialog').close();changed();toast(t('m323',{p0:batchStats.count,p1:batchStats.skipped}),true)};
 async function loadLogos(){logoLibrary=await api('/api/logos');return logoLibrary}
 function libraryPaths(){return logoLibrary.logos}
 let logoPickerContext=null,logoPickerChannel=null;
@@ -222,7 +233,7 @@ function renderAutoLogos(){
  window.M3UI18n.setText($('#autoLogoSummary'),window.M3UI18n.dynamic(()=>t("m116",{p0:(logoMatches.length),p1:(kept),p2:(same),p3:(missing),p4:(logoMatches.length>100?t("m115"):'')})));$('#autoLogoApply').disabled=!logoMatches.length;
 }
 $('#replaceLogos').onchange=renderAutoLogos;
-$('#autoLogoApply').onclick=()=>{if(core.fingerprint(state)!==logoContext.fingerprint)return toast(t("m109"));const list=state.lists.find(l=>l.id===logoContext.listId);const paths=new Map(logoMatches.map(m=>[m.id,m.path]));list.channels.forEach(ch=>{if(paths.has(ch.id))ch.logo=paths.get(ch.id)});$('#autoLogoDialog').close();changed();toast(t("m117",{p0:(logoMatches.length)}))};
+$('#autoLogoApply').onclick=()=>{if(core.fingerprint(state)!==logoContext.fingerprint)return toast(t("m109"));const list=state.lists.find(l=>l.id===logoContext.listId);const paths=new Map(logoMatches.map(m=>[m.id,m.path]));list.channels.forEach(ch=>{if(paths.has(ch.id))ch.logo=paths.get(ch.id)});$('#autoLogoDialog').close();changed();toast(t("m117",{p0:(logoMatches.length)}),true)};
 function legacyCopy(text){
  const previous=document.activeElement,area=el('textarea');area.className='clipboard-helper';area.value=text;$('#settingsDialog').append(area);area.focus();area.select();
  let ok=false;try{ok=document.execCommand('copy')}finally{area.remove();previous?.focus()}return ok;
@@ -243,6 +254,70 @@ $('#history').onclick=async()=>{
   });row.append(restore);$('#historyEntries').append(row)});
  }catch(err){window.M3UI18n.setText($('#historyStatus'),window.M3UI18n.dynamic(()=>window.M3UI18n.error(err.message)))}
 };
+const sourceCheckResults=new Map(),sourceSingleRuns=new Map();
+let sourceRun=null,sourceItems=[],sourceDone=0,sourceTotal=0,sourceCancelled=false,sourceStarted=false;
+const sourceResultKey=(listId,ch)=>JSON.stringify([listId,ch.id,ch.url]);
+const sourceItem=(listId,ch)=>({listId,id:ch.id,name:ch.name,url:ch.url,key:sourceResultKey(listId,ch)});
+const sourceDisplayResult=key=>sourceSingleRuns.has(key)?{status:'checking'}:sourceCheckResults.get(key);
+function sourceBadge(result,item=null){
+ const text=result.status==='ok'?`${result.ms}ms`:t(({checking:'m341',timeout:'m332',unavailable:'m333',unsupported:'m334'})[result.status]||'m333');
+ const badge=item?button(text,()=>checkSingleSource(item)):el('span',text);badge.className='source-latency '+M3USourceCheck.color(result);
+ if(item){badge.disabled=!!sourceRun||sourceSingleRuns.has(item.key)||sourceSingleRuns.size>=4;window.M3UI18n.setAttribute(badge,'title',window.M3UI18n.dynamic(()=>t('m343',{p0:item.name})));window.M3UI18n.setAttribute(badge,'aria-label',window.M3UI18n.dynamic(()=>t('m343',{p0:item.name})))}
+ return badge;
+}
+async function checkSingleSource(item){
+ if(sourceRun||sourceSingleRuns.has(item.key))return;
+ if(sourceSingleRuns.size>=4)return toast(t('m344'));
+ const controller=new AbortController();sourceSingleRuns.set(item.key,controller);sourceCheckResults.delete(item.key);updateSourceBadges();updateSelection();
+ try{const result=await probeSource(item,controller.signal);if(!controller.signal.aborted)sourceCheckResults.set(item.key,result)}
+ catch{if(!controller.signal.aborted)sourceCheckResults.set(item.key,{status:'unavailable'})}
+ finally{if(sourceSingleRuns.get(item.key)===controller)sourceSingleRuns.delete(item.key);updateSourceBadges();updateSelection()}
+}
+function stopSingleChecks(){for(const controller of sourceSingleRuns.values())controller.abort();sourceSingleRuns.clear()}
+
+function updateSourceBadges(){
+ const channels=new Map((current()?.channels||[]).map(ch=>[ch.id,ch]));
+ for(const row of $('#channels').children){row.querySelector('.source-latency')?.remove();const ch=channels.get(row.dataset.id),result=ch&&sourceDisplayResult(sourceResultKey(selected,ch));if(result)row.querySelector('.channel-title')?.append(sourceBadge(result,sourceItem(selected,ch)))}
+}
+function renderSourceResults(){
+ $('#sourceCheckResults').replaceChildren();
+ let failures=0;
+ for(const item of sourceItems){const result=sourceCheckResults.get(item.key);if(result&&M3USourceCheck.failed(result))failures++;if($('#sourceCheckFailed').checked&&(!result||!M3USourceCheck.failed(result)))continue;
+ const row=el('div',undefined,'source-check-row');row.append(el('span',item.name),result?sourceBadge(result):el('span',sourceCancelled?t('m335'):t('m336'),'muted'));$('#sourceCheckResults').append(row)}
+ $('#sourceCheckProgress').max=Math.max(1,sourceTotal);$('#sourceCheckProgress').value=sourceDone;
+ window.M3UI18n.setText($('#sourceCheckStatus'),window.M3UI18n.dynamic(()=>t(!sourceStarted?'m346':sourceRun?'m337':sourceCancelled?'m338':'m339',{p0:sourceDone,p1:sourceTotal,p2:failures})));
+ window.M3UI18n.setText($('#sourceCheckAgain'),window.M3UI18n.dynamic(()=>t(sourceStarted?'m342':'m345')));
+ $('#sourceCheckAgain').disabled=!!sourceRun||!sourceItems.length;$('#sourceCheckRetry').disabled=!sourceStarted||!!sourceRun||!failures;$('#sourceCheckCancel').disabled=!sourceRun;
+}
+async function probeSource(item,signal){
+ while(!signal.aborted){
+  const response=await fetch('/api/source-check',{method:'POST',signal,headers:{'Content-Type':'application/json','X-IPTV-Request':'1'},body:JSON.stringify({url:item.url})});
+  if(response.status===429){await new Promise(resolve=>{const timer=setTimeout(done,250);function done(){clearTimeout(timer);signal.removeEventListener('abort',done);resolve()}signal.addEventListener('abort',done,{once:true})});continue}
+  if(response.status===401){stopSourceCheck();showAuth(false);return {status:'unavailable'}}
+  if(!response.ok)return {status:'unavailable'};
+  return response.json();
+ }
+ throw new DOMException('Cancelled','AbortError');
+}
+async function runSourceCheck(items){
+ if(sourceRun||sourceSingleRuns.size)return;const controller=new AbortController();sourceRun=controller;sourceStarted=true;sourceCancelled=false;sourceDone=0;sourceTotal=items.length;
+ for(const item of items)sourceCheckResults.delete(item.key);renderSourceResults();render();
+ try{await M3USourceCheck.run(items,probeSource,(item,result)=>{sourceCheckResults.set(item.key,result);sourceDone++;renderSourceResults();updateSourceBadges()},controller.signal)}
+ finally{if(sourceRun===controller){sourceRun=null;renderSourceResults();render()}}
+}
+function stopSourceCheck(){if(sourceRun){sourceCancelled=true;sourceRun.abort();renderSourceResults()}}
+$('#checkSources').onclick=()=>{
+ if(sourceRun){$('#sourceCheckDialog').showModal();return}
+ const list=current();if(!list)return;const ids=selectedChannels.size?new Set(selectedChannels):null;
+ sourceItems=list.channels.filter(ch=>!ids||ids.has(ch.id)).map(ch=>sourceItem(list.id,ch));
+ $('#sourceCheckFailed').checked=false;window.M3UI18n.setText($('#sourceCheckScope'),window.M3UI18n.dynamic(()=>t('m340',{p0:list.name,p1:sourceItems.length})));sourceStarted=false;sourceCancelled=false;sourceDone=0;sourceTotal=sourceItems.length;renderSourceResults();$('#sourceCheckDialog').showModal();
+};
+$('#sourceCheckAgain').onclick=()=>{$('#sourceCheckFailed').checked=false;runSourceCheck(sourceItems)};
+$('#sourceCheckCancel').onclick=stopSourceCheck;
+$('#sourceCheckDialog').addEventListener('close',stopSourceCheck);
+$('#sourceCheckFailed').onchange=renderSourceResults;
+$('#sourceCheckRetry').onclick=()=>runSourceCheck(sourceItems.filter(item=>M3USourceCheck.failed(sourceCheckResults.get(item.key)||{})));
+window.addEventListener('m3u-language-change',()=>{if($('#sourceCheckDialog').open)renderSourceResults()});
 api('/api/auth/status').then(async data=>{username=data.username;if(data.authenticated)await loadWorkspace();else showAuth(!data.initialized)}).catch(err=>{showAuth(false);window.M3UI18n.setText($('#authError'),window.M3UI18n.dynamic(()=>window.M3UI18n.error(err.message)))});
 
 window.addEventListener('m3u-language-change',()=>{if(state){render();if(logoLibrary&&$('#logoManagerDialog').open)renderLogoManager();if(logoLibrary&&$('#logosDialog').open)renderLogoPicker();if(logoContext&&$('#autoLogoDialog').open)renderAutoLogos();}});

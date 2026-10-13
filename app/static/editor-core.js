@@ -52,7 +52,7 @@ const AliceEditorCore = (() => {
       }
       if (JSON.stringify(ch) !== before) count++;
     });
-    return {draft, count};
+    return {draft, count, total: selected.size, skipped: selected.size - count};
   }
   const logoName = path => {
     const name = path.split('?')[0].split('#')[0].split('/').pop();
@@ -77,8 +77,39 @@ const AliceEditorCore = (() => {
       if (matches.length === 1) return matches[0];
       if (matches.length > 1) return null;
     }
-    return null;
+    // Fuzzy fallback: require a clear winner and preserve channel numbers / resolution.
+    const name = names[0];
+    if (!name || name.length < 4) return null;
+    const numberKey = value => (value.match(/\d+|\+/g) || []).join('|');
+    const distance = (a, b) => {
+      let row = Array.from({length: b.length + 1}, (_, i) => i);
+      for (let i = 1; i <= a.length; i++) {
+        const next = [i];
+        for (let j = 1; j <= b.length; j++) next[j] = Math.min(next[j-1]+1, row[j]+1, row[j-1]+(a[i-1]===b[j-1]?0:1));
+        row = next;
+      }
+      return row[b.length];
+    };
+    const ranked = paths.map(path => {
+      const candidate = normalizeName(logoName(path));
+      if (numberKey(name) !== numberKey(candidate) || /4k|8k/.test(name) !== /4k|8k/.test(candidate)) return {path, score: 0};
+      return {path, score: 1-distance(name,candidate)/Math.max(name.length,candidate.length)};
+    }).sort((a,b)=>b.score-a.score);
+    return ranked[0]?.score >= 0.8 && (!ranked[1] || ranked[0].score-ranked[1].score >= 0.12) ? ranked[0].path : null;
   }
-  return {clone, content, fingerprint, createHistory, batchEdit, logoName, normalizeName, matchLogo};
+  function createDraftStore(storage, key) {
+    return {
+      save(state, baseline) { storage.setItem(key, JSON.stringify({version:1, baseline, content:content(state), savedAt:Date.now()})); },
+      read() {
+        const value = storage.getItem(key);
+        if (!value) return null;
+        const draft = JSON.parse(value);
+        if (draft.version !== 1 || typeof draft.baseline !== 'string' || !Array.isArray(draft.content?.lists)) throw Error('Invalid draft');
+        return draft;
+      },
+      clear() { storage.removeItem(key); }
+    };
+  }
+  return {createDraftStore, clone, content, fingerprint, createHistory, batchEdit, logoName, normalizeName, matchLogo};
 })();
 if (typeof module !== 'undefined' && module.exports) module.exports = AliceEditorCore;
