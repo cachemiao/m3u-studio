@@ -5,7 +5,10 @@ from flask import Flask, request, jsonify, Response, send_from_directory, abort,
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta, datetime, timezone
 from time import monotonic
-from threading import Lock
+from threading import Lock, BoundedSemaphore
+import sys
+sys.path.insert(0, str(Path(__file__).parent))
+from probe import probe_http
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 ROOT = Path(__file__).parent
@@ -291,6 +294,21 @@ def headers(response):
 def bad_request(error):
     return jsonify(error='请求格式错误或文件超过 8MB'), error.code
 
+# Shared cap across authenticated requests in this worker, including multiple tabs.
+probe_slots = BoundedSemaphore(4)
+@app.route('/api/source-check', methods=['POST'])
+def source_check():
+    raw = request.get_json()
+    url = raw.get('url') if isinstance(raw, dict) else None
+    if not isinstance(url, str) or not url.strip() or len(url) > 8192:
+        return jsonify(error='请求格式错误'), 400
+    if not probe_slots.acquire(blocking=False):
+        return jsonify(status='busy'), 429
+    try:
+        return jsonify(probe_http(url.strip()))
+    finally:
+        probe_slots.release()
+
 @app.route('/healthz')
 def health():
     with db() as conn: conn.execute('SELECT 1').fetchone()
@@ -542,7 +560,7 @@ def generate(lists, epg, base, fmt):
         for item in lists:
             for ch in ordered(item):
                 logo = base + quote(ch['logo'], safe='/') if ch['logo'].startswith('/logo/') else ch['logo']
-                attrs = {'tvg-id': ch['epg_id'], 'tvg-name': ch['name'], 'tvg-logo': logo, 'group-title': ch['group']}
+                attrs = {'tvg-id': ch['epg_id'] or ch['name'], 'tvg-name': ch['name'], 'tvg-logo': logo, 'group-title': ch['group']}
                 if ch['catchup_url']: attrs.update({'catchup': ch['catchup'], 'catchup-source': ch['catchup_url'], 'catchup-days': str(ch['days'])})
                 lines.extend(['#EXTINF:-1 ' + ' '.join(f'{k}="{quoted(v)}"' for k,v in attrs.items()) + ',' + ch['name'], playback_url(ch)])
     else:
