@@ -32,9 +32,9 @@ Questions, bug reports and feature requests are welcome in [Issues](https://gith
 
 - **Multiple playlists:** separate subscriptions, custom short names, optional combined subscriptions, and drag-and-drop ordering of playlists, groups and channels.
 - **Import and export:** import UTF-8 M3U / TXT and publish M3U / TXT subscriptions.
-- **Logo library:** starts empty and supports search, local and batch uploads, and name matching. For duplicate names, choose to replace the existing image or stop the upload. Direct image URLs can be assigned separately.
+- **Logo library:** starts empty and supports search, local and batch uploads, name and alias matching, and conservative fuzzy matching. For duplicate names, choose to replace the existing image or stop the upload. Direct image URLs can be assigned separately.
 - **Bulk editing:** change groups, EPG or FCC, or replace text in live and catch-up URLs; preview before applying.
-- **EPG, catch-up and FCC:** configure channel EPG IDs, XMLTV URLs, catch-up parameters and fast channel switching parameters.
+- **EPG, catch-up and FCC:** configure channel EPG IDs, XMLTV URLs, catch-up parameters and fast channel switching parameters. When the EPG ID is blank, M3U uses the channel name as its ID for matching by the player.
 - **Undo and history:** undo/redo drafts, retain the last 30 pre-publish configuration snapshots, and export/restore JSON configurations.
 - **Themes, languages and mobile:** light/dark/system themes, Chinese/English, responsive layout and touch dragging.
 - **Local storage:** account, configuration and uploaded images stay in your data directory. The frontend has no external CDN dependency.
@@ -69,6 +69,12 @@ Install Docker first. Images support **AMD64 and ARM64**; Docker selects the app
 
 ```sh
 docker pull cachemiao/m3u-studio:latest
+```
+
+You can also use GitHub Container Registry. Replace the image name in the run command or Compose configuration as well:
+
+```sh
+docker pull ghcr.io/cachemiao/m3u-studio:latest
 ```
 
 ### 2. Start the container
@@ -147,7 +153,7 @@ For Docker Run, use `-v "$PWD/data:/data"`; for Compose, use `- ./data:/data`. A
 
 ## Upgrade and maintenance
 
-`latest` follows the latest stable release. To pin a version, use a version tag, for example `cachemiao/m3u-studio:0.4.2`. Back up before upgrading and retain the original data mount.
+`latest` follows the latest stable release. To pin a version, use a version tag, for example `cachemiao/m3u-studio:0.5.0`. Back up before upgrading and retain the original data mount.
 
 **Compose upgrade:**
 
@@ -201,7 +207,17 @@ The repository's Compose file builds from source, uses container name `iptv-mana
 4. Review the draft and click **Save & publish**.
 5. Open **Subscriptions & EPG** and copy subscription URLs to your player.
 
-Channel changes update subscriptions after publishing. Unsaved drafts remain in page memory; save or export JSON before refreshing. Logo upload, replacement and deletion take effect immediately. Channel-logo assignments still require publishing; image changes cannot be undone through draft or publish history.
+Channel changes update subscriptions after publishing. Unpublished changes applied to the playlist are saved in this browser and can be restored after reloading or signing in again. If the server configuration has changed, review it before publishing. Unsubmitted dialog forms are not included. If browser storage is unavailable, publish or export JSON promptly. Logo upload, replacement and deletion take effect immediately. Channel-logo assignments still require publishing; image changes cannot be undone through draft or publish history.
+
+## Source response-time checks
+
+Click **Batch check** to check selected channels, or every channel in the current playlist when nothing is selected. Includes progress, cancellation, failure filtering and retries. Concurrency is limited to 4, with a 5-second timeout per request. Closing the check dialog cancels further checks.
+
+**Batch check** opens the dialog without sending requests. Click **Start check** to begin. **Check again** reruns every channel in the current check scope. Click a channel’s time or status badge to recheck just that channel inline, without opening the dialog. Its badge shows **Checking…** until the result arrives. Duplicate checks for the same channel are blocked, and inline checks also have a concurrency limit of 4.
+
+Results use `ms`: ≤300ms green, >300ms yellow; timeouts are red. Timeouts show **Timeout**; other request errors show **Unavailable**. HTTP/HLS requests read only the first response data, never a continuous stream or HLS media segments. UDP/RTP/RTSP and other protocols show **Unsupported**.
+
+Checks run from the deployment server and do not measure player startup time or verify playback. Results stay in page memory; changing a URL invalidates its result. Checks never delete, modify or publish channels. Cancellation stops new requests and ignores late results; requests already received by the server finish within their timeout.
 
 ## Subscription URLs
 
