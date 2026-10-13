@@ -69,3 +69,25 @@ test('builtin name aliases also apply to a uniquely named logo', () => {
   const path='https://raw.githubusercontent.com/a/b/ref/TV/%E5%8C%97%E4%BA%AC%E5%8D%A1%E9%85%B7%E5%B0%91%E5%84%BF.png';
   assert.equal(core.matchLogo({name:'卡酷少儿'},[path],{'卡酷少儿.png':'北京卡酷少儿.png'}),path);
 });
+
+
+test('fuzzy logo matching accepts clear typo but rejects ties, other channel numbers and resolutions',()=>{
+ assert.equal(core.matchLogo({name:'湖南卫视台'},['/logo/湖南卫视.png']),'/logo/湖南卫视.png');
+ assert.equal(core.matchLogo({name:'湖南卫视台'},['/logo/湖南卫视.png','/logo/湖南卫视频.png']),null);
+ assert.equal(core.matchLogo({name:'CCTV10'},['/logo/CCTV1.png']),null);
+ assert.equal(core.matchLogo({name:'CCTV5+'},['/logo/CCTV5.png']),null);
+ assert.equal(core.matchLogo({name:'湖南卫视4K',epg_id:'湖南卫视'},['/logo/湖南卫视.png']),null);
+});
+test('local draft stores content without credentials and rejects invalid stored versions',()=>{
+ const values=new Map(),storage={setItem:(k,v)=>values.set(k,v),getItem:k=>values.get(k),removeItem:k=>values.delete(k)};
+ const a=core.createDraftStore(storage,'alice'),b=core.createDraftStore(storage,'bob');
+ const state=sample();state.password='secret';a.save(state,core.fingerprint(state));
+ assert.equal(b.read(),null);assert.deepEqual(a.read().content,core.content(state));assert.equal(values.get('alice').includes('secret'),false);
+ state.lists[0].channels[0].name='Changed';assert.notEqual(core.fingerprint(state),core.fingerprint(a.read().content));
+ a.clear();assert.equal(a.read(),null);values.set('alice','{"version":9}');assert.throws(()=>a.read());
+ const unavailable=core.createDraftStore({setItem(){throw Error('quota')}},'test');assert.throws(()=>unavailable.save(sample(),''));
+});
+test('bulk summary counts unchanged and missing selections as skipped',()=>{
+ const result=core.batchEdit(sample(),'one',['a','b','missing'],{group:'央视'});
+ assert.equal(result.total,3);assert.equal(result.count,1);assert.equal(result.skipped,2);
+});

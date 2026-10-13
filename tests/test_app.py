@@ -419,3 +419,75 @@ def test_import_language_does_not_translate_user_data(server, auth):
     assert chinese['groups'] == ['未分组', '央视']
     assert english['channels'][0]['name'] == '我的频道'
     assert english['channels'][0]['url'] == 'http://example.com/live'
+
+
+def test_epg_id_falls_back_to_channel_name_without_changing_explicit_id(server):
+    channel = {'name': '湖南卫视', 'group': '卫视', 'url': 'http://example.com/live', 'logo': '', 'epg_id': '', 'epg': '', 'catchup_url': '', 'fcc_url': ''}
+    playlists = [{'groups': ['卫视'], 'channels': [channel], 'epg': ''}]
+    output = server.generate(playlists, '', 'http://localhost:8324', 'm3u')
+    assert 'tvg-id="湖南卫视"' in output
+    assert channel['epg_id'] == ''
+    channel['epg_id'] = 'hunan.tv'
+    assert 'tvg-id="hunan.tv"' in server.generate(playlists, '', 'http://localhost:8324', 'm3u')
+
+def test_source_check_requires_login_and_request_header(server, auth, monkeypatch):
+    c = server.app.test_client()
+    assert c.post('/api/source-check', json={'url':'http://example.com'}, headers=auth).status_code == 401
+    c = client(server, auth)
+    assert c.post('/api/source-check', json={'url':'http://example.com'}).status_code == 403
+    monkeypatch.setattr(server, 'probe_http', lambda url: {'status':'ok', 'ms':50})
+    before = server.read_state()
+    assert c.post('/api/source-check', json={'url':'http://example.com'}, headers=auth).json == {'status':'ok','ms':50}
+    assert server.read_state() == before
+    assert c.post('/api/source-check', json={'url':123}, headers=auth).status_code == 400
+    acquired = [server.probe_slots.acquire(False) for _ in range(4)]
+    assert all(acquired)
+    try:
+        assert c.post('/api/source-check', json={'url':'http://example.com'}, headers=auth).status_code == 429
+    finally:
+        for _ in acquired: server.probe_slots.release()
+
+
+def test_probe_reads_only_one_byte_closes_and_handles_http_errors(server, monkeypatch):
+    import probe
+    calls = []
+    class Response:
+        status = 200
+        def read1(self, count): calls.append(('read',count)); return b'x'
+    class Connection:
+        sock = None
+        def __init__(self,*args,**kwargs): pass
+        def request(self,method,path,headers): calls.append(('request',headers['Connection']))
+        def getresponse(self): return Response()
+        def close(self): calls.append(('close',))
+    monkeypatch.setattr(probe.http.client,'HTTPConnection',Connection)
+    assert probe.probe_http('http://example.com/live')['status'] == 'ok'
+    assert ('read',1) in calls and ('request','close') in calls and calls[-1] == ('close',)
+    calls.clear();Response.status = 404
+    assert probe.probe_http('http://example.com/missing') == {'status':'unavailable','http_status':404}
+    assert not any(call[0]=='read' for call in calls)
+    assert probe.probe_http('udp://239.1.1.1:1234') == {'status':'unsupported'}
+
+
+def test_probe_timeout_and_redirect_limits(server, monkeypatch):
+    import probe
+    closed = []
+    class Response:
+        status = 302
+        def getheader(self,key): return '/again'
+    class Connection:
+        sock = None
+        def __init__(self,*args,**kwargs): pass
+        def request(self,*args,**kwargs): pass
+        def getresponse(self): return Response()
+        def close(self): closed.append(True)
+    monkeypatch.setattr(probe.http.client,'HTTPConnection',Connection)
+    assert probe.probe_http('http://example.com/live')['status'] == 'unavailable'
+    assert len(closed) == 4
+    def timed_out(self): raise TimeoutError()
+    monkeypatch.setattr(Connection,'getresponse',timed_out)
+    assert probe.probe_http('http://example.com/live') == {'status':'timeout'}
+    assert len(closed) == 5
+    monkeypatch.setattr(Connection,'getresponse',lambda self: Response())
+    monkeypatch.setattr(Response,'getheader',lambda self,key:'file:///etc/passwd')
+    assert probe.probe_http('http://example.com/live') == {'status':'unsupported'}
