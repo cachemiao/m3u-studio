@@ -34,6 +34,7 @@ Questions, bug reports and feature requests are welcome in [Issues](https://gith
 - **Import and export:** import UTF-8 M3U / TXT and publish M3U / TXT subscriptions.
 - **Logo library:** starts empty and supports search, local and batch uploads, name and alias matching, and conservative fuzzy matching. For duplicate names, choose to replace the existing image or stop the upload. Direct image URLs can be assigned separately.
 - **Bulk editing:** change groups, EPG or FCC, or replace text in live and catch-up URLs; preview before applying.
+- **Source checks:** measure response times for selected channels or the current playlist, with inline rechecks, progress, cancellation and failure retries.
 - **EPG, catch-up and FCC:** configure channel EPG IDs, XMLTV URLs, catch-up parameters and fast channel switching parameters. When the EPG ID is blank, M3U uses the channel name as its ID for matching by the player.
 - **Undo and history:** undo/redo drafts, retain the last 30 pre-publish configuration snapshots, and export/restore JSON configurations.
 - **Themes, languages and mobile:** light/dark/system themes, Chinese/English, responsive layout and touch dragging.
@@ -47,7 +48,7 @@ FCC requires [rtp2httpd](https://github.com/stackia/rtp2httpd) and the correspon
 
 Dark mode is the default. Light, dark and system themes are available. The interface supports Simplified Chinese and English: choose a language on the sign-in page or in the app header. The initial language follows your browser; your choice is remembered in this browser. Playlist names, channel names, groups and URLs are never translated when switching languages.
 
-These screenshots show a personal installation, including user-supplied playlists and logos. Some screenshots retain the previous branding and Chinese interface. A new public installation has an empty logo library.
+Channels and logos in the screenshots are user-supplied examples. The project does not include stream sources or logo images.
 
 ### Channel management
 
@@ -185,7 +186,7 @@ Health check (adjust the port if changed):
 curl -fsS http://127.0.0.1:8324/healthz
 ```
 
-The expected response is `{"status":"ok"}`. Stable GitHub releases automatically publish versioned Docker images and `latest`; see [Automatic image publishing](docs/镜像自动发布.md). Existing installations update only when you pull the image and recreate the container.
+The expected response is `{"status":"ok"}`.
 
 ## Build from source
 
@@ -211,13 +212,16 @@ Channel changes update subscriptions after publishing. Unpublished changes appli
 
 ## Source response-time checks
 
-Click **Batch check** to check selected channels, or every channel in the current playlist when nothing is selected. Includes progress, cancellation, failure filtering and retries. Concurrency is limited to 4, with a 5-second timeout per request. Closing the check dialog cancels further checks.
+1. Select channels to check, or leave the selection empty to check the entire current playlist.
+2. Click **Batch check** to open the dialog, then click **Start check**.
+3. View progress and results. You can cancel, filter failures, retry failures or recheck all channels in the current scope.
 
-**Batch check** opens the dialog without sending requests. Click **Start check** to begin. **Check again** reruns every channel in the current check scope. Click a channel’s time or status badge to recheck just that channel inline, without opening the dialog. Its badge shows **Checking…** until the result arrives. Duplicate checks for the same channel are blocked, and inline checks also have a concurrency limit of 4.
+Click a channel's time or status badge to recheck that channel inline without opening the dialog.
 
-Results use `ms`: ≤300ms green, >300ms yellow; timeouts are red. Timeouts show **Timeout**; other request errors show **Unavailable**. HTTP/HLS requests read only the first response data, never a continuous stream or HLS media segments. UDP/RTP/RTSP and other protocols show **Unsupported**.
-
-Checks run from the deployment server and do not measure player startup time or verify playback. Results stay in page memory; changing a URL invalidates its result. Checks never delete, modify or publish channels. Cancellation stops new requests and ignores late results; requests already received by the server finish within their timeout.
+- **≤300ms**: green; **>300ms**: yellow; **Timeout**: red.
+- Up to 4 concurrent requests, with a 5-second timeout each. HTTP/HLS uses limited reads rather than continuously downloading the stream. UDP/RTP/RTSP is unsupported.
+- Checks run from the deployment server. Response time does not measure player startup time or verify playback.
+- Results are for reference and never delete or modify channels. Results stay on the current page and clear on reload. Closing the dialog cancels further checks.
 
 ## Subscription URLs
 
@@ -278,17 +282,6 @@ docker compose start
 
 For source upgrades, retain `data/` and any existing `.env`, update the source, then run `sh setup.sh` and `docker compose up -d --build`. See the [Upgrade guide](docs/使用指南.md#从旧版本升级).
 
-### Upgrade from a version with bundled logos
-
-Before replacing source from v0.3.3 or earlier, back up data and copy the old logos into your local library:
-
-```sh
-mkdir -p data/logo
-find app/builtin -type f -name '*.png' -exec cp -n {} data/logo/ \;
-```
-
-Existing uploaded files are not overwritten; deleted logos stay hidden. Public releases do not include TV logo images.
-
 ## Scope and compatibility
 
 - Deploy on a trusted LAN or VPN. Configure HTTPS and access restrictions if exposing it publicly; subscription URLs can reveal stream URLs.
@@ -296,26 +289,10 @@ Existing uploaded files are not overwritten; deleted logos stay hidden. Public r
 - Catch-up and FCC depend on your player and stream service. FCC needs a service supporting the parameter, such as rtp2httpd.
 - TXT has no logo or EPG metadata. Unknown M3U extension attributes and comments are not preserved.
 
-## Development
-
-Flask, Gunicorn and SQLite backend; plain HTML/CSS/JavaScript frontend, with no Node build step.
-
-```sh
-python -m pip install -r requirements.txt pytest
-python -m pytest tests -q
-node --test tests/*.cjs
-```
-
-Node is used only for frontend logic tests. Check the service with:
-
-```sh
-docker compose logs --tail=80
-curl -fsS http://127.0.0.1:8324/healthz
-```
+## More documentation
 
 - [Detailed user guide](docs/使用指南.md)
 - [Changelog](CHANGELOG.md)
-- [Validation record](VALIDATION.md)
 
 ## Feedback and contributions
 
@@ -330,7 +307,5 @@ Code is licensed under [GNU GPL v2.0 only](LICENSE) (`GPL-2.0-only`), Copyright 
 - When distributing modified versions covered by GPL, license them under GPL v2.0 and provide the corresponding source code to recipients as required by the license.
 - When distributing binaries, comply with GPL v2.0's source-code provision requirements, such as supplying corresponding source or a valid written offer.
 - Retain copyright notices and the license. The software is provided without warranty.
-
-This license change applies from the commit that introduces it. Previously published MIT versions retain their original MIT permissions; this change does not revoke them.
 
 Channel logos, names and third-party trademarks are not original project code; the code license does not grant additional rights to those materials. The project does not distribute TV station logo images. Upload only images you are entitled to use in Logo library management. Naming images after their channels helps automatic matching.
