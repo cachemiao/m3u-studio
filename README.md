@@ -19,9 +19,7 @@
 
 一个易于部署的、基于 **Python / Flask** 的 IPTV 频道管理与订阅服务器，支持 **M3U 和 TXT** 格式。通过网页管理多套频道列表、分组、台标和 EPG，生成可自定义短地址的订阅链接，支持 **Docker 一键部署**。
 
-本项目出于个人学习与兴趣开发，代码采用 **GNU GPL v2.0 许可证**开源，不提供直播源或第三方台标素材。如有涉及侵权的内容，请通过  [Issue](https://github.com/cachemiao/m3u-studio/issues) 联系作者处理。
-
-使用中遇到问题或有功能建议，欢迎提交 [Issue](https://github.com/cachemiao/m3u-studio/issues)。
+本项目出于个人学习与兴趣开发，代码采用 **GNU GPL v2.0 许可证**开源，不提供直播源或第三方台标素材。如有涉及侵权的内容，请通过  [Issue](https://github.com/cachemiao/m3u-studio/issues) 联系作者处理。使用中遇到问题或有功能建议，欢迎提交 [Issue](https://github.com/cachemiao/m3u-studio/issues)。
 
 - [Telegram 频道](https://t.me/m3ustudio_news)：版本更新、功能介绍和重要通知。
 - [Telegram 群组](https://t.me/m3ustudio_chat)：使用交流、问题求助和建议反馈。
