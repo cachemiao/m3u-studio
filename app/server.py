@@ -1,4 +1,5 @@
 import io, json, os, re, secrets, sqlite3, warnings, unicodedata
+from collections import OrderedDict
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit, unquote, quote, parse_qs
 from flask import Flask, request, jsonify, Response, send_from_directory, abort, session
@@ -152,6 +153,9 @@ def auth_account():
 def read_state():
     with db() as conn:
         revision, payload = conn.execute('SELECT revision,payload FROM state WHERE id=1').fetchone()
+    return decode_state(revision, payload)
+
+def decode_state(revision, payload):
     state = json.loads(payload)
     for item in state['lists']:
         for ch in item['channels']:
@@ -260,7 +264,8 @@ def validate(raw):
             fcc = fcc_address(ch.get('fcc_url', embedded_fcc))
             catchup = clean(ch.get('catchup', 'default'), 40)
             if catchup not in ('default', 'append', 'shift', 'flussonic', 'xc'): raise ValueError('回放类型无效')
-            days = int(ch.get('days', 7))
+            try: days = int(ch.get('days', 7))
+            except (ValueError, TypeError, OverflowError): raise ValueError('回放天数需为 1–30')
             if not 1 <= days <= 30: raise ValueError('回放天数需为 1–30')
             result['channels'].append({'id': cid, 'name': name, 'group': group, 'logo': logo,
                 'url': stream, 'fcc_url': fcc, 'catchup_url': url(ch.get('catchup_url', '')), 'catchup': catchup,
@@ -395,47 +400,147 @@ migrate_history()
 
 ATTR = re.compile(r'([\w-]+)="([^"]*)"')
 def parse_playlist(text, language="zh"):
-    ungrouped = "Ungrouped" if language == "en" else "未分组"
+    english = language == 'en'
+    def message(zh, en): return en if english else zh
+    ungrouped = message('未分组', 'Ungrouped')
     if not isinstance(text, str): raise ValueError('请提供文本')
     channels, groups, epg = [], [], ''
-    group, pending = ungrouped, None
-    for line in text.lstrip('\ufeff').splitlines():
+    report = {'imported': 0, 'skipped': 0, 'repaired': 0, 'issues': [], 'omitted': 0}
+    group, pending, pending_line = ungrouped, None, 0
+    def issue(line, name, action, reason):
+        if len(report['issues']) < 1000:
+            report['issues'].append({'line': line, 'name': str(name)[:200], 'action': action, 'reason': reason})
+        else: report['omitted'] += 1
+    def skip(line, name, reason):
+        report['skipped'] += 1
+        issue(line, name, 'skipped', reason)
+    def normalized_label(value, is_group=False):
+        value = clean(value, 200).replace(',', ' ')
+        if is_group: value = value.replace('"', ' ')
+        return re.sub(r'\s+', ' ', value).strip()
+    def accept(raw, line):
+        name = raw.get('name', '')
+        if len(channels) >= 20000:
+            skip(line, name, message('超过 20000 个频道，已跳过', 'Skipped: 20,000-channel limit exceeded'))
+            return
+        repairs = []
+        try:
+            fixed_name = normalized_label(name)
+            fixed_group = normalized_label(raw.get('group', ungrouped), True) or ungrouped
+            if fixed_name != name.strip() or fixed_group != raw.get('group', ungrouped):
+                repairs.append(message('名称或分组中的逗号、引号或多余空格已替换', 'Normalized punctuation or whitespace in the name or group'))
+            if not fixed_name: raise ValueError()
+        except (ValueError, TypeError, AttributeError):
+            skip(line, name, message('频道名称或分组无效、为空或过长', 'Channel name or group is invalid, empty or too long'))
+            return
+        try:
+            stream = clean(raw.get('url', ''), 8192)
+            scheme = urlsplit(stream).scheme.lower()
+            if scheme and scheme not in ('http', 'https', 'rtsp', 'rtp', 'udp'):
+                skip(line, name, message('不支持的播放协议：', 'Unsupported stream protocol: ') + scheme)
+                return
+            stream = url(stream)
+            if not stream: raise ValueError()
+        except (ValueError, TypeError):
+            skip(line, name, message('播放地址无效或为空', 'Stream URL is invalid or empty'))
+            return
+        ch = dict(raw, id=secrets.token_hex(8), name=fixed_name, group=fixed_group, url=stream)
+        for field, schemes in [('logo', ('http', 'https')), ('epg', ('http', 'https')), ('catchup_url', ('http', 'https', 'rtsp', 'rtp', 'udp'))]:
+            value = ch.get(field, '')
+            try:
+                if field == 'logo' and isinstance(value, str) and value.startswith('/logo/'):
+                    if not valid_logo_filename(value.removeprefix('/logo/')): raise ValueError()
+                    ch[field] = value
+                else: ch[field] = url(value, schemes)
+            except (ValueError, TypeError):
+                ch[field] = ''
+                labels = {'logo': message('台标地址', 'Logo URL'), 'epg': message('节目表地址', 'EPG URL'), 'catchup_url': message('回放地址', 'Catch-up URL')}
+                repairs.append(labels[field] + message('无效，已清空', ' was invalid and cleared'))
+        if ch.get('catchup', 'default') not in ('default', 'append', 'shift', 'flussonic', 'xc'):
+            ch['catchup'] = 'default'
+            repairs.append(message('未知回放类型已改为 default', 'Unknown catch-up type changed to default'))
+        try:
+            days = int(ch.get('days', 7))
+            if not 1 <= days <= 30: raise ValueError()
+            ch['days'] = days
+        except (ValueError, TypeError, OverflowError):
+            ch['days'] = 7
+            repairs.append(message('无效回放天数已改为 7 天', 'Invalid catch-up days changed to 7'))
+        try:
+            ch['url'], embedded_fcc = separate_fcc(ch['url'])
+            ch['fcc_url'] = fcc_address(embedded_fcc)
+        except (ValueError, TypeError):
+            ch['fcc_url'] = ''
+            repairs.append(message('无效 FCC 参数已清空', 'Invalid FCC parameter cleared'))
+        try:
+            # Keep publishing strict: each accepted channel must satisfy the same schema.
+            ch = validate({'lists': [{'id': 'import', 'name': 'Import', 'groups': [fixed_group], 'channels': [ch]}]})['lists'][0]['channels'][0]
+        except (ValueError, TypeError, AttributeError):
+            skip(line, name, message('频道字段不符合要求，已跳过', 'Channel fields could not be normalized; skipped'))
+            return
+        if fixed_group not in group_set:
+            group_set.add(fixed_group); groups.append(fixed_group)
+        channels.append(ch)
+        if repairs:
+            report['repaired'] += 1
+            issue(line, name, 'repaired', '; '.join(repairs))
+    group_set = set()
+    for number, line in enumerate(text.lstrip('\ufeff').splitlines(), 1):
         line = line.strip()
         if not line: continue
         if line.startswith('#EXTM3U'):
-            a = dict(ATTR.findall(line)); epg = a.get('x-tvg-url', a.get('url-tvg', ''))
+            a = dict(ATTR.findall(line)); raw_epg = a.get('x-tvg-url', a.get('url-tvg', ''))
+            try: epg = url(raw_epg, ('http', 'https'))
+            except ValueError:
+                epg = ''
+                issue(number, '', 'repaired', message('无效全局节目表地址已清空', 'Invalid playlist EPG URL cleared'))
         elif line.startswith('#EXTINF:'):
-            # 找到引号之外的逗号，允许属性 URL 含逗号。
+            if pending is not None:
+                skip(pending_line, pending['name'], message('频道缺少播放链接', 'Missing stream URL'))
+            pending, pending_line = None, number
             quoted = False; split = None
             for i, char in enumerate(line):
                 if char == '"': quoted = not quoted
                 elif char == ',' and not quoted: split = i; break
-            if split is None: raise ValueError('EXTINF 缺少频道名称')
+            if split is None:
+                skip(number, '', message('EXTINF 缺少名称分隔符', 'EXTINF is missing its name separator'))
+                continue
             a = dict(ATTR.findall(line[:split]))
             pending = {'name': line[split+1:], 'group': a.get('group-title') or ungrouped,
                 'logo': a.get('tvg-logo', ''), 'epg_id': a.get('tvg-id', ''), 'epg': '',
                 'catchup_url': a.get('catchup-source', ''), 'catchup': a.get('catchup', 'default'),
                 'days': a.get('catchup-days', '7')}
         elif line.startswith('#'): continue
+        elif pending is not None:
+            ch = pending; pending = None
+            ch['url'] = line
+            accept(ch, pending_line)
+        elif line.endswith(',#genre#'):
+            raw_group = line[:-len(',#genre#')]
+            try: group = normalized_label(raw_group, True) or ungrouped
+            except ValueError: group = ungrouped
+            if group != raw_group:
+                issue(number, raw_group, 'repaired', message('无效分组名称已规范化', 'Invalid group name normalized'))
+            if group not in group_set:
+                group_set.add(group); groups.append(group)
+        elif ',' in line:
+            # TXT separates name/stream/catch-up using commas, but URLs can also
+            # contain commas. Only a comma immediately before a URL starts a field.
+            delimiter = re.search(r',(?=[a-zA-Z][a-zA-Z0-9+.-]*://)', line)
+            split = delimiter.start() if delimiter else line.index(',')
+            name, stream = line[:split], line[split+1:]
+            catchup = re.search(r',(?=[a-zA-Z][a-zA-Z0-9+.-]*://)', stream)
+            ch = {'name': name, 'url': stream[:catchup.start()] if catchup else stream, 'group': group,
+                  'catchup_url': stream[catchup.start()+1:] if catchup else ''}
+            accept(ch, number)
         else:
-            if pending is not None:
-                ch = pending; ch['url'] = line; pending = None
-            elif ',#genre#' in line:
-                group = line.split(',#genre#', 1)[0]
-                if group not in groups: groups.append(group)
-                continue
-            elif ',' in line:
-                parts = line.split(',', 2)
-                ch = {'name': parts[0], 'url': parts[1], 'group': group,
-                      'catchup_url': parts[2] if len(parts) > 2 else ''}
-            else: raise ValueError('无法解析此行：' + line[:80])
-            ch['id'] = secrets.token_hex(8)
-            if ch['group'] not in groups: groups.append(ch['group'])
-            channels.append(ch)
-    if pending is not None: raise ValueError('最后一个频道缺少播放链接')
-    if not channels: raise ValueError('未找到频道')
-    parsed = validate({'epg': '', 'lists': [{'id': 'import', 'name': '导入', 'groups': groups, 'channels': channels, 'epg': epg}]})['lists'][0]
-    return parsed
+            skip(number, '', message('无法解析此行', 'Unrecognized playlist line'))
+    if pending is not None:
+        skip(pending_line, pending['name'], message('频道缺少播放链接', 'Missing stream URL'))
+    if not channels and not report['skipped']: raise ValueError('未找到频道')
+    report['imported'] = len(channels)
+    return {'id': 'import', 'name': 'Import', 'slug': '', 'enabled': True,
+            'epg': epg, 'groups': groups, 'channels': channels, 'report': report}
 
 @app.route('/api/import', methods=['POST'])
 def import_file():
@@ -550,8 +655,14 @@ def logo(filename):
     return response
 
 def quoted(value): return value.replace('"', '&quot;')
+def channel_buckets(item):
+    buckets = {group: [] for group in item['groups']}
+    for ch in item['channels']:
+        if ch['group'] in buckets: buckets[ch['group']].append(ch)
+    return buckets
+
 def ordered(item):
-    return [ch for group in item['groups'] for ch in item['channels'] if ch['group'] == group]
+    return [ch for channels in channel_buckets(item).values() for ch in channels]
 
 def generate(lists, epg, base, fmt):
     urls = list(dict.fromkeys(x for x in [epg] + [item['epg'] for item in lists] + [ch['epg'] for item in lists for ch in item['channels']] if x))
@@ -566,25 +677,58 @@ def generate(lists, epg, base, fmt):
     else:
         lines = []
         # 合并列表相同分组聚合，保留列表顺序和组内频道顺序。
-        groups = list(dict.fromkeys(g for item in lists for g in item['groups']))
-        for group in groups:
+        buckets = dict.fromkeys((g for item in lists for g in item['groups']))
+        buckets = {g: [] for g in buckets}
+        for item in lists:
+            for ch in item['channels']:
+                if ch['group'] in buckets: buckets[ch['group']].append(ch)
+        for group, channels in buckets.items():
             lines.append(group + ',#genre#')
-            for item in lists:
-                for ch in ordered(item):
-                    if ch['group'] == group:
-                        lines.append(ch['name'] + ',' + playback_url(ch) + (',' + ch['catchup_url'] if ch['catchup_url'] else ''))
+            for ch in channels:
+                lines.append(ch['name'] + ',' + playback_url(ch) + (',' + ch['catchup_url'] if ch['catchup_url'] else ''))
     return '\n'.join(lines) + '\n'
+
+# Each worker checks the small revision row; decoded state and generated bytes
+# are reused until publication. Bound host/list/format variants by entries and bytes.
+subscription_lock = Lock()
+subscription_revision = None
+subscription_state = None
+subscription_cache = OrderedDict()
+SUBSCRIPTION_CACHE_BYTES = 16 * 1024 * 1024
+SUBSCRIPTION_CACHE_ENTRIES = 16
+
+def subscription_text(fmt, ident, slug, base):
+    global subscription_revision, subscription_state
+    with subscription_lock:
+        with db() as conn:
+            revision = conn.execute('SELECT revision FROM state WHERE id=1').fetchone()[0]
+            if revision != subscription_revision or subscription_state is None:
+                revision, payload = conn.execute('SELECT revision,payload FROM state WHERE id=1').fetchone()
+                subscription_state = decode_state(revision, payload)
+                subscription_revision = revision
+                subscription_cache.clear()
+        key = (fmt, ident, slug, base if fmt == 'm3u' else '')
+        if key in subscription_cache:
+            subscription_cache.move_to_end(key)
+            return subscription_cache[key]
+        state = subscription_state
+        if slug is not None:
+            lists = [x for x in state['lists'] if x.get('slug') == slug]
+        else:
+            lists = [x for x in state['lists'] if x['id'] == ident] if ident else [x for x in state['lists'] if x['enabled']]
+        if (ident or slug is not None) and not lists: abort(404)
+        text = generate(lists, state['epg'], base, fmt).encode('utf-8')
+        if len(text) <= SUBSCRIPTION_CACHE_BYTES:
+            subscription_cache[key] = text
+            while (len(subscription_cache) > SUBSCRIPTION_CACHE_ENTRIES
+                   or sum(map(len, subscription_cache.values())) > SUBSCRIPTION_CACHE_BYTES):
+                subscription_cache.popitem(last=False)
+        return text
 
 @app.route('/tv.<fmt>')
 @app.route('/lists/<ident>/tv.<fmt>')
 @app.route('/<slug>.<fmt>')
 def subscription(fmt, ident=None, slug=None):
     if fmt not in ('m3u', 'txt'): abort(404)
-    state = read_state()
-    if slug is not None:
-        lists = [x for x in state['lists'] if x.get('slug') == slug]
-    else:
-        lists = [x for x in state['lists'] if x['id'] == ident] if ident else [x for x in state['lists'] if x['enabled']]
-    if (ident or slug is not None) and not lists: abort(404)
-    text = generate(lists, state['epg'], request.host_url.rstrip('/'), fmt)
+    text = subscription_text(fmt, ident, slug, request.host_url.rstrip('/'))
     return Response(text, content_type='audio/x-mpegurl; charset=utf-8' if fmt == 'm3u' else 'text/plain; charset=utf-8')
