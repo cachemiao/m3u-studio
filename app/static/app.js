@@ -64,7 +64,27 @@ $('#newGroup').onclick=()=>{const name=prompt(t("m32"));if(!name?.trim())return;
 $('#add').onclick=()=>openEditor();$('#search').oninput=render;
 $('#save').onclick=async()=>{const btn=$('#save');btn.disabled=true;const submitted=core.clone(state), sent=core.fingerprint(submitted);try{const result=await api('/api/state',json('PUT',submitted));state.revision=result.revision;publishedFingerprint=core.fingerprint(result.state);if(core.fingerprint(state)===sent){state.lists=result.state.lists;state.epg=result.state.epg;draftHistory.record(state)}syncDirty();render();toast(dirty?t("m33"):t("m34"))}catch(err){toast(window.M3UI18n.error(err.message))}finally{btn.disabled=false}};
 $('#import').onclick=()=>{$('#playlistText').value='';$('#playlistFile').value='';$('#replaceImport').checked=false;$('#importDialog').showModal()};$('#playlistFile').onchange=async e=>{const file=e.target.files[0];if(file)$('#playlistText').value=await file.text()};
-$('#importForm').onsubmit=async e=>{e.preventDefault();try{const parsed=await api('/api/import',json('POST',{text:$('#playlistText').value}));const list=current();if($('#replaceImport').checked){if(!confirm(t("m35")))return;list.channels=parsed.channels;list.groups=parsed.groups}else{list.channels.push(...parsed.channels);list.groups=[...new Set([...list.groups,...parsed.groups])]};if(parsed.epg)list.epg=parsed.epg;$('#importDialog').close();changed();toast(t("m36",{p0:(parsed.channels.length)}))}catch(err){toast(window.M3UI18n.error(err.message))}};
+function showImportReport(report){
+ window.M3UI18n.setText($('#importReportSummary'),window.M3UI18n.dynamic(()=>t('m350',{p0:report.imported,p1:report.repaired,p2:report.skipped})));
+ $('#importReportDetails').replaceChildren();
+ for(const issue of report.issues){const row=el('div',undefined,'preview-row');window.M3UI18n.setText(row,window.M3UI18n.dynamic(()=>t('m351',{p0:issue.line,p1:issue.name||'—',p2:t(issue.action==='skipped'?'m352':'m353'),p3:issue.reason})));$('#importReportDetails').append(row)}
+ if(report.omitted)$('#importReportDetails').append(el('p',t('m354',{p0:report.omitted}),'hint'));
+ $('#importReportDialog').showModal();
+}
+$('#importForm').onsubmit=async e=>{
+ e.preventDefault();const submit=$('#importForm button.primary');submit.disabled=true;
+ try{
+  const parsed=await api('/api/import',json('POST',{text:$('#playlistText').value})),list=current();if(!list)return;
+  if(parsed.channels.length){
+   if($('#replaceImport').checked){if(!confirm(t('m35')))return;list.channels=parsed.channels;list.groups=parsed.groups}
+   else{list.channels.push(...parsed.channels);list.groups=[...new Set([...list.groups,...parsed.groups])]}
+   if(parsed.epg)list.epg=parsed.epg;changed();
+  }
+  $('#importDialog').close();
+  if(parsed.report&&(parsed.report.issues.length||parsed.report.skipped))showImportReport(parsed.report);
+  else toast(t('m36',{p0:parsed.channels.length}));
+ }catch(err){toast(window.M3UI18n.error(err.message))}finally{submit.disabled=false}
+};
 $('#pickLogo').onclick=()=>openLogoPicker({editor:true},{name:$('#channelForm').elements.name.value,epg_id:$('#channelForm').elements.epg_id.value,logo:$('#channelForm').elements.logo.value});
 $('#logoFile').onchange=async e=>{
  const file=e.target.files[0],target=logoPickerContext;if(!file||!target)return;$('#uploadLogoButton').disabled=true;

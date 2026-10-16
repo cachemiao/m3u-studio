@@ -1380,5 +1380,13 @@ window.M3UTranslations = {
   "m344": {
     "zh": "最多同时检测 4 个频道，请稍候。",
     "en": "Up to 4 channels can be checked at once. Please wait."
-  }
+  },
+  "m347": {"zh": "导入结果", "en": "Import results"},
+  "m348": {"zh": "有效频道已加入草稿，请核对后保存并发布。未导入任何频道时，原列表保持不变。", "en": "Valid channels were added to the draft. Review, then save and publish. If no channels were imported, the original playlist is unchanged."},
+  "m349": {"zh": "关闭", "en": "Close"},
+  "m350": {"zh": "导入 {p0} 个频道，其中修正 {p1} 个；跳过 {p2} 项。", "en": "Imported {p0} channels ({p1} repaired); skipped {p2} entries."},
+  "m351": {"zh": "第 {p0} 行 · {p1} · {p2}：{p3}", "en": "Line {p0} · {p1} · {p2}: {p3}"},
+  "m352": {"zh": "已跳过", "en": "Skipped"},
+  "m353": {"zh": "已修正", "en": "Repaired"},
+  "m354": {"zh": "另有 {p0} 条详情未显示，仅展示前 1000 条。", "en": "{p0} additional details omitted; showing the first 1,000."}
 };
