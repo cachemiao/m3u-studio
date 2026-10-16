@@ -80,7 +80,10 @@ def test_import_roundtrip(server,auth):
     result=c.post('/api/import',json={'text':'\ufeff'+txt},headers=auth)
     assert result.json['channels'][0]['catchup_url'].startswith('rtsp://')
     assert result.json['groups']==['央视','卫视']
-    assert c.post('/api/import',json={'text':'#EXTINF:-1,孤立'},headers=auth).status_code==400
+    orphan = c.post('/api/import',json={'text':'#EXTINF:-1,孤立'},headers=auth)
+    assert orphan.status_code == 200
+    assert orphan.json['channels'] == []
+    assert orphan.json['report']['skipped'] == 1
 
 def test_import_url_comma(server,auth):
     c=client(server,auth)
@@ -491,3 +494,141 @@ def test_probe_timeout_and_redirect_limits(server, monkeypatch):
     monkeypatch.setattr(Connection,'getresponse',lambda self: Response())
     monkeypatch.setattr(Response,'getheader',lambda self,key:'file:///etc/passwd')
     assert probe.probe_http('http://example.com/live') == {'status':'unsupported'}
+
+
+def test_txt_generation_is_linear_and_preserves_merged_order(server):
+    class CountedChannels(list):
+        iterations = 0
+        def __iter__(self):
+            self.iterations += 1
+            return super().__iter__()
+    channels = CountedChannels({'id': str(i), 'name': str(i), 'group': f'g{i % 200}',
+                               'url': f'http://example.com/{i}', 'epg': '', 'catchup_url': '', 'fcc_url': ''}
+                              for i in range(20000))
+    playlist = {'groups': [f'g{i}' for i in range(200)], 'channels': channels, 'epg': ''}
+    text = server.generate([playlist], '', '', 'txt')
+    assert channels.iterations <= 2  # one EPG scan and one grouping scan, independent of group count
+    assert text.count(',#genre#') == 200
+    assert len(text.splitlines()) == 20200
+    assert text.index('0,http:') < text.index('200,http:') < text.index('g1,#genre#')
+    other = {'groups': ['empty', 'g0'], 'channels': [dict(channels[0], name='later')], 'epg': ''}
+    merged = server.generate([playlist, other], '', '', 'txt')
+    assert merged.count('g0,#genre#') == 1
+    assert merged.index('19800,http:') < merged.index('later,http:') < merged.index('g1,#genre#')
+    assert merged.endswith('empty,#genre#\n')
+
+
+def test_subscription_cache_reuses_payload_and_invalidates_revision(server, auth, monkeypatch):
+    c = client(server, auth)
+    s = sample()
+    s['lists'][0]['slug'] = 'short'
+    c.put('/api/state', json=s, headers=auth)
+    calls = {'decode': 0, 'generate': 0}
+    decode, generate = server.decode_state, server.generate
+    def counted_decode(*args):
+        calls['decode'] += 1
+        return decode(*args)
+    def counted_generate(*args):
+        calls['generate'] += 1
+        return generate(*args)
+    monkeypatch.setattr(server, 'decode_state', counted_decode)
+    monkeypatch.setattr(server, 'generate', counted_generate)
+    a = c.get('/tv.txt').data
+    assert c.get('/tv.txt').data == a
+    assert calls == {'decode': 1, 'generate': 1}
+    assert c.get('/short.txt').data == a
+    assert c.get('/lists/neimeng/tv.txt').data == a
+    assert 'http://first.test/logo/' in c.get('/tv.m3u', base_url='http://first.test').text
+    assert 'http://second.test/logo/' in c.get('/tv.m3u', base_url='http://second.test').text
+    assert calls['decode'] == 1
+    s['revision'] = 1
+    s['lists'][0]['channels'][0]['name'] = 'updated'
+    assert c.put('/api/state', json=s, headers=auth).status_code == 200
+    assert 'updated' in c.get('/tv.txt').text
+    assert calls['decode'] == 2
+    assert c.get('/missing.txt').status_code == 404
+    # Retain a bounded number of host variants, and don't store oversized responses.
+    for i in range(25): c.get('/tv.m3u', base_url=f'http://host{i}.test')
+    assert len(server.subscription_cache) <= server.SUBSCRIPTION_CACHE_ENTRIES
+    assert sum(map(len, server.subscription_cache.values())) <= server.SUBSCRIPTION_CACHE_BYTES
+    monkeypatch.setattr(server, 'SUBSCRIPTION_CACHE_BYTES', 1)
+    server.subscription_cache.clear()
+    assert c.get('/tv.txt').status_code == 200
+    assert not server.subscription_cache
+
+
+def test_import_repairs_individual_fields_and_skips_unsupported_streams(server, auth):
+    c = client(server, auth)
+    content = '''#EXTM3U x-tvg-url="relative.xml"
+#EXTINF:-1 group-title="News, Sports" tvg-logo="images/logo.png" catchup="flussonic-hls" catchup-days="abc",News, One
+http://example.com/live
+#EXTINF:-1 group-title="Good",Unsupported
+rtmp://example.com/live
+#EXTINF:-1 group-title="Good",Valid
+https://example.com/valid
+'''
+    result = c.post('/api/import', json={'text': content}, headers=auth)
+    assert result.status_code == 200
+    parsed = result.json
+    assert parsed['epg'] == ''
+    assert len(parsed['channels']) == 2
+    first = parsed['channels'][0]
+    assert (first['name'], first['group'], first['logo'], first['catchup'], first['days']) == ('News One', 'News Sports', '', 'default', 7)
+    assert parsed['report']['imported'] == 2
+    assert parsed['report']['repaired'] == 1
+    assert parsed['report']['skipped'] == 1
+    assert any(x['name'] == 'Unsupported' and x['line'] == 4 for x in parsed['report']['issues'])
+    assert all('invalid literal' not in x['reason'] for x in parsed['report']['issues'])
+    # Parsed survivors are publishable with the unchanged strict validation rules.
+    assert server.validate({'lists': [parsed]})['lists'][0]['channels'] == parsed['channels']
+    assert c.get('/api/state').json['revision'] == 0
+
+
+def test_txt_import_preserves_url_commas_and_optional_catchup(server):
+    content = '''News, Sports,#genre#
+News, One,http://example.com/live?ids=1,2,3
+Two,http://example.com/other?a=1,2,rtsp://example.com/replay?ids=3,4
+Bad,rtmp://example.com/live
+'''
+    parsed = server.parse_playlist(content)
+    assert parsed['groups'] == ['News Sports']
+    assert parsed['channels'][0]['name'] == 'News One'
+    assert parsed['channels'][0]['url'] == 'http://example.com/live?ids=1,2,3'
+    assert parsed['channels'][1]['url'] == 'http://example.com/other?a=1,2'
+    assert parsed['channels'][1]['catchup_url'] == 'rtsp://example.com/replay?ids=3,4'
+    assert parsed['report']['skipped'] == 1
+    exported = server.generate([parsed], '', '', 'txt')
+    again = server.parse_playlist(exported)
+    assert [ch['url'] for ch in again['channels']] == [ch['url'] for ch in parsed['channels']]
+
+
+def test_import_all_invalid_reports_without_replacing_state_and_limits_details(server, auth):
+    c = client(server, auth)
+    result = c.post('/api/import', json={'text': '#EXTINF:-1,Bad\nrtmp://example.com/live'}, headers=auth)
+    assert result.status_code == 200
+    assert result.json['channels'] == []
+    assert result.json['report']['skipped'] == 1
+    assert c.get('/api/state').json['revision'] == 0
+    report = server.parse_playlist('\n'.join('invalid line' for _ in range(1005)), 'en')['report']
+    assert report['skipped'] == 1005
+    assert len(report['issues']) == 1000
+    assert report['omitted'] == 5
+    assert report['issues'][0]['reason'] == 'Unrecognized playlist line'
+
+
+def test_invalid_days_never_leaks_raw_python_exception(server, auth):
+    c = client(server, auth)
+    s = sample()
+    s['lists'][0]['channels'][0]['days'] = 'abc'
+    result = c.put('/api/state', json=s, headers=auth)
+    assert result.status_code == 400
+    assert 'invalid literal' not in result.json['error']
+    assert '1–30' in result.json['error']
+
+
+def test_txt_import_preserves_empty_groups_and_normalizes_headers(server):
+    parsed = server.parse_playlist('Empty,#genre#\nNews, Sports,#genre#\nOne,http://example.com/live')
+    assert parsed['groups'] == ['Empty', 'News Sports']
+    assert parsed['channels'][0]['group'] == 'News Sports'
+    assert parsed['report']['issues'][0]['line'] == 2
+    assert server.generate([parsed], '', '', 'txt').startswith('Empty,#genre#\nNews Sports,#genre#\n')
