@@ -31,7 +31,7 @@ Questions, bug reports and feature requests are welcome in [Issues](https://gith
 ## Features
 
 - **Multiple playlists:** separate subscriptions, custom short names, optional combined subscriptions, and drag-and-drop ordering of playlists, groups and channels.
-- **Import and export:** import UTF-8 M3U / TXT and publish M3U / TXT subscriptions.
+- **Import and export:** import UTF-8 M3U / TXT, repair supported fields, skip invalid channels with a report, and publish M3U / TXT subscriptions.
 - **Logo library:** starts empty and supports search, local and batch uploads, name and alias matching, and conservative fuzzy matching. For duplicate names, choose to replace the existing image or stop the upload. Direct image URLs can be assigned separately.
 - **Bulk editing:** change groups, EPG or FCC, or replace text in live and catch-up URLs; preview before applying.
 - **Source checks:** measure response times for selected channels or the current playlist, with inline rechecks, progress, cancellation and failure retries.
@@ -209,6 +209,12 @@ The repository's Compose file builds from source, uses container name `iptv-mana
 5. Open **Subscriptions & EPG** and copy subscription URLs to your player.
 
 Channel changes update subscriptions after publishing. Unpublished changes applied to the playlist are saved in this browser and can be restored after reloading or signing in again. If the server configuration has changed, review it before publishing. Unsubmitted dialog forms are not included. If browser storage is unavailable, publish or export JSON promptly. Logo upload, replacement and deletion take effect immediately. Channel-logo assignments still require publishing; image changes cannot be undone through draft or publish history.
+
+### Import results
+
+Import normalizes commas in channel and group names to spaces, clears invalid logo URLs, sets unknown catch-up types to `default`, and replaces invalid catch-up days with 7. Unsupported stream protocols or channels that cannot be repaired are skipped. The report includes line numbers, names and reasons. Accepted channels must still satisfy publication validation.
+
+Ordinary commas in TXT URLs are preserved; a comma immediately followed by another `scheme://` URL separates the catch-up URL. The report shows imported, repaired and skipped counts, with up to 1,000 detail entries. If all channels are invalid, replace-import leaves the original playlist unchanged.
 
 ## Source response-time checks
 
