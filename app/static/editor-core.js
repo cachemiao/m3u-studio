@@ -35,13 +35,20 @@ const AliceEditorCore = (() => {
   function batchEdit(state, listId, ids, changes) {
     const draft = content(state), list = draft.lists.find(item => item.id === listId);
     if (!list) throw Error('列表已不存在');
+    const transfer = changes.transfer;
+    const target = transfer && draft.lists.find(item => item.id === transfer.listId);
+    if (transfer && (!target || target === list)) throw Error('请选择其他目标列表');
+    if (transfer && !['move', 'copy'].includes(transfer.mode)) throw Error('请选择移动或复制');
+    if (transfer?.group !== undefined && (typeof transfer.group !== 'string' || !transfer.group.trim() || transfer.group.length > 200 || /[,\"\r\n]/.test(transfer.group))) throw Error('目标分组名称无效');
+    const transfers = [], usedIds = new Set(target?.channels.map(ch => ch.id)), targetGroups = new Set(target?.groups);
     const selected = new Set(ids);
     if (!selected.size) throw Error('请先选择频道');
     if (changes.group !== undefined && !list.groups.includes(changes.group)) throw Error('目标分组不存在');
     if (changes.replace && !changes.replace.from) throw Error('查找内容不能为空');
     let count = 0;
-    list.channels.forEach(ch => {
-      if (!selected.has(ch.id)) return;
+    list.channels.forEach(original => {
+      if (!selected.has(original.id)) return;
+      const ch = transfer?.mode === 'copy' ? clone(original) : original;
       const before = JSON.stringify(ch);
       for (const key of ['group', 'epg', 'fcc_url']) if (changes[key] !== undefined) ch[key] = changes[key];
       if (changes.replace) {
@@ -50,9 +57,20 @@ const AliceEditorCore = (() => {
           ch[key] = (ch[key] || '').split(changes.replace.from).join(changes.replace.to);
         }
       }
-      if (JSON.stringify(ch) !== before) count++;
+      if (transfer) {
+        const copied = clone(ch);
+        if (transfer.group !== undefined) copied.group = transfer.group.trim();
+        let suffix = 1;
+        do { copied.id = `${ch.id.slice(0, 50)}_transfer_${suffix++}`; } while (usedIds.has(copied.id));
+        usedIds.add(copied.id);
+        if (!targetGroups.has(copied.group)) { target.groups.push(copied.group); targetGroups.add(copied.group); }
+        target.channels.push(copied);
+        transfers.push({sourceId: ch.id, targetId: copied.id});
+      }
+      if (transfer || JSON.stringify(ch) !== before) count++;
     });
-    return {draft, count, total: selected.size, skipped: selected.size - count};
+    if (transfer?.mode === 'move') list.channels = list.channels.filter(ch => !selected.has(ch.id));
+    return {draft, count, total: selected.size, skipped: selected.size - count, transfers};
   }
   const logoName = path => {
     const name = path.split('?')[0].split('#')[0].split('/').pop();

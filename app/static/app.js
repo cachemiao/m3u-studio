@@ -128,18 +128,46 @@ window.addEventListener('keydown',e=>{
 });
 function previewRow(name,description){const row=el('div',undefined,'preview-row');row.append(el('strong',name),el('p',description,'hint'));return row}
 const maskUrl=value=>(value||'').replace(/(\w+:\/\/)[^/@\s]+@/g,'$1••••@');
-function invalidateBatch(){batchCandidate=null;batchStats=null;$('#batchApply').disabled=true;$('#batchPreview').replaceChildren();window.M3UI18n.setText($('#batchMessage'),window.M3UI18n.dynamic(()=>t("m66")))}
-function batchInputFingerprint(){return JSON.stringify({group:$('#batchGroup').value,epg:$('#batchEpg').value,fcc:$('#batchFcc').value,from:$('#replaceFrom').value,to:$('#replaceTo').value,toggles:batchControls.map(([id])=>$('#'+id).checked),live:$('#replaceLive').checked,catchup:$('#replaceCatchup').checked})}
-const batchControls=[['changeGroup',['batchGroup']],['changeEpg',['batchEpg']],['changeFcc',['batchFcc']],['changeReplace',['replaceFrom','replaceTo','replaceLive','replaceCatchup']]];
-for(const [toggle,fields] of batchControls)$('#'+toggle).onchange=()=>{fields.forEach(id=>$('#'+id).disabled=!$('#'+toggle).checked);invalidateBatch()};
+function invalidateBatch(){batchCandidate=null;batchStats=null;$('#batchApply').disabled=true;$('#batchPreview').replaceChildren();syncTransferPresentation();window.M3UI18n.setText($('#batchMessage'),window.M3UI18n.dynamic(()=>t("m66")))}
+function batchInputFingerprint(){return JSON.stringify({transferMode:$('#batchTransferMode').value,targetList:$('#batchTargetList').value,targetGroup:$('#batchTargetGroup').value,newGroup:$('#batchNewGroup').value,group:$('#batchGroup').value,epg:$('#batchEpg').value,fcc:$('#batchFcc').value,from:$('#replaceFrom').value,to:$('#replaceTo').value,toggles:batchControls.map(([id])=>$('#'+id).checked),live:$('#replaceLive').checked,catchup:$('#replaceCatchup').checked})}
+const batchControls=[['changeTransfer',['batchTransferMode','batchTargetList','batchTargetGroup']],['changeGroup',['batchGroup']],['changeEpg',['batchEpg']],['changeFcc',['batchFcc']],['changeReplace',['replaceFrom','replaceTo','replaceLive','replaceCatchup']]];
+for(const [toggle,fields] of batchControls)$('#'+toggle).onchange=()=>{fields.forEach(id=>$('#'+id).disabled=!$('#'+toggle).checked);syncTransferFields();invalidateBatch()};
+function syncTransferPresentation(){
+ const active=$('#changeTransfer').checked,move=$('#batchTransferMode').value==='move';
+ for(const [id] of batchControls){const input=$('#'+id);input.closest('section').classList.toggle('is-selected',input.checked&&!input.disabled)}
+ $('#batchTransferNotice').hidden=!active;
+ $('#batchTransferNotice').closest('section').classList.toggle('is-move',active&&move);
+ window.M3UI18n.setText($('#batchTransferNotice'),window.M3UI18n.dynamic(()=>t(move?'m371':'m370')));
+ window.M3UI18n.setText($('#batchApply'),window.M3UI18n.dynamic(()=>t(active?(move?'m373':'m372'):'m233')));
+}
+$('#batchTransferMode').onchange=()=>{invalidateBatch()};
+function syncTransferFields(){
+ const active=$('#changeTransfer').checked;
+ $('#batchNewGroupLabel').hidden=$('#batchTargetGroup').value!=='new';
+ $('#batchNewGroup').disabled=!active||$('#batchTargetGroup').value!=='new';
+ $('#changeGroup').disabled=active;$('#batchGroup').disabled=active||!$('#changeGroup').checked;
+}
+function populateTargetGroups(){
+ const target=state.lists.find(l=>l.id===$('#batchTargetList').value);
+ const option=(value,text)=>{const o=el('option',text);o.value=value;return o};
+ $('#batchTargetGroup').replaceChildren(option('keep',window.M3UI18n.dynamic(()=>t('m364'))),...(target?.groups||[]).map(g=>option('group:'+g,g)),option('new',window.M3UI18n.dynamic(()=>t('m365'))));
+ $('#batchNewGroup').value='';syncTransferFields();invalidateBatch();
+}
+$('#batchTargetList').onchange=populateTargetGroups;
+$('#batchTargetGroup').onchange=()=>{syncTransferFields();invalidateBatch()};
 $('#batchForm').addEventListener('input',invalidateBatch);
 $('#batchEdit').onclick=()=>{
  batchContext={listId:selected,ids:[...selectedChannels],fingerprint:core.fingerprint(state)};$('#batchForm').reset();batchControls.forEach(([toggle,fields])=>fields.forEach(id=>$('#'+id).disabled=true));
+ $('#batchTargetList').replaceChildren(...state.lists.filter(l=>l.id!==selected).map(l=>{const o=el('option',l.name);o.value=l.id;return o}));
+ populateTargetGroups();
  $('#batchGroup').replaceChildren(...current().groups.map(g=>{const o=el('option',g);o.value=g;return o}));window.M3UI18n.setText($('#batchScope'),window.M3UI18n.dynamic(()=>t("m67",{p0:(current().name),p1:(batchContext.ids.length)})));invalidateBatch();$('#batchDialog').showModal();
 };
 $('#batchForm').onsubmit=async e=>{
  e.preventDefault();invalidateBatch();const changes={},inputFingerprint=batchInputFingerprint(),context=batchContext;
- if($('#changeGroup').checked)changes.group=$('#batchGroup').value;
+ if($('#changeTransfer').checked){if(!$('#batchTargetList').value)return toast(t('m361'));changes.transfer={mode:$('#batchTransferMode').value,listId:$('#batchTargetList').value};const targetGroup=$('#batchTargetGroup').value;
+  if(targetGroup!=='keep'){const name=targetGroup==='new'?$('#batchNewGroup').value.trim():targetGroup.slice(6);if(!name||name.length>200||/[,"\r\n]/.test(name))return toast(t('m367'));changes.transfer.group=name}}
+
+ if(!changes.transfer&&$('#changeGroup').checked)changes.group=$('#batchGroup').value;
  if($('#changeEpg').checked)changes.epg=$('#batchEpg').value.trim();
  if($('#changeFcc').checked)changes.fcc_url=$('#batchFcc').value.trim();
  if($('#changeReplace').checked){const fields=[];if($('#replaceLive').checked)fields.push('url');if($('#replaceCatchup').checked)fields.push('catchup_url');if(!fields.length)return toast(t("m68"));changes.replace={from:$('#replaceFrom').value,to:$('#replaceTo').value,fields}}
@@ -147,14 +175,18 @@ $('#batchForm').onsubmit=async e=>{
  const btn=$('#batchPreviewButton');btn.disabled=true;
  try{
   if(core.fingerprint(state)!==batchContext.fingerprint)throw Error(t("m70"));
-  const {draft,count,total,skipped}=core.batchEdit(state,batchContext.listId,batchContext.ids,changes);
+  const {draft,count,total,skipped,transfers}=core.batchEdit(state,batchContext.listId,batchContext.ids,changes);
   if(!count){window.M3UI18n.setText($('#batchMessage'),t('m322',{p0:total,p1:0,p2:skipped,p3:''}));return}
   const checked=await api('/api/validate',json('POST',draft));
   if(!$('#batchDialog').open||batchContext!==context)return;
   // Form input while validation was pending makes the returned preview stale.
   if(inputFingerprint!==batchInputFingerprint()){toast(t("m72"));return}
   batchCandidate=checked;batchStats={count,total,skipped};const before=current(),beforeById=new Map(before.channels.map(ch=>[ch.id,ch])),ids=new Set(batchContext.ids),after=checked.lists.find(l=>l.id===batchContext.listId);let displayed=0;
-  for(const ch of after.channels){const old=beforeById.get(ch.id);if(!ids.has(ch.id)||!['group','epg','fcc_url','url','catchup_url'].some(key=>old[key]!==ch[key]))continue;if(displayed++>=100)continue;
+  if(changes.transfer){
+   const target=checked.lists.find(l=>l.id===changes.transfer.listId),targetById=new Map(target.channels.map(ch=>[ch.id,ch]));
+   for(const pair of transfers){if(displayed++>=100)continue;const ch=targetById.get(pair.targetId);$('#batchPreview').append(previewRow(ch.name,window.M3UI18n.dynamic(()=>t('m362',{p0:changes.transfer.mode==='move'?t('m357'):t('m358'),p1:before.name,p2:target.name,p3:ch.group}))))}
+  }
+  for(const ch of changes.transfer?[]:after.channels){const old=beforeById.get(ch.id);if(!ids.has(ch.id)||!['group','epg','fcc_url','url','catchup_url'].some(key=>old[key]!==ch[key]))continue;if(displayed++>=100)continue;
    const descriptions=()=>{const lines=[];for(const key of ['group','epg','fcc_url','url','catchup_url'])if(old[key]!==ch[key])lines.push(`${({group:t("m73"),epg:'EPG',fcc_url:'FCC',url:t("m74"),catchup_url:t("m20")})[key]}${window.M3UI18n.language==='zh'?'：':': '}${maskUrl(old[key])||t("m75")} → ${maskUrl(ch[key])||t("m75")}`);
    return lines.join('\n')};
    $('#batchPreview').append(previewRow(ch.name,window.M3UI18n.dynamic(descriptions)));
@@ -162,7 +194,7 @@ $('#batchForm').onsubmit=async e=>{
   window.M3UI18n.setText($('#batchMessage'),window.M3UI18n.dynamic(()=>t('m322',{p0:total,p1:count,p2:skipped,p3:displayed>100?t('m76'):''})));$('#batchApply').disabled=false;
  }catch(err){toast(window.M3UI18n.error(err.message))}finally{btn.disabled=false}
 };
-$('#batchApply').onclick=()=>{if(!batchCandidate)return;if(core.fingerprint(state)!==batchContext.fingerprint)return toast(t("m78"));state.lists=batchCandidate.lists;state.epg=batchCandidate.epg;$('#batchDialog').close();changed();toast(t('m323',{p0:batchStats.count,p1:batchStats.skipped}),true)};
+$('#batchApply').onclick=()=>{if(!batchCandidate)return;if(core.fingerprint(state)!==batchContext.fingerprint)return toast(t("m78"));state.lists=batchCandidate.lists;state.epg=batchCandidate.epg;const remainingIds=new Set(current().channels.map(ch=>ch.id));selectedChannels=new Set([...selectedChannels].filter(id=>remainingIds.has(id)));$('#batchDialog').close();changed();toast(t('m323',{p0:batchStats.count,p1:batchStats.skipped}),true)};
 async function loadLogos(){logoLibrary=await api('/api/logos');return logoLibrary}
 function libraryPaths(){return logoLibrary.logos}
 let logoPickerContext=null,logoPickerChannel=null;

@@ -130,3 +130,20 @@ button.source-latency{border:1px solid transparent;cursor:pointer;line-height:1.
 
 .channel-title .source-latency{font-size:11px;font-weight:inherit;line-height:15px;padding:3px 6px;border:0;border-radius:4px}
 .channel-title button.source-latency:hover:not(:disabled){box-shadow:inset 0 0 0 1px currentColor}
+
+/* Keep each bulk action title visually attached to its own controls. */
+#batchDialog .batch-section{border:2px solid var(--border);border-radius:12px;padding:16px;margin:16px 0;background:var(--surface)}
+#batchDialog .batch-section-title{font-size:16px;font-weight:700;color:var(--text);margin:0 0 12px;gap:10px;line-height:1.5}
+#batchDialog .batch-section-title input{width:18px;height:18px;flex:0 0 18px}
+.batch-step{display:inline-grid;place-items:center;width:24px;height:24px;flex:0 0 24px;border-radius:50%;background:var(--active);color:var(--accent);font-size:13px}
+#batchDialog .batch-section>label:not(.batch-section-title){margin:12px 0 0}
+#batchDialog .batch-section .form-grid{margin:0;gap:12px}
+#batchDialog .batch-section .form-grid label{margin:0}
+#batchDialog .batch-section .inputrow{margin-top:10px}
+#batchDialog .batch-section .hint{margin:10px 0 0}
+#batchDialog .batch-transfer-section{margin-top:24px}
+#batchDialog .batch-section.is-selected{border-color:var(--accent)}
+#batchDialog .batch-transfer-section.is-move{border-color:var(--danger)}
+.transfer-notice{padding:10px 12px;border-radius:8px;background:var(--active);color:var(--text);font-size:14px;line-height:1.6;margin:0 0 12px}
+.is-move .transfer-notice{color:var(--danger);border:1px solid var(--danger);background:var(--soft);font-weight:700}
+@media(max-width:600px){#batchDialog .batch-section{padding:12px}#batchDialog .batch-section-title{font-size:15px}}
