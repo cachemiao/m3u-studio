@@ -91,3 +91,65 @@ test('bulk summary counts unchanged and missing selections as skipped',()=>{
  const result=core.batchEdit(sample(),'one',['a','b','missing'],{group:'央视'});
  assert.equal(result.total,3);assert.equal(result.count,1);assert.equal(result.skipped,2);
 });
+
+test('copy to another playlist preserves complete channel data and adds missing groups',()=>{
+ const state=sample();
+ Object.assign(state.lists[0].channels[1],{logo:'/logo/test.png',epg_id:'hunan',catchup:'default',catchup_days:7});
+ const original=JSON.stringify(state);
+ const r=core.batchEdit(state,'one',['a','b'],{transfer:{mode:'copy',listId:'two'}});
+ assert.equal(JSON.stringify(state),original);
+ assert.equal(r.count,2);assert.equal(r.draft.lists[0].channels.length,2);
+ assert.deepEqual(r.draft.lists[1].groups,['央视','卫视']);
+ assert.deepEqual(r.draft.lists[1].channels.slice(1).map(({id,...ch})=>ch),state.lists[0].channels.map(({id,...ch})=>ch));
+ assert.equal(new Set(r.draft.lists[1].channels.map(ch=>ch.id)).size,3);
+ assert.deepEqual(r.draft.lists[1].channels[0],state.lists[1].channels[0]);
+});
+test('move handles ID collisions, preserves order, applies edits, and supports undo',()=>{
+ const state=sample();state.lists[1].channels.push({...state.lists[1].channels[0],id:'a_transfer_1'});
+ const history=core.createHistory();history.reset(state);
+ const r=core.batchEdit(state,'one',['b','a'],{group:'卫视',transfer:{mode:'move',listId:'two'}});
+ assert.equal(r.draft.lists[0].channels.length,0);
+ assert.deepEqual(r.draft.lists[0].groups,['央视','卫视']);
+ assert.deepEqual(r.draft.lists[1].channels.slice(2).map(ch=>ch.name),['CCTV1','湖南卫视']);
+ assert.equal(r.draft.lists[1].channels[2].id,'a_transfer_2');
+ assert.ok(r.draft.lists[1].channels.slice(2).every(ch=>ch.group==='卫视'));
+ history.record(r.draft);assert.deepEqual(history.undo(r.draft),core.content(state));
+});
+test('transfers reject same or missing targets and skip stale selections without mutation',()=>{
+ const state=sample();
+ for(const listId of ['one','missing'])assert.throws(()=>core.batchEdit(state,'one',['a'],{transfer:{mode:'copy',listId}}));
+ assert.throws(()=>core.batchEdit(state,'one',['a'],{transfer:{mode:'delete',listId:'two'}}));
+ const r=core.batchEdit(state,'one',['missing'],{transfer:{mode:'move',listId:'two'}});
+ assert.equal(r.count,0);assert.equal(r.skipped,1);assert.deepEqual(r.draft,core.content(state));
+ state.lists[0].channels[0].id='x'.repeat(80);
+ const copied=core.batchEdit(state,'one',['x'.repeat(80)],{transfer:{mode:'copy',listId:'two'}});
+ assert.ok(copied.transfers[0].targetId.length<=80);
+});
+
+test('copy with field edits changes only the destination copies',()=>{
+ const state=sample();
+ const r=core.batchEdit(state,'one',['a'],{epg:'https://example.com/epg.xml',transfer:{mode:'copy',listId:'two'}});
+ assert.deepEqual(r.draft.lists[0],state.lists[0]);
+ assert.equal(r.draft.lists[1].channels[1].epg,'https://example.com/epg.xml');
+});
+
+test('transfer selects an existing target group or creates a new group once',()=>{
+ const state=sample();
+ const existing=core.batchEdit(state,'one',['a','b'],{transfer:{mode:'copy',listId:'two',group:'央视'}});
+ assert.deepEqual(existing.draft.lists[1].groups,['央视']);
+ assert.ok(existing.draft.lists[1].channels.every(ch=>ch.group==='央视'));
+ assert.deepEqual(existing.draft.lists[0],state.lists[0]);
+ const created=core.batchEdit(state,'one',['a','b'],{transfer:{mode:'move',listId:'two',group:' 精选 '}});
+ assert.deepEqual(created.draft.lists[1].groups,['央视','精选']);
+ assert.ok(created.draft.lists[1].channels.slice(1).every(ch=>ch.group==='精选'));
+ assert.equal(created.draft.lists[0].channels.length,0);
+});
+test('invalid new target groups cannot change the draft',()=>{
+ const state=sample(),before=JSON.stringify(state);
+ for(const group of ['', ' ', 'a,b', 'a"b','a\nb','x'.repeat(201)]){
+  assert.throws(()=>core.batchEdit(state,'one',['a'],{transfer:{mode:'copy',listId:'two',group}}));
+ }
+ assert.equal(JSON.stringify(state),before);
+ const stale=core.batchEdit(state,'one',['missing'],{transfer:{mode:'copy',listId:'two',group:'新分组'}});
+ assert.deepEqual(stale.draft,core.content(state));
+});
