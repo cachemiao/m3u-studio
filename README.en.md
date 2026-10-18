@@ -229,6 +229,12 @@ Click a channel's time or status badge to recheck that channel inline without op
 - Checks run from the deployment server. Response time does not measure player startup time or verify playback.
 - Results are for reference and never delete or modify channels. Results stay on the current page and clear on reload. Closing the dialog cancels further checks.
 
+### Move or copy between playlists
+
+Select channels, open **Bulk edit**, and enable **Move or copy to another playlist**. Choose the action, target playlist and target group. Keep original groups, select an existing target group, or enter a new group name. Missing groups are created automatically and channels are appended to the target playlist.
+
+**Copy** is selected by default and keeps the original channels. **Move** removes selected channels from the source and displays a red warning. Preview before applying; changes support undo. Click **Save & publish** when ready to update subscriptions.
+
 ## Subscription URLs
 
 | Content | Path |
@@ -239,7 +245,9 @@ Click a channel's time or status badge to recheck that channel inline without op
 | Playlist TXT | `/lists/PLAYLIST_ID/tv.txt` |
 | Local logo | `/logo/CCTV1.png` |
 
-Set a **Subscription short name** in Playlist settings, such as `home`. After publishing, use `/home.m3u` or `/home.txt`. Names are 1–24 ASCII letters, digits, underscores or hyphens, starting with a letter or digit. Names are lowercased, must be unique and cannot use reserved routes. Clear the name to disable it. Changing the name invalidates the old short URL; permanent ID URLs remain valid.
+**For long-term subscriptions on a TV, use a permanent ID URL**, such as `/lists/PLAYLIST_ID/tv.m3u`. Renaming the playlist or changing its subscription short name does not change this URL. After organizing channels, click **Save & publish** and refresh the existing subscription in your player; there is no need to enter the URL again.
+
+Set a **Subscription short name** in Playlist settings, such as `home`. After publishing, use `/home.m3u` or `/home.txt`. Names are 1–24 ASCII letters, digits, underscores or hyphens, starting with a letter or digit. Names are lowercased, must be unique and cannot use reserved routes. Clear the name to disable it. Changing the short name invalidates the old short URL, so players using it need the new URL. Permanent ID URLs remain valid.
 
 The web interface displays complete URLs. Renaming a playlist does not change its subscription ID. Subscriptions and logos do not require login. Your player must be able to reach the server.
 
