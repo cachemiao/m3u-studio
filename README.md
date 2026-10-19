@@ -23,9 +23,6 @@
 
 使用中遇到问题或有功能建议，欢迎提交 [Issue](https://github.com/cachemiao/m3u-studio/issues)。
 
-- [Telegram 频道](https://t.me/m3ustudio_news)：版本更新、功能介绍和重要通知。
-- [Telegram 群组](https://t.me/m3ustudio_chat)：使用交流、问题求助和建议反馈。
-
 ---
 
 ## 主要功能
