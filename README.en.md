@@ -310,6 +310,12 @@ For source upgrades, retain `data/` and any existing `.env`, update the source, 
 
 Questions and suggestions are welcome in Issues. Please include the version, deployment method, browser/player and reproduction steps. Remove credentials, tokens and private addresses from examples.
 
+## ☕ Support
+
+If you enjoy M3U Studio, consider buying me a coffee! Your support helps keep this project maintained and improving. Thank you for your support!
+
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/cachemiao)
+
 ## License and logo images
 
 Code is licensed under [GNU GPL v2.0 only](LICENSE) (`GPL-2.0-only`), Copyright (c) 2026 cachemiao.
@@ -321,3 +327,4 @@ Code is licensed under [GNU GPL v2.0 only](LICENSE) (`GPL-2.0-only`), Copyright 
 - Retain copyright notices and the license. The software is provided without warranty.
 
 Channel logos, names and third-party trademarks are not original project code; the code license does not grant additional rights to those materials. The project does not distribute TV station logo images. Upload only images you are entitled to use in Logo library management. Naming images after their channels helps automatic matching.
+
