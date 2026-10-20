@@ -317,7 +317,7 @@ Questions and suggestions are welcome in Issues. Please include the version, dep
 
 ## ☕ Support
 
-If you enjoy M3U Studio, consider buying me a coffee! Your support helps keep this project maintained and improving. Thank you for your support!
+If you enjoy M3U Studio, consider [buying me a coffee](https://ko-fi.com/cachemiao)! Your support helps keep this project maintained and improving. Thank you for your support!
 
 ## License and logo images
 

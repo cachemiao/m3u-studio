@@ -321,7 +321,7 @@ docker compose start
 
 ## ☕ 支持项目
 
-如果 M3U Studio 对你有帮助，欢迎请我喝杯咖啡，支持项目持续维护与改进。感谢你的支持！
+如果 M3U Studio 对你有帮助，欢迎[请我喝杯咖啡](https://ko-fi.com/cachemiao)，支持项目持续维护与改进。感谢你的支持！
 
 ## 许可证与台标素材
 
