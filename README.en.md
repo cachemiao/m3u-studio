@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/cachemiao/m3u-studio/releases"><img src="https://img.shields.io/github/v/release/cachemiao/m3u-studio?color=0f766e" alt="Latest release"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0-blue" alt="GNU GPL v2.0 许可证"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0-blue" alt="GNU GPL v2.0 License"></a>
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=0f766e" alt="Docker pulls"></a>
   <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=0f766e" alt="GitHub Stars"></a>
   <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-Channel-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram channel"></a>
@@ -23,6 +23,8 @@ Developed as a personal learning and hobby project, with source code released un
 
 Questions, bug reports and feature requests are welcome in [Issues](https://github.com/cachemiao/m3u-studio/issues).
 
+- [Telegram news · @m3ustudio_news](https://t.me/m3ustudio_news): release updates, features and important notices.
+- [Telegram community · @m3ustudio_chat](https://t.me/m3ustudio_chat): discussion, help and suggestions.
 
 ---
 
@@ -31,7 +33,7 @@ Questions, bug reports and feature requests are welcome in [Issues](https://gith
 - **Multiple playlists:** separate subscriptions, custom short names, optional combined subscriptions, and drag-and-drop ordering of playlists, groups and channels.
 - **Import and export:** import UTF-8 M3U / TXT, repair supported fields, skip invalid channels with a report, and publish M3U / TXT subscriptions.
 - **Logo library:** starts empty and supports search, local and batch uploads, name and alias matching, and conservative fuzzy matching. For duplicate names, choose to replace the existing image or stop the upload. Direct image URLs can be assigned separately.
-- **Bulk editing:** change groups, EPG or FCC, or replace text in live and catch-up URLs; preview before applying.
+- **Bulk editing:** change groups, EPG or FCC, replace text in live and catch-up URLs, or copy and move channels between playlists; preview before applying.
 - **Source checks:** measure response times for selected channels or the current playlist, with inline rechecks, progress, cancellation and failure retries.
 - **EPG, catch-up and FCC:** configure channel EPG IDs, XMLTV URLs, catch-up parameters and fast channel switching parameters. When the EPG ID is blank, M3U uses the channel name as its ID for matching by the player.
 - **Undo and history:** undo/redo drafts, retain the last 30 pre-publish configuration snapshots, and export/restore JSON configurations.
@@ -40,7 +42,9 @@ Questions, bug reports and feature requests are welcome in [Issues](https://gith
 
 M3U Studio edits playlists and serves subscriptions. Stream URLs and EPG must be provided by the user. Stream forwarding, such as UDP-to-HTTP conversion, requires a separate service.
 
-FCC requires [rtp2httpd](https://github.com/stackia/rtp2httpd) and the corresponding [FCC server addresses](https://rtp2httpd.com/reference/cn-fcc-collection).
+For logo resources, see [m3u-logos](https://github.com/cachemiao/m3u-logos). Check the rights to any images before using them.
+
+FCC requires a service such as [rtp2httpd](https://github.com/stackia/rtp2httpd) and the corresponding [FCC server addresses](https://rtp2httpd.com/reference/cn-fcc-collection).
 
 ## Screenshots
 
@@ -200,7 +204,7 @@ The repository's Compose file builds from source, uses container name `iptv-mana
 
 ## Basic usage
 
-1. Create playlists and groups; import M3U/TXT or add channels manually.
+1. Click **＋** beside **Playlists** and choose **Create empty playlist** or **Import as new playlist**. For an existing playlist, click **Import channels** to append M3U / TXT; the dialog shows the target playlist. You can also create groups and add channels manually.
 2. Edit stream URLs, EPG, catch-up and FCC; choose or upload logos.
 3. Organize using drag-and-drop, search, bulk editing and logo matching.
 4. Review the draft and click **Save & publish**.
@@ -212,7 +216,7 @@ Channel changes update subscriptions after publishing. Unpublished changes appli
 
 Import normalizes commas in channel and group names to spaces, clears invalid logo URLs, sets unknown catch-up types to `default`, and replaces invalid catch-up days with 7. Unsupported stream protocols or channels that cannot be repaired are skipped. The report includes line numbers, names and reasons. Accepted channels must still satisfy publication validation.
 
-Ordinary commas in TXT URLs are preserved; a comma immediately followed by another `scheme://` URL separates the catch-up URL. The report shows imported, repaired and skipped counts, with up to 1,000 detail entries. If all channels are invalid, replace-import leaves the original playlist unchanged.
+Ordinary commas in TXT URLs are preserved; a comma immediately followed by another `scheme://` URL separates the catch-up URL. The report shows imported, repaired and skipped counts, with up to 1,000 detail entries. Imports only append channels and keep existing channels. If all channels are invalid, no playlist is created and the original playlist is unchanged. Duplicate channel IDs are adjusted automatically to avoid conflicts. If the form or playlist content changes during import, the result is blocked; review your changes and import again.
 
 ## Source response-time checks
 
@@ -327,4 +331,3 @@ Code is licensed under [GNU GPL v2.0 only](LICENSE) (`GPL-2.0-only`), Copyright 
 - Retain copyright notices and the license. The software is provided without warranty.
 
 Channel logos, names and third-party trademarks are not original project code; the code license does not grant additional rights to those materials. The project does not distribute TV station logo images. Upload only images you are entitled to use in Logo library management. Naming images after their channels helps automatic matching.
-
