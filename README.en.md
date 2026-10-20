@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="https://ko-fi.com/cachemiao"><img src="https://ko-fi.com/img/githubbutton_sm.svg" width="200" alt="Support me on Ko-fi"></a>
+  <a href="https://ko-fi.com/cachemiao"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="200" alt="Buy me a coffee"></a>
 </p>
 
 <p align="center"><a href="README.md">简体中文</a> · <strong>English</strong></p>
