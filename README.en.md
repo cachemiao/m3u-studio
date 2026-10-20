@@ -15,6 +15,10 @@
   <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-Group-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram group"></a>
 </p>
 
+<p align="center">
+  <a href="https://ko-fi.com/cachemiao"><img src="https://ko-fi.com/img/githubbutton_sm.svg" width="200" alt="Support me on Ko-fi"></a>
+</p>
+
 <p align="center"><a href="README.md">简体中文</a> · <strong>English</strong></p>
 
 An easy-to-deploy IPTV channel management and subscription server built with **Python / Flask**, supporting **M3U and TXT**. Manage multiple playlists, groups, channel logos and EPG in your browser, then publish subscriptions with customizable short URLs. Deploy with **Docker**.
@@ -314,8 +318,6 @@ Questions and suggestions are welcome in Issues. Please include the version, dep
 ## ☕ Support
 
 If you enjoy M3U Studio, consider buying me a coffee! Your support helps keep this project maintained and improving. Thank you for your support!
-
-[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/cachemiao)
 
 ## License and logo images
 

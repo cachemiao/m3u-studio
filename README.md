@@ -15,6 +15,10 @@
   <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-%E7%BE%A4%E7%BB%84-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram 群组"></a>
 </p>
 
+<p align="center">
+  <a href="https://ko-fi.com/cachemiao"><img src="https://ko-fi.com/img/githubbutton_sm.svg" width="200" alt="请我喝杯咖啡"></a>
+</p>
+
 <p align="center"><strong>简体中文</strong> · <a href="README.en.md">English</a></p>
 
 一个易于部署的、基于 **Python / Flask** 的 IPTV 频道管理与订阅服务器，支持 **M3U 和 TXT** 格式。通过网页管理多套频道列表、分组、台标和 EPG，生成可自定义短地址的订阅链接，支持 **Docker 一键部署**。
@@ -318,8 +322,6 @@ docker compose start
 ## ☕ 支持项目
 
 如果 M3U Studio 对你有帮助，欢迎请我喝杯咖啡，支持项目持续维护与改进。感谢你的支持！
-
-[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/cachemiao)
 
 ## 许可证与台标素材
 
