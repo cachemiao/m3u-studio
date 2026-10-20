@@ -23,9 +23,6 @@ Developed as a personal learning and hobby project, with source code released un
 
 Questions, bug reports and feature requests are welcome in [Issues](https://github.com/cachemiao/m3u-studio/issues).
 
-- [Telegram news · @m3ustudio_news](https://t.me/m3ustudio_news): release updates, features and important notices.
-- [Telegram community · @m3ustudio_chat](https://t.me/m3ustudio_chat): discussion, help and suggestions.
-
 ---
 
 ## Features
