@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://ko-fi.com/cachemiao"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
+  <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=en"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
 </p>
 
 <p align="center"><a href="README.md">简体中文</a> · <strong>English</strong></p>
@@ -319,7 +319,7 @@ Questions and suggestions are welcome in Issues. Please include the version, dep
 
 ## ☕ Support
 
-If you enjoy M3U Studio, consider [buying me a coffee](https://ko-fi.com/cachemiao)! Your support helps keep this project maintained and improving. Thank you for your support!
+If you enjoy M3U Studio, consider [buying me a coffee](https://cachemiao.github.io/m3u-studio/support.html?lang=en)! Your support helps keep this project maintained and improving. Thank you for your support!
 
 ## License and logo images
 

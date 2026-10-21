@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://ko-fi.com/cachemiao"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
+  <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=zh"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
 </p>
 
 <p align="center"><strong>简体中文</strong> · <a href="README.en.md">English</a></p>
@@ -323,7 +323,7 @@ docker compose start
 
 ## ☕ 支持项目
 
-如果 M3U Studio 对你有帮助，欢迎[请我喝杯咖啡](https://ko-fi.com/cachemiao)，支持项目持续维护与改进。感谢你的支持！
+如果 M3U Studio 对你有帮助，欢迎[请我喝杯咖啡](https://cachemiao.github.io/m3u-studio/support.html?lang=zh)，支持项目持续维护与改进。感谢你的支持！
 
 ## 许可证与台标素材
 
