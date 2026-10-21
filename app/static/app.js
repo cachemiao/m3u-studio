@@ -3,6 +3,7 @@ const $=s=>document.querySelector(s), el=(tag,text,cls)=>{const n=document.creat
 let state, selected, group='', dirty=false, editing=null, uploadTarget=null, dragId=null, authMode='login', username='', sidebarDrag=null;
 const core=AliceEditorCore, draftHistory=core.createHistory();
 let publishedFingerprint='', selectedChannels=new Set(), selectionList=null, visibleChannels=[], logoLibrary=null, batchContext=null, batchCandidate=null, logoContext=null, logoMatches=[];
+let importContext=null;
 let workspaceOwner=null, draftStore=null, draftStorageWarned=false, batchStats=null;
 const current=()=>state?.lists.find(x=>x.id===selected), uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
 function toast(message,undo=false){window.M3UI18n.setText($('#toast'),message);if(undo)$('#toast').append(button(t('m324'),()=>$('#undo').click(),'small'));$('#toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').style.display='none',5000)}
@@ -59,11 +60,20 @@ function bindSidebarDrag(row,kind,id){
 }
 function openEditor(ch){const list=current();if(!list.groups.length)return toast(t("m26"));editing=ch?.id||null;window.M3UI18n.setText($('#editorTitle'),window.M3UI18n.dynamic(()=>ch?t("m27"):t("m28")));const form=$('#channelForm');form.reset();form.elements.group.replaceChildren(...list.groups.map(g=>{const o=el('option',g);o.value=g;return o}));const values=ch||{group:group||list.groups[0],days:7,catchup:'default'};for(const key of ['name','group','logo','url','fcc_url','catchup_url','catchup','days','epg_id','epg'])form.elements[key].value=values[key]??'';$('#editor').showModal()}
 $('#channelForm').onsubmit=e=>{e.preventDefault();const ch=Object.fromEntries(new FormData(e.target));ch.id=editing||uid();ch.days=Number(ch.days);const list=current();if(editing)list.channels[list.channels.findIndex(c=>c.id===editing)]=ch;else list.channels.push(ch);$('#editor').close();changed()};
-$('#newList').onclick=()=>{const name=prompt(t("m29"));if(!name?.trim())return;const list={id:uid(),name:name.trim(),enabled:true,epg:'',groups:[String(t("m30")),String(t("m31"))],channels:[]};state.lists.push(list);selected=list.id;group='';changed()};
+$('#newEmptyList').onclick=()=>{const name=prompt(t("m29"));if(!name?.trim())return;const list={id:uid(),name:name.trim(),enabled:true,epg:'',groups:[String(t("m30")),String(t("m31"))],channels:[]};state.lists.push(list);selected=list.id;group='';changed()};
 $('#newGroup').onclick=()=>{const name=prompt(t("m32"));if(!name?.trim())return;if(current().groups.includes(name.trim()))return toast(t("m6"));current().groups.push(name.trim());changed()};
 $('#add').onclick=()=>openEditor();$('#search').oninput=render;
 $('#save').onclick=async()=>{const btn=$('#save');btn.disabled=true;const submitted=core.clone(state), sent=core.fingerprint(submitted);try{const result=await api('/api/state',json('PUT',submitted));state.revision=result.revision;publishedFingerprint=core.fingerprint(result.state);if(core.fingerprint(state)===sent){state.lists=result.state.lists;state.epg=result.state.epg;draftHistory.record(state)}syncDirty();render();toast(dirty?t("m33"):t("m34"))}catch(err){toast(window.M3UI18n.error(err.message))}finally{btn.disabled=false}};
-$('#import').onclick=()=>{$('#playlistText').value='';$('#playlistFile').value='';$('#replaceImport').checked=false;$('#importDialog').showModal()};$('#playlistFile').onchange=async e=>{const file=e.target.files[0];if(file)$('#playlistText').value=await file.text()};
+function openImport(create=false){
+ importContext={create,listId:selected,fingerprint:core.fingerprint(state)};
+ $('#importForm').reset();$('#importForm button.primary').disabled=false;$('#importListNameLabel').hidden=!create;$('#importListName').disabled=!create;$('#importListName').required=create;
+ const name=current()?.name||'';
+ window.M3UI18n.setText($('#importTitle'),window.M3UI18n.dynamic(()=>create?t('m376'):t('m379',{p0:name})));
+ updateImportScope();$('#importDialog').showModal();
+}
+function updateImportScope(){window.M3UI18n.setText($('#importScope'),window.M3UI18n.dynamic(()=>t(importContext?.create?'m380':'m382')))}
+$('#import').onclick=()=>openImport();$('#importNewList').onclick=()=>openImport(true);
+$('#playlistFile').onchange=async e=>{const file=e.target.files[0],context=importContext;if(file){const text=await file.text();if(context===importContext&&e.target.files[0]===file)$('#playlistText').value=text}};
 function showImportReport(report){
  window.M3UI18n.setText($('#importReportSummary'),window.M3UI18n.dynamic(()=>t('m350',{p0:report.imported,p1:report.repaired,p2:report.skipped})));
  $('#importReportDetails').replaceChildren();
@@ -71,19 +81,24 @@ function showImportReport(report){
  if(report.omitted)$('#importReportDetails').append(el('p',t('m354',{p0:report.omitted}),'hint'));
  $('#importReportDialog').showModal();
 }
+function importInputFingerprint(){const file=$('#playlistFile').files[0];return JSON.stringify({name:$('#importListName').value,text:$('#playlistText').value,file:file?[file.name,file.size,file.lastModified]:null})}
 $('#importForm').onsubmit=async e=>{
- e.preventDefault();const submit=$('#importForm button.primary');submit.disabled=true;
+ e.preventDefault();const submit=$('#importForm button.primary'),context=importContext,input=importInputFingerprint();submit.disabled=true;
  try{
-  const parsed=await api('/api/import',json('POST',{text:$('#playlistText').value})),list=current();if(!list)return;
+  const options={create:context.create,listId:context.listId,id:context.create?uid():undefined,name:$('#importListName').value};
+  const parsed=await api('/api/import',json('POST',{text:$('#playlistText').value}));
+  if(!$('#importDialog').open||importContext!==context)return;
+  if(core.fingerprint(state)!==context.fingerprint||importInputFingerprint()!==input)throw Error(t('m383'));
   if(parsed.channels.length){
-   if($('#replaceImport').checked){if(!confirm(t('m35')))return;list.channels=parsed.channels;list.groups=parsed.groups}
-   else{list.channels.push(...parsed.channels);list.groups=[...new Set([...list.groups,...parsed.groups])]}
-   if(parsed.epg)list.epg=parsed.epg;changed();
+   const result=core.importChannels(state,parsed,options),checked=await api('/api/validate',json('POST',result.draft));
+   if(!$('#importDialog').open||importContext!==context)return;
+   if(core.fingerprint(state)!==context.fingerprint||importInputFingerprint()!==input)throw Error(t('m383'));
+   state.lists=checked.lists;state.epg=checked.epg;selected=result.listId;group='';changed();
   }
   $('#importDialog').close();
   if(parsed.report&&(parsed.report.issues.length||parsed.report.skipped))showImportReport(parsed.report);
   else toast(t('m36',{p0:parsed.channels.length}));
- }catch(err){toast(window.M3UI18n.error(err.message))}finally{submit.disabled=false}
+ }catch(err){if(importContext===context)toast(window.M3UI18n.error(err.message))}finally{if(importContext===context)submit.disabled=false}
 };
 $('#pickLogo').onclick=()=>openLogoPicker({editor:true},{name:$('#channelForm').elements.name.value,epg_id:$('#channelForm').elements.epg_id.value,logo:$('#channelForm').elements.logo.value});
 $('#logoFile').onchange=async e=>{
@@ -97,7 +112,7 @@ $('#backup').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{ty
 $('#restore').onclick=()=>$('#restoreFile').click();$('#restoreFile').onchange=async e=>{try{const file=e.target.files[0];if(!file)return;const raw=JSON.parse(await file.text());if(!Array.isArray(raw.lists))throw Error(t("m51"));if(!confirm(t("m52")))return;state.lists=raw.lists;state.epg=raw.epg||'';selected=state.lists[0]?.id;group='';$('#preferencesDialog').close();changed()}catch(err){toast(window.M3UI18n.error(err.message))}e.target.value=''};
 document.querySelectorAll('.close').forEach(b=>b.onclick=()=>b.closest('dialog').close());
 const formBaselines=new WeakMap();
-const formFingerprint=form=>JSON.stringify([...new FormData(form)].map(([key,value])=>[key,value instanceof File?[value.name,value.size,value.lastModified]:value]));
+const formFingerprint=form=>JSON.stringify([...new FormData(form)].map(([key,value])=>[key,value instanceof File?[value.name,value.size,value.name?value.lastModified:0]:value]));
 for(const id of ['channelForm','importForm','settingsForm','listForm']){const form=$('#'+id),dialog=form.closest('dialog');new MutationObserver(()=>{if(dialog.open)formBaselines.set(form,formFingerprint(form));else formBaselines.delete(form)}).observe(dialog,{attributes:true,attributeFilter:['open']})}
 function pendingFormChanges(){return ['channelForm','importForm','settingsForm','listForm'].some(id=>{const form=$('#'+id);return form.closest('dialog').open&&formBaselines.has(form)&&formFingerprint(form)!==formBaselines.get(form)})}
 window.addEventListener('beforeunload',e=>{if(dirty||pendingFormChanges()){e.preventDefault();e.returnValue=''}});

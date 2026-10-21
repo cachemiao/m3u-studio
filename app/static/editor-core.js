@@ -72,6 +72,30 @@ const AliceEditorCore = (() => {
     if (transfer?.mode === 'move') list.channels = list.channels.filter(ch => !selected.has(ch.id));
     return {draft, count, total: selected.size, skipped: selected.size - count, transfers};
   }
+  function importChannels(state, parsed, options) {
+    const draft = content(state);
+    if (!parsed.channels.length) return {draft, listId: options.listId, count: 0};
+    let list;
+    if (options.create) {
+      const name = options.name.trim();
+      if (!name || name.length > 200) throw Error('列表名称不能为空');
+      if (!options.id || draft.lists.some(l => l.id === options.id)) throw Error('列表 ID 必须唯一');
+      list = {id: options.id, name, enabled: true, epg: '', groups: [], channels: []};
+      draft.lists.push(list);
+    } else {
+      list = draft.lists.find(l => l.id === options.listId);
+      if (!list) throw Error('列表已不存在');
+    }
+    const used = new Set(list.channels.map(ch => ch.id));
+    for (const original of parsed.channels) {
+      const ch = clone(original), base = ch.id; let suffix = 1;
+      while (used.has(ch.id)) ch.id = `${base.slice(0, 50)}_import_${suffix++}`;
+      used.add(ch.id); list.channels.push(ch);
+    }
+    list.groups = [...new Set([...list.groups, ...parsed.groups])];
+    if (parsed.epg) list.epg = parsed.epg;
+    return {draft, listId: list.id, count: parsed.channels.length};
+  }
   const logoName = path => {
     const name = path.split('?')[0].split('#')[0].split('/').pop();
     try { return decodeURIComponent(name).replace(/\.(?:png|jpe?g|webp|gif|svg)$/i, ''); }
@@ -128,6 +152,6 @@ const AliceEditorCore = (() => {
       clear() { storage.removeItem(key); }
     };
   }
-  return {createDraftStore, clone, content, fingerprint, createHistory, batchEdit, logoName, normalizeName, matchLogo};
+  return {createDraftStore, clone, content, fingerprint, createHistory, batchEdit, importChannels, logoName, normalizeName, matchLogo};
 })();
 if (typeof module !== 'undefined' && module.exports) module.exports = AliceEditorCore;

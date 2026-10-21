@@ -136,10 +136,6 @@ window.M3UTranslations = {
     "zh": "订阅已更新，发布前版本已加入历史",
     "en": "Subscriptions updated; previous configuration added to history"
   },
-  "m35": {
-    "zh": "替换当前列表所有频道？",
-    "en": "Replace all channels in this playlist?"
-  },
   "m36": {
     "zh": "已导入 {p0} 个频道，请保存发布",
     "en": "Imported {p0} channels. Save and publish to update subscriptions."
@@ -669,8 +665,8 @@ window.M3UTranslations = {
     "en": "Playlist settings"
   },
   "m168": {
-    "zh": "导入 M3U / TXT",
-    "en": "Import M3U / TXT"
+    "zh": "导入频道",
+    "en": "Import channels"
   },
   "m169": {
     "zh": "选择筛选结果",
@@ -847,10 +843,6 @@ window.M3UTranslations = {
   "m212": {
     "zh": "导入当前列表",
     "en": "Import into current playlist"
-  },
-  "m213": {
-    "zh": "替换当前列表频道（默认追加）",
-    "en": "Replace this playlist's channels (append by default)"
   },
   "m214": {
     "zh": "解析并导入",
@@ -1407,5 +1399,14 @@ window.M3UTranslations = {
   "m370": {"zh": "复制：原列表频道保留不变，所选频道将复制到目标列表。", "en": "Copy: keep the originals and add copies to the target playlist."},
   "m371": {"zh": "移动：所选频道将从原列表移除，转入目标列表。若要保留原频道，请选择“复制”。", "en": "Move: remove selected channels from the source and transfer them to the target. Choose Copy to keep the originals."},
   "m372": {"zh": "应用复制", "en": "Apply copy"},
-  "m373": {"zh": "应用移动", "en": "Apply move"}
+  "m373": {"zh": "应用移动", "en": "Apply move"},
+  "m374": {"zh": "添加频道列表", "en": "Add playlist"},
+  "m375": {"zh": "新建空列表", "en": "Create empty playlist"},
+  "m376": {"zh": "导入并新建列表", "en": "Import as new playlist"},
+  "m377": {"zh": "支持 M3U / TXT，可上传文件或粘贴内容。", "en": "Supports M3U / TXT. Upload a file or paste its contents."},
+  "m378": {"zh": "新列表名称", "en": "New playlist name"},
+  "m379": {"zh": "导入频道到「{p0}」", "en": "Import channels into “{p0}”"},
+  "m380": {"zh": "解析出有效频道后才创建新列表，不影响现有列表。", "en": "A new playlist is created only when valid channels are found. Existing playlists are unchanged."},
+  "m382": {"zh": "追加到当前列表，保留原有频道；不受勾选或搜索筛选影响。", "en": "Appends to this playlist and keeps existing channels, regardless of selection or search filters."},
+  "m383": {"zh": "导入期间表单或列表发生变化，请重新导入。", "en": "The form or playlists changed during import. Please try again."}
 };
