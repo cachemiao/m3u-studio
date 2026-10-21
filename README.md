@@ -12,7 +12,6 @@
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-2496ED?logo=docker&amp;logoColor=white" alt="Docker Architectures"></a>
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=0f766e" alt="Docker Pulls"></a>
   <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=0f766e" alt="GitHub Stars"></a>
-  <a href="https://x.com/cachemiao"><img src="https://img.shields.io/badge/X-@cachemiao-000000?logo=x&amp;logoColor=white" alt="Follow on X"></a>
   <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-Channel-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram Channel"></a>
   <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-Group-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram Group"></a>
 </p>
