@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Support M3U Studio through Ko-fi or WeChat appreciation. Thank you for supporting this open-source project.">
+  <title>支持 M3U Studio</title>
+  <link rel="icon" href="images/support-button.svg" type="image/svg+xml">
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI","PingFang SC",sans-serif;color-scheme:light dark;--page:#f5f4ee;--paper:#fffefa;--text:#183b38;--muted:#667c72;--line:#e1e7dd;--teal:#007e78;--soft:#edf6ef;--hover:#dcece3;--shadow:#183b3812}
+    @media(prefers-color-scheme:dark){:root{--page:#111b17;--paper:#1b2923;--text:#e7f1eb;--muted:#a4bbad;--line:#34493d;--teal:#8cd9c2;--soft:#273e32;--hover:#365444;--shadow:#00000024}}
+    *{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--text);min-height:100svh;display:grid;place-items:center;padding:48px 20px;font-size:15px;line-height:1.6}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer;color:inherit}a{color:var(--teal)}button:focus-visible,a:focus-visible{outline:3px solid var(--teal);outline-offset:5px}[hidden]{display:none!important}svg{display:block;width:20px;height:20px;flex-shrink:0}
+    .support{width:100%;max-width:570px;background:var(--paper);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 18px 64px var(--shadow)}
+    .header{padding:17px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:8px;color:var(--text);text-decoration:none;font-weight:650;letter-spacing:-.3px}.brand svg{color:var(--teal)}.languages{display:flex;align-items:center;gap:3px;padding:3px;border:1px solid var(--line);border-radius:10px}.languages button{font-size:12px;border:0;padding:4px 9px;background:transparent;border-radius:7px;color:var(--muted);min-height:30px}.languages button[aria-pressed="true"]{background:var(--soft);color:var(--teal);font-weight:600}
+    main{padding:32px 32px 26px;text-align:center}.coffee{display:block;width:260px;max-width:100%;height:auto;margin:0 auto}.heading{font-size:25px;font-weight:650;line-height:1.4;letter-spacing:-.65px;margin:25px 0 8px}.intro{font-size:14px;color:var(--muted);margin:0;text-wrap:pretty}.methods{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:27px}.method{display:flex;flex-direction:column;align-items:flex-start;text-align:left;border:1px solid var(--line);border-radius:17px;padding:21px;background:var(--paper);color:var(--text);text-decoration:none;transition:transform .16s,border-color .16s,background .16s}.method:hover{transform:translateY(-2px);border-color:var(--teal);background:var(--soft)}.symbol{width:43px;height:43px;background:var(--soft);border-radius:13px;display:grid;place-items:center;color:var(--teal);margin-bottom:16px}.symbol svg{width:24px;height:24px;stroke-width:1.7}.method-name{font-size:18px;font-weight:650}.method-note{font-size:12px;color:var(--muted);margin-top:4px}.method-action{display:flex;align-items:center;gap:6px;color:var(--teal);font-size:13px;margin-top:24px;font-weight:500}.method-action svg{width:15px;height:15px}.footnote{font-size:12px;color:var(--muted);margin:24px 0 0;display:flex;align-items:center;justify-content:center;gap:7px}.footnote svg{width:16px;height:16px}
+    .qrpanel{margin-top:26px;border:1px solid var(--line);border-radius:18px;padding:19px 18px 22px}.qrhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:19px}.back{display:flex;align-items:center;gap:5px;border:0;background:none;color:var(--muted);padding:4px 0;font-size:12px}.back svg{width:15px;height:15px}.qrtitle{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600}.qrtitle svg{color:var(--teal);width:19px;height:19px}.qrbutton{display:block;width:228px;max-width:100%;padding:0;border:0;border-radius:14px;margin:auto;background:#fff;cursor:zoom-in;overflow:hidden}.qrbutton img{display:block;width:100%;height:auto}.instructions{font-size:12px;color:var(--muted);margin:16px 0 0}.qr-actions{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:11px}.qr-actions a,.zoom{border:0;background:none;padding:4px 0;font:inherit;font-size:13px;color:var(--teal);text-underline-offset:3px}.zoom{text-decoration:underline}.thanks{font-size:13px;color:var(--teal);margin:15px 0 0}.footer{border-top:1px solid var(--line);padding:15px 22px;text-align:center;font-size:12px}.footer a{color:var(--muted);text-decoration:none}.footer a:hover{text-decoration:underline}
+    dialog{border:1px solid var(--line);border-radius:20px;background:var(--paper);color:var(--text);padding:19px;width:min(550px,calc(100vw - 32px));max-height:calc(100svh - 32px);overflow:auto;box-shadow:0 24px 80px #0004}dialog::backdrop{background:#101e18b8}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.modal-head h2{font-size:16px;margin:0;font-weight:600}.close{border:1px solid var(--line);border-radius:10px;background:var(--soft);width:36px;height:36px;display:grid;place-items:center}.close svg{width:18px;height:18px}.full-qr{width:100%;height:auto;display:block;border-radius:12px}.modal-footer{text-align:center;margin:13px 0 0;font-size:13px}
+    @media(max-width:440px){body{padding:20px 12px}.support{border-radius:19px}.header{padding:15px 17px}main{padding:27px 20px 23px}.brand{font-size:14px}.languages button{padding:4px 7px}.heading{font-size:23px}.method{padding:16px}.method-note{font-size:12px}.method-name{font-size:17px}.methods{gap:11px}.method-action{margin-top:22px;font-size:12px}}
+    @media(max-width:350px){.methods{grid-template-columns:1fr}.method{display:grid;grid-template-columns:43px 1fr;column-gap:13px}.symbol{grid-row:1/4;margin:0}.method-name,.method-note,.method-action{grid-column:2}.method-action{margin-top:10px}.header{gap:8px}.brand{font-size:13px}}
+    @media(pointer:coarse){.languages button{min-height:38px}.back,.zoom,.qr-actions a{min-height:44px;display:inline-flex;align-items:center}.close{min-width:44px;min-height:44px}}
+    @media(prefers-reduced-motion:reduce){.method{transition:none}.method:hover{transform:none}}
+  </style>
+</head>
+<body>
+  <div class="support">
+    <header class="header">
+      <a class="brand" href="https://github.com/cachemiao/m3u-studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h15M4 11h6M4 17h15"/><path d="m15 8 5 3-5 3Z" fill="currentColor" stroke="none"/></svg>M3U Studio</a>
+      <nav class="languages" aria-label="Language / 语言"><button type="button" data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button type="button" data-language="en" aria-pressed="false" lang="en">EN</button></nav>
+    </header>
+    <main>
+      <img class="coffee" src="images/support-button.svg" width="260" height="64" alt="Buy me a coffee">
+      <h1 class="heading" data-i18n="heading">谢谢你，让项目继续生长。</h1>
+      <p class="intro" data-i18n="intro">如果 M3U Studio 对你有帮助，欢迎请我喝杯咖啡。</p>
+      <section id="choices" aria-label="支持方式">
+        <div id="methods" class="methods"></div>
+        <p class="footnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg><span data-i18n="footnote">支持随心，使用始终自由。</span></p>
+      </section>
+      <section id="wechat" class="qrpanel" hidden aria-labelledby="qr-title">
+        <div class="qrhead"><button id="back" type="button" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 5-7 7 7 7M5 12h14"/></svg><span data-i18n="back">其他方式</span></button><span id="qr-title" class="qrtitle" data-i18n="wechat">微信赞赏</span></div>
+        <button id="qr-open" class="qrbutton" type="button" aria-haspopup="dialog" aria-label="放大微信赞赏码"><img id="qr" src="images/wechat-appreciation.jpg" width="547" height="548" alt="微信赞赏码"></button>
+        <p class="instructions" data-i18n="instructions">使用微信扫一扫，或保存图片后在微信中识别</p>
+        <div class="qr-actions"><a href="images/wechat-appreciation.jpg" download="m3u-studio-wechat-appreciation.jpg" data-i18n="save">保存赞赏码</a><button id="zoom" type="button" class="zoom" data-i18n="zoom">放大查看</button></div>
+        <p class="thanks" data-i18n="thanks">感谢支持，请量力而行。</p>
+      </section>
+    </main>
+    <footer class="footer"><a href="https://github.com/cachemiao/m3u-studio" data-i18n="repository">← 返回 M3U Studio</a></footer>
+  </div>
+  <dialog id="qr-dialog" aria-labelledby="dialog-title"><div class="modal-head"><h2 id="dialog-title" data-i18n="wechat">微信赞赏</h2><button id="close" class="close" type="button" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div><img id="full-qr" class="full-qr" src="images/wechat-appreciation.jpg" width="547" height="548" alt="微信赞赏码"><p class="modal-footer"><a href="images/wechat-appreciation.jpg" download="m3u-studio-wechat-appreciation.jpg" data-i18n="save">保存赞赏码</a></p></dialog>
+  <script>
+  (()=>{
+    'use strict';
+    const messages={
+      zh:{title:'支持 M3U Studio',heading:'谢谢你，让项目继续生长。',intro:'如果 M3U Studio 对你有帮助，欢迎请我喝杯咖啡。',footnote:'支持随心，使用始终自由。',wechat:'微信赞赏',back:'其他方式',instructions:'使用微信扫一扫，或保存图片后在微信中识别',save:'保存赞赏码',zoom:'放大查看',thanks:'感谢支持，请量力而行。',repository:'← 返回 M3U Studio',methods:'支持方式',close:'关闭',qrAlt:'微信赞赏码',qrOpen:'放大微信赞赏码',kofi:'Ko-fi',kofiNote:'通过 Ko-fi 支持',kofiAction:'前往 Ko-fi',wechatNote:'使用微信扫码支持',wechatAction:'查看赞赏码'},
+      en:{title:'Support M3U Studio',heading:'Thanks for helping the project grow.',intro:'If M3U Studio helps you, consider buying me a coffee.',footnote:'Support is optional. The project stays free.',wechat:'WeChat appreciation',back:'Other ways',instructions:'Scan with WeChat, or save the image and open it in WeChat.',save:'Save QR code',zoom:'View larger',thanks:'Thank you. Please give only what feels comfortable.',repository:'← Back to M3U Studio',methods:'Ways to support',close:'Close',qrAlt:'WeChat appreciation code',qrOpen:'Enlarge WeChat appreciation code',kofi:'Ko-fi',kofiNote:'Support through Ko-fi',kofiAction:'Visit Ko-fi',wechatNote:'Scan with WeChat',wechatAction:'View QR code'}
+    };
+    // Add future support methods here; external links and QR panels share this entry point.
+    const methods=[{id:'kofi',type:'link',url:'https://ko-fi.com/cachemiao',icon:'heart'},{id:'wechat',type:'qr',panel:'wechat',icon:'scan'}];
+    const icons={heart:'<path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/>',scan:'<path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4M4 12h16"/>',external:'<path d="M7 17 17 7M7 7h10v10"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>'};
+    const icon=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[name]+'</svg>';
+    const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
+    const requested=params.get('lang');
+    let language=requested==='en'||requested==='zh'?requested:(navigator.language||'zh').toLowerCase().startsWith('zh')?'zh':'en';
+    let activeMethod=null;
+    function renderMethods(){
+      const text=messages[language];$('methods').replaceChildren();
+      for(const method of methods){
+        const control=document.createElement(method.type==='link'?'a':'button');control.className='method';control.id='method-'+method.id;
+        if(method.type==='link'){control.href=method.url;control.target='_blank';control.rel='noopener noreferrer'}
+        else{control.type='button';control.setAttribute('aria-controls',method.panel);control.onclick=()=>showMethod(method.id)}
+        control.innerHTML='<span class="symbol">'+icon(method.icon)+'</span><span class="method-name"></span><span class="method-note"></span><span class="method-action"><span></span>'+icon(method.type==='link'?'external':'arrow')+'</span>';
+        control.querySelector('.method-name').textContent=text[method.id];control.querySelector('.method-note').textContent=text[method.id+'Note'];control.querySelector('.method-action span').textContent=text[method.id+'Action'];$('methods').append(control);
+      }
+    }
+    function setLanguage(next,updateUrl=true){
+      language=next;const text=messages[language];document.documentElement.lang=language==='zh'?'zh-CN':'en';document.title=text.title;
+      document.querySelectorAll('[data-i18n]').forEach(node=>node.textContent=text[node.dataset.i18n]);
+      document.querySelectorAll('[data-language]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===language)));
+      $('choices').setAttribute('aria-label',text.methods);$('qr-open').setAttribute('aria-label',text.qrOpen);$('qr').alt=$('full-qr').alt=text.qrAlt;$('close').setAttribute('aria-label',text.close);renderMethods();
+      if(updateUrl){const url=new URL(location.href);url.searchParams.set('lang',language);history.replaceState(null,'',url)}
+    }
+    function showMethod(id){activeMethod=id;$('choices').hidden=Boolean(id);for(const method of methods.filter(item=>item.type==='qr'))$(method.panel).hidden=method.id!==id;if(id)$('back').focus();else $('method-wechat').focus()}
+    function showQr(){if(!$('qr-dialog').open)$('qr-dialog').showModal()}
+    $('back').onclick=()=>showMethod(null);$('qr-open').onclick=$('zoom').onclick=showQr;$('close').onclick=()=>$('qr-dialog').close();
+    $('qr-dialog').addEventListener('click',event=>{if(event.target!==$('qr-dialog'))return;const box=$('qr-dialog').getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)$('qr-dialog').close()});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('qr-dialog').open&&activeMethod)showMethod(null)});
+    document.querySelectorAll('[data-language]').forEach(button=>button.onclick=()=>setLanguage(button.dataset.language));
+    setLanguage(language,false);
+  })();
+  </script>
+</body>
+</html>
