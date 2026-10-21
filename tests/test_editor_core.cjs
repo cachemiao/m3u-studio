@@ -153,3 +153,25 @@ test('invalid new target groups cannot change the draft',()=>{
  const stale=core.batchEdit(state,'one',['missing'],{transfer:{mode:'copy',listId:'two',group:'新分组'}});
  assert.deepEqual(stale.draft,core.content(state));
 });
+
+test('import as new playlist leaves existing playlists unchanged and supports undo',()=>{
+ const state=sample(),before=JSON.stringify(state),history=core.createHistory();history.reset(state);
+ const parsed={groups:['新闻'],channels:[{id:'a',name:'新闻台',group:'新闻',url:'http://example.com/live'}],epg:'https://example.com/epg.xml'};
+ const r=core.importChannels(state,parsed,{create:true,id:'new',name:' 新列表 '});
+ assert.equal(JSON.stringify(state),before);assert.deepEqual(r.draft.lists.slice(0,2),state.lists);
+ assert.equal(r.listId,'new');assert.equal(r.draft.lists[2].name,'新列表');assert.equal(r.draft.lists[2].epg,parsed.epg);
+ history.record(r.draft);assert.deepEqual(history.undo(r.draft),core.content(state));
+});
+test('all-invalid import creates no playlist and never clears an existing playlist',()=>{
+ const state=sample(),parsed={groups:[],channels:[]};
+ for(const options of [{create:true,id:'new',name:'new'},{listId:'one',replace:true}])assert.deepEqual(core.importChannels(state,parsed,options).draft,core.content(state));
+});
+test('append import targets the captured playlist and resolves duplicate IDs',()=>{
+ const state=sample(),parsed={groups:['央视'],channels:[{id:'a',name:'新频道',group:'央视',url:'http://example.com/live'}]};
+ const r=core.importChannels(state,parsed,{listId:'two'});
+ assert.deepEqual(r.draft.lists[0],state.lists[0]);assert.equal(r.draft.lists[1].channels.length,2);
+ assert.notEqual(r.draft.lists[1].channels[0].id,r.draft.lists[1].channels[1].id);
+ const appended=core.importChannels(state,parsed,{listId:'two',replace:true});assert.equal(appended.draft.lists[1].channels.length,2);assert.deepEqual(appended.draft.lists[1].channels[0],state.lists[1].channels[0]);
+ assert.throws(()=>core.importChannels(state,parsed,{listId:'missing'}));
+ assert.throws(()=>core.importChannels(state,parsed,{create:true,id:'new',name:' '}));
+});

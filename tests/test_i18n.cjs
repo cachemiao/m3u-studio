@@ -29,7 +29,7 @@ test('every translated message preserves all placeholders and page keys exist',(
  }
  for(const file of ['index.html','app.js','theme.js']){
   const text=fs.readFileSync(path.join(root,file),'utf8');
-  for(const match of text.matchAll(/(?:data-i18n(?:-[\w-]+)?="|\bt\(")(m\d+)/g))assert.ok(messages[match[1]],file+':'+match[1]);
+  for(const match of text.matchAll(/(?:data-i18n(?:-[\w-]+)?="|\bt\(['"])(m\d+)/g))assert.ok(messages[match[1]],file+':'+match[1]);
  }
 });
 test('switch updates live text, attributes and static labels, preserving form and user data',()=>{
