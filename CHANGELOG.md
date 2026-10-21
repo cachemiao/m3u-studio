@@ -1,3 +1,31 @@
+# v0.5.4 · 频道导入流程与保护 / Channel import workflow and safeguards · 2026-10-21
+
+## 中文更新说明
+
+- 导入入口统一为“导入频道”，弹窗明确显示目标列表。
+- 左侧“频道列表”的 ＋ 改为菜单，提供“新建空列表”和“导入并新建列表”。
+- 移除替换导入；导入只追加频道，保留原有频道和分组。
+- 仅在解析出有效频道且通过校验后创建新列表；全部无效或校验失败时保持草稿不变。
+- 自动处理与已有频道、同批导入频道之间的 ID 冲突。
+- 解析、校验期间表单或列表发生变化时阻止应用旧结果；关闭或重新打开弹窗后，旧请求不会错误应用或干扰新请求。
+- 完善中英文提示、导入说明及回归测试；同步 README 徽标与自定义支持按钮。
+
+## English release notes
+
+- Renamed the import action to **Import channels**. The dialog clearly identifies the destination playlist.
+- The **＋** beside Playlists now offers **Create empty playlist** and **Import as new playlist**.
+- Removed replace-import. Imports only append channels and preserve existing channels and groups.
+- A new playlist is created only after valid channels pass validation. All-invalid imports and validation failures leave the draft unchanged.
+- Resolve channel ID collisions against existing channels and within the same import.
+- Block stale results if the form or playlists change during parsing or validation. Closing or reopening the dialog prevents older requests from applying results or interfering with a newer request.
+- Updated Chinese and English UI text, import documentation and regression coverage; aligned README badges and the custom support button.
+
+## 验证 / Validation
+
+- 43 项 Python 后端测试通过。 / 43 Python backend tests passed.
+- 49 项 JavaScript 测试通过，包含导入目标、追加、新建列表、重复 ID、异步变化与取消保护。 / 49 JavaScript tests passed, including import targeting, append-only behavior, playlist creation, duplicate IDs, stale changes and cancellation.
+
+
 # v0.5.3 · 跨列表频道管理与批量编辑优化 · 2026-10-18
 
 - 批量编辑支持将所选频道移动或复制到其他列表，保留频道配置并处理 ID 冲突。

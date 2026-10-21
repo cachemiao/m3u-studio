@@ -1,3 +1,13 @@
+# v0.5.4 验证 / Validation · 2026-10-21
+
+- Python: 43 tests passed; JavaScript: 49 tests passed.
+- 导入覆盖：明确目标列表、只追加、有效频道通过校验后新建、全部无效不建空列表、ID 冲突处理、解析/校验期间表单与内容变化、关闭/重开及校验失败。
+- Import coverage: captured destination, append-only behavior, validated playlist creation, all-invalid no-op, ID collision handling, stale form/content during parsing and validation, cancellation/reopening and validation failure.
+- 中英文翻译占位符及页面引用检查通过，包含单引号与双引号的翻译键。
+- Translation placeholders and page references passed, including single- and double-quoted keys.
+- 本地验证未操作生产频道或用户数据。多架构镜像构建由 Release 触发的 GitHub Actions 执行，结果以 Actions 为准。
+- Local checks did not change production channels or user data. The release-triggered GitHub Actions workflow builds the multi-architecture images; refer to Actions for its outcome.
+
 # v0.4.0 国际化验证 · 2026-10-11
 
 - 32 项 Python 后端测试、17 项 Node 测试通过；新增语言偏好、翻译占位符、动态文字/属性、跨页语言同步与错误提示测试。
