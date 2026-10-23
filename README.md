@@ -26,8 +26,8 @@
 
 <table>
   <tr>
-    <td width="50%" align="center"><a href="docs/images/channel-editor.png"><img src="docs/images/channel-editor.png" width="100%" alt="M3U Studio 深色模式频道管理"></a><br><small>深色模式</small></td>
-    <td width="50%" align="center"><a href="docs/images/channel-editor-light.png"><img src="docs/images/channel-editor-light.png" width="100%" alt="M3U Studio 浅色模式频道管理"></a><br><small>浅色模式</small></td>
+    <td width="50%" align="center"><a href="docs/images/channel-editor.png"><img src="docs/images/channel-editor.png" width="100%" alt="M3U Studio 深色模式频道管理"></a><br><sub><sup>深色模式</sup></sub></td>
+    <td width="50%" align="center"><a href="docs/images/channel-editor-light.png"><img src="docs/images/channel-editor-light.png" width="100%" alt="M3U Studio 浅色模式频道管理"></a><br><sub><sup>浅色模式</sup></sub></td>
   </tr>
 </table>
 
