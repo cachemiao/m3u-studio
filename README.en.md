@@ -26,32 +26,26 @@
 
 ## Screenshots
 
-![M3U Studio channel management in dark mode](docs/images/channel-editor-en.png)
+![Dragging selected channels together and undoing the move](docs/images/multi-drag-en.gif)
+
+The interface and features below apply to **v0.6.0 and later**. Channels and logos are user-provided.
 
 <details>
-<summary>View light mode</summary>
+<summary>View dark / light screenshots</summary>
+
+![M3U Studio channel management in dark mode](docs/images/channel-editor-en.png)
 
 ![M3U Studio channel management in light mode](docs/images/channel-editor-en-light.png)
 
 </details>
 
-Screenshots preview the upcoming interface; the current public version may differ. Channels and logos are user-provided.
-
-<details>
-<summary>Watch multi-select dragging (upcoming interface)</summary>
-
-![Dragging selected channels together and undoing the move](docs/images/multi-drag-en.gif)
-
-</details>
-
 ## Features
 
-- **Playlists and subscriptions:** separate and combined subscriptions, custom short URLs, and M3U / TXT imports.
-- **Easy organization:** search, drag selected channels together, automatic edge scrolling, and playlist and group ordering.
-- **Bulk editing and checks:** edit fields, replace URLs, move or copy between playlists, and check source response times.
-- **Logos and program guides:** a searchable logo library, automatic matching, EPG, catch-up and FCC parameters.
-- **Recoverable changes:** undo/redo, browser drafts, the last 30 pre-publish snapshots, and JSON backup/restore.
-- **Appearance and local deployment:** six accent colors, light/dark modes, Chinese/English and touch controls; local data storage with no frontend CDN dependency.
+- **Drafts and publish history:** browser draft autosave, undo/redo, review before publishing, and restoration of the last 30 pre-publish snapshots.
+- **Automatic logo matching:** a searchable library, batch uploads and matching by name or alias; EPG and catch-up parameters.
+- **Source checks and bulk edits:** check response times, replace URLs, edit fields and move or copy channels between playlists.
+- **Playlists and subscriptions:** import M3U / TXT files, text or URLs; publish separate or combined subscriptions with custom short URLs.
+- **Multi-select dragging:** move selected channels together, scroll automatically at the edges, and reorder playlists and groups.
 
 ## Quick start
 
@@ -67,7 +61,43 @@ docker compose up -d
 
 Open **`http://SERVER_IP:8324`** and create your admin account; passwords require at least 8 characters. Data stays in the `m3u-studio-data` named volume.
 
-**NAS / download fallback:** open [docker-compose.image.yml](docker-compose.image.yml) on GitHub and paste it into your fnOS, Synology or other NAS Compose/project editor. Alternatively, save it as `docker-compose.yml` in an empty directory and run `docker compose up -d`.
+**NAS:** paste the configuration below into your fnOS, Synology or other NAS Compose/project editor. You can also save it as `docker-compose.yml` in an empty directory and run `docker compose up -d`, without downloading a configuration file.
+
+<details>
+<summary>Copy the Compose configuration</summary>
+
+```yaml
+# Standalone image deployment: no source checkout or .env required.
+# Save as docker-compose.yml, then run: docker compose up -d
+services:
+  m3u-studio:
+    image: cachemiao/m3u-studio:latest
+    container_name: m3u-studio
+    ports:
+      - "8324:8324"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - m3u-studio-data:/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  m3u-studio-data:
+    name: m3u-studio-data
+```
+
+Configuration file: [docker-compose.image.yml](docker-compose.image.yml).
+
+</details>
 
 [Other deployment methods, port changes, upgrades and backups →](docs/Deployment.md)
 
@@ -97,17 +127,9 @@ Report bugs through [Issues](https://github.com/cachemiao/m3u-studio/issues) or 
 
 Released under [GNU GPL v2.0](LICENSE) (`GPL-2.0-only`). Copyright © 2026 cachemiao.
 
-The project includes no live stream sources or TV channel logos. Use resources you have permission to use. It manages channels and distributes subscriptions; playback, UDP-to-HTTP conversion, catch-up and FCC depend on external services and players.
+The project includes no live stream sources or TV channel logos. Use resources you have permission to use. It manages channels and distributes subscriptions; playback, UDP-to-HTTP conversion and catch-up depend on external services and players.
 
-## Star History
-
-<a href="https://star-history.com/#cachemiao/m3u-studio&amp;Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date&amp;theme=dark">
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date">
-    <img alt="Star History · cachemiao/m3u-studio" src="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date" width="100%">
-  </picture>
-</a>
+**FCC (fast channel changing)** targets multicast IPTV setups and requires a supporting service such as [rtp2httpd](https://github.com/stackia/rtp2httpd) and a compatible player.
 
 <p align="center">
   <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=en"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>

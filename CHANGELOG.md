@@ -1,3 +1,35 @@
+# v0.6.0 · 频道整理与粉色主题 / Channel organization and pink themes · 2026-10-23
+
+## 中文更新说明
+
+- 多选频道可合并拖动，按原显示顺序一次插入新位置；支持跨分组、边缘自动滚动及一次撤销／重做。
+- 新增粉、紫、蓝、黄、绿、青六套主题色，深浅模式使用独立的按钮、文字、选中态和 Logo 颜色变量；默认粉色，保留已有浏览器偏好。
+- 调整工作区工具栏、紧凑搜索、批量操作、账号菜单、语言与主题菜单，改善窄屏和触屏操作。
+- 浏览器 prompt / confirm / alert 改为应用内弹窗；新建分组支持输入校验、自动聚焦、Enter 确认和 Esc 取消。
+- 添加／编辑等表单采用独立滚动区域与底部操作栏，修复底部漏字、下拉箭头与图标对齐问题。
+- 导入支持文件、粘贴内容和 HTTP/HTTPS 文件直链；远程导入保留既有解析、校验、追加和取消保护，并限制文件大小及请求超时。
+- 台标容器统一深色底，完善台标预览、圆角选择按钮、订阅复制反馈及回放／FCC 悬停提示。
+- README 与本版本源码一起发布：直接展示拖动演示，提供可复制的 Compose 全文、FCC 说明、本地开发和贡献指南。
+
+## English release notes
+
+- Drag selected channels together in display order, including cross-group moves, automatic edge scrolling and single-step undo/redo.
+- Added six accent palettes with separate button, text, selection and logo variables for light/dark modes. Pink is the default; existing browser preferences are retained.
+- Refined the workspace toolbar, compact search, bulk actions, account menu, language/theme menus and narrow-screen interactions.
+- Replaced browser prompts, confirmations and alerts with application dialogs; group creation includes inline validation, autofocus, Enter and Escape support.
+- Form dialogs use independent scrolling and fixed action bars, with fixes for footer clipping, chevrons and icon alignment.
+- Import from files, pasted text or HTTP/HTTPS file URLs. Remote import reuses validation, append-only behavior and stale-result safeguards, with size and timeout limits.
+- Unified logo backdrops and improved previews, rounded source tabs, subscription copy feedback and replay/FCC tooltips.
+- Published documentation with its matching source: visible drag demos, embedded Compose configuration, FCC context and development/contribution guides.
+
+## 验证 / Validation
+
+- 67 项 Python 后端测试通过。 / 67 Python backend tests passed.
+- 62 项 JavaScript 测试通过，包含新增的 8 项多选拖动回归测试。 / 62 JavaScript tests passed, including 8 new batch-drag regression tests.
+- Chromium 浏览器检查覆盖实际鼠标拖动、上下边缘滚动、跨分组、撤销／重做、六套配色的深浅模式、弹窗滚动及中英文响应布局。 / Chromium checks covered native mouse dragging, edge scrolling, group transfer, undo/redo, six light/dark palettes, dialog scrolling and bilingual responsive layouts.
+- Docker Hub / GHCR 的 AMD64、ARM64 构建与 GitHub Release 由标签发布工作流执行，最终结果以 Actions 为准。 / The tag workflow builds AMD64/ARM64 images and creates the GitHub Release; consult Actions for the final outcome.
+
+
 # v0.5.4 · 频道导入流程与保护 / Channel import workflow and safeguards · 2026-10-21
 
 ## 中文更新说明

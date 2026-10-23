@@ -1,5 +1,58 @@
 /* Shared UI messages; keep placeholders identical in both languages. */
 window.M3UTranslations = {
+"uiDraggingChannels":{"zh":"移动 {p0} 个频道","en":"Moving {p0} channels"},
+"uiMoreDraggedChannels":{"zh":"另有 {p0} 个频道","en":"{p0} more channels"},
+"uiGroupColumn":{"zh": "\u5206\u7ec4", "en": "Group"},
+
+"uiLogoColumn":{"zh": "\u53f0\u6807", "en": "Logo"},
+"uiInlineGroupCount":{"zh": "\uff08{p0}\u4e2a\u9891\u9053\uff09", "en": " ({p0} channels)"},
+
+"uiImportIntoList":{"zh": "\u5bfc\u5165\u5230\u6b64\u5217\u8868", "en": "Import into this list"},
+
+"uiReplayColumn":{"zh": "\u56de\u653e", "en": "Replay"},
+"uiClose":{"zh": "\u5173\u95ed", "en": "Close"},
+"uiLogoInLibrary":{"zh": "\u4f4d\u4e8e\u53f0\u6807\u5e93", "en": "Stored in logo library"},
+"uiLogoFromLink":{"zh": "\u53f0\u6807\u4f4d\u7f6e", "en": "Logo location"},
+"uiLogoLocal":{"zh": "\u4f7f\u7528\u672c\u5730\u56fe\u7247", "en": "Using local image"},
+
+"uiCurrentLogo":{"zh": "\u5f53\u524d\u53f0\u6807", "en": "Current logo"},
+"uiLogoPreview":{"zh": "\u53f0\u6807\u9884\u89c8", "en": "Logo preview"},
+"uiLogoPreviewHint":{"zh": "\u60ac\u505c\u6216\u805a\u7126\u5e93\u4e2d\u53f0\u6807\u67e5\u770b\u7ec6\u8282\uff0c\u70b9\u51fb\u540e\u5e94\u7528\u3002", "en": "Hover or focus a logo to inspect it. Click to apply."},
+"uiLogoPreviewEmpty":{"zh": "\u6682\u65e0\u53f0\u6807", "en": "No logo yet"},
+"uiLogoPreviewError":{"zh": "\u56fe\u7247\u65e0\u6cd5\u663e\u793a", "en": "Image unavailable"},
+
+"uiImportMethods":{"zh": "\u5bfc\u5165\u65b9\u5f0f", "en": "Import method"},
+"uiUrl":{"zh": "\u94fe\u63a5", "en": "URL"},
+"uiFile":{"zh": "\u6587\u4ef6", "en": "File"},
+"uiPaste":{"zh": "\u7c98\u8d34", "en": "Paste"},
+"uiDrop":{"zh": "\u62d6\u62fd M3U / TXT \u6587\u4ef6\u5230\u8fd9\u91cc", "en": "Drop an M3U / TXT file here"},
+"uiBrowse":{"zh": "\u6216\u70b9\u51fb\u9009\u62e9\u6587\u4ef6", "en": "or click to browse"},
+"uiChannel":{"zh": "\u9891\u9053", "en": "Channel"},
+"uiStream":{"zh": "\u64ad\u653e\u5730\u5740", "en": "Stream URL"},
+"uiStatus":{"zh": "\u68c0\u6d4b\u72b6\u6001", "en": "Status"},
+"uiCopied":{"zh": "\u5df2\u590d\u5236 \u2713", "en": "Copied \u2713"},
+
+  "studioDeleteSelected":{"zh":"批量删除","en":"Delete selected"},
+  "studioDeleteConfirm":{"zh":"删除选中的 {p0} 个频道？可通过撤销恢复。","en":"Delete {p0} selected channels? You can undo this change."},
+  "studioDeleted":{"zh":"已删除 {p0} 个频道，可撤销恢复","en":"Deleted {p0} channels. You can undo this change."},
+  "studioImportUrl": {"zh": "列表链接（可选）", "en": "Playlist URL (optional)"},
+  "studioImportUrlHint": {"zh": "填写链接时优先读取链接；留空则使用下方文件或粘贴内容。仅读取本次内容，不会定时同步。", "en": "A URL takes priority. Leave blank to use a file or pasted text. Imports once; does not sync automatically."},
+  "studioUrlOnly": {"zh": "列表链接仅支持 HTTP/HTTPS", "en": "Playlist URLs must use HTTP or HTTPS"},
+  "studioUrlInvalid": {"zh": "请输入有效的列表链接", "en": "Enter a valid playlist URL"},
+  "studioUrlHtml": {"zh": "链接返回了网页，请使用 M3U/TXT 文件直链", "en": "The URL returned a web page. Use a direct M3U/TXT file URL."},
+  "studioUrlLarge": {"zh": "列表文件超过 8MB", "en": "The playlist exceeds 8MB"},
+  "studioUrlUnavailable": {"zh": "无法读取列表链接，请检查地址或稍后重试", "en": "Unable to read the playlist URL. Check the address or try again later."},
+  "studioUrlEncoding": {"zh": "列表文件需使用 UTF-8 编码", "en": "The playlist must use UTF-8 encoding"},
+
+  "studioSourceStatus": {"zh":"检测状态", "en":"Source status"},
+  "studioFcc": {"zh":"FCC 快速换台", "en":"FCC fast channel switching"},
+  "studioClearSearch": {"zh":"清除搜索", "en":"Clear search"},
+  "studioWorkspace": {"zh":"频道工作区", "en":"Channel workspace"},
+  "studioChannel": {"zh":"频道 / 播放地址", "en":"Channel / Stream address"},
+  "studioEpg": {"zh":"节目表 ID", "en":"EPG ID"},
+  "studioActions": {"zh":"操作", "en":"Actions"},
+  "studioAuth": {"zh":"你的频道、台标与配置保存在此设备。创建账号后，即可导入第一套频道列表。", "en":"Your channels, logos and configuration stay on this device. Create an account to import your first playlist."},
+  "studioGroupCount": {"zh":"{p0} 个频道", "en":"{p0} channels"},
   "m1": {
     "zh": "请求失败",
     "en": "Request failed"
@@ -113,7 +166,7 @@ window.M3UTranslations = {
     "en": "Add channel"
   },
   "m29": {
-    "zh": "新列表名称，例如：联通",
+    "zh": "新列表名称，例如：IPTV",
     "en": "New playlist name, e.g. Home TV"
   },
   "m30": {
@@ -264,10 +317,7 @@ window.M3UTranslations = {
     "zh": "{p0} · 仅修改已选的 {p1} 个频道（包含筛选后隐藏的已选频道）",
     "en": "{p0} · Edit only the {p1} selected channels (including hidden selections)"
   },
-  "m68": {
-    "zh": "请选择要替换的地址类型",
-    "en": "Select the URL types to replace"
-  },
+  "m68":{"zh": "\u8bf7\u9009\u62e9\u4e00\u79cd\u8981\u66ff\u6362\u7684\u5730\u5740\u7c7b\u578b", "en": "Select one URL type to replace"},
   "m69": {
     "zh": "请选择至少一项修改",
     "en": "Select at least one change"
@@ -532,10 +582,7 @@ window.M3UTranslations = {
     "zh": "上传后自动生成本地地址，或输入 https://…",
     "en": "Upload to generate a local URL, or enter https://…"
   },
-  "m135": {
-    "zh": "FCC 服务器 IP:端口，例如 10.255.14.152:15970",
-    "en": "FCC server IP:port, e.g. 10.255.14.152:15970"
-  },
+  "m135":{"zh": "\u4f8b\u5982 203.0.113.10:9000", "en": "e.g. 203.0.113.10:9000"},
   "m136": {
     "zh": "rtsp://… 或带时间占位符的 URL",
     "en": "rtsp://… or a URL with time placeholders"
@@ -576,14 +623,8 @@ window.M3UTranslations = {
     "zh": "批量 FCC 地址",
     "en": "Bulk FCC URL"
   },
-  "m146": {
-    "zh": "例如 192.168.6.3:3224",
-    "en": "For example, 192.168.6.3:3224"
-  },
-  "m147": {
-    "zh": "新的服务器 IP:端口",
-    "en": "New server IP:port"
-  },
+  "m146":{"zh": "\u4f8b\u5982 192.0.2.10:8080", "en": "e.g. 192.0.2.10:8080"},
+  "m147":{"zh": "\u4f8b\u5982 198.51.100.20:8080", "en": "e.g. 198.51.100.20:8080"},
   "m148": {
     "zh": "台标方式",
     "en": "Logo source"
@@ -808,10 +849,7 @@ window.M3UTranslations = {
     "zh": "直播播放链接",
     "en": "Live stream URL"
   },
-  "m204": {
-    "zh": "FCC（快速换台需使用rtp2httpd）",
-    "en": "FCC (fast channel switching requires rtp2httpd)"
-  },
+  "m204":{"zh": "FCC\uff08\u5feb\u901f\u6362\u53f0\u9700\u914d\u5408\u76f8\u5e94\u7684\u63d2\u4ef6\u4f7f\u7528\uff09", "en": "FCC (fast switching requires a compatible plugin)"},
   "m205": {
     "zh": "也可粘贴带 fcc 参数的链接。保存后自动加入直播地址。",
     "en": "You can also paste a URL with an fcc parameter. It is added to the stream URL on publishing."
@@ -916,14 +954,8 @@ window.M3UTranslations = {
     "zh": "回放地址",
     "en": "Catch-up URLs"
   },
-  "m232": {
-    "zh": "预览修改",
-    "en": "Preview changes"
-  },
-  "m233": {
-    "zh": "应用修改",
-    "en": "Apply changes"
-  },
+  "m232":{"zh": "\u9884\u89c8", "en": "Preview"},
+  "m233":{"zh": "\u5e94\u7528", "en": "Apply"},
   "m234": {
     "zh": "自动匹配台标",
     "en": "Auto-match logos"
@@ -1077,8 +1109,8 @@ window.M3UTranslations = {
     "en": "Invalid FCC port"
   },
   "m272": {
-    "zh": "FCC 地址格式应为 IP:端口，例如 10.255.14.152:15970",
-    "en": "FCC must be IP:port, e.g. 10.255.14.152:15970"
+    "zh": "FCC 地址格式应为 IP:端口，例如 203.0.113.10:9000",
+    "en": "FCC must be IP:port, e.g. 203.0.113.10:9000"
   },
   "m273": {
     "zh": "配置必须包含 lists 数组，最多 100 套列表",
@@ -1285,10 +1317,7 @@ window.M3UTranslations = {
     "zh": "撤销",
     "en": "Undo"
   },
-  "m325": {
-    "zh": "留空时订阅使用频道名称作为 EPG ID，由播放器与节目表匹配。",
-    "en": "When blank, subscriptions use the channel name as the EPG ID for matching by the player."
-  },
+  "m325":{"zh": "\u7559\u7a7a\u7528\u9891\u9053\u540d\u5339\u914d\u8282\u76ee\u8868", "en": "Blank uses channel name."},
   "m326": {
     "zh": "批量检测",
     "en": "Batch check"
@@ -1403,10 +1432,37 @@ window.M3UTranslations = {
   "m374": {"zh": "添加频道列表", "en": "Add playlist"},
   "m375": {"zh": "新建空列表", "en": "Create empty playlist"},
   "m376": {"zh": "导入并新建列表", "en": "Import as new playlist"},
-  "m377": {"zh": "支持 M3U / TXT，可上传文件或粘贴内容。", "en": "Supports M3U / TXT. Upload a file or paste its contents."},
+  "m377": {"zh": "支持 M3U / TXT，可填写链接、上传文件或粘贴内容。", "en": "Supports M3U / TXT. Enter a URL, upload a file or paste its contents."},
   "m378": {"zh": "新列表名称", "en": "New playlist name"},
   "m379": {"zh": "导入频道到「{p0}」", "en": "Import channels into “{p0}”"},
   "m380": {"zh": "解析出有效频道后才创建新列表，不影响现有列表。", "en": "A new playlist is created only when valid channels are found. Existing playlists are unchanged."},
   "m382": {"zh": "追加到当前列表，保留原有频道；不受勾选或搜索筛选影响。", "en": "Appends to this playlist and keeps existing channels, regardless of selection or search filters."},
-  "m383": {"zh": "导入期间表单或列表发生变化，请重新导入。", "en": "The form or playlists changed during import. Please try again."}
+  "m383": {"zh": "导入期间表单或列表发生变化，请重新导入。", "en": "The form or playlists changed during import. Please try again."},
+  "appearanceTitle": {"zh": "外观设置", "en": "Appearance"},
+  "appearanceDesc": {"zh": "调整显示模式和主题色", "en": "Choose your display mode and accent color"},
+  "appearanceOpen": {"zh": "调整外观", "en": "Customize"},
+  "appearanceMode": {"zh": "显示模式", "en": "Display mode"},
+  "appearanceAccent": {"zh": "主题色", "en": "Accent color"},
+  "appearanceHint": {"zh": "即时生效，仅保存在当前浏览器，无需保存并发布。", "en": "Applies immediately in this browser. No publishing needed."},
+  "appearanceReset": {"zh": "恢复默认粉色", "en": "Reset to Pink"},
+  "accentPurple": {"zh": "紫色", "en": "Purple"},
+  "accentPink": {"zh": "粉色", "en": "Pink"},
+  "accentBlue": {"zh": "蓝色", "en": "Blue"},
+  "accentYellow": {"zh": "黄色", "en": "Yellow"},
+  "accentGreen": {"zh": "绿色", "en": "Green"},
+  "accentCyan": {"zh": "青色", "en": "Cyan"},
+  "uiSearchCompact": {"zh":"搜索","en":"Search"},
+  "uiImportCompact":{"zh":"导入","en":"Import"},
+  "uiAddCompact":{"zh":"添加","en":"Add"},
+  "uiSearchHint":{"zh":"名称 / 地址 / EPG","en":"Name / URL / EPG"},
+  "uiAccountMenu":{"zh": "账号菜单", "en": "Account menu"},
+  "uiCurrentAccount":{"zh": "当前账号", "en": "Signed in as"},
+  "uiNewGroup":{"zh": "新建分组", "en": "New group"},
+  "uiNewList":{"zh": "新建列表", "en": "New playlist"},
+  "uiGroupName":{"zh": "分组名称", "en": "Group name"},
+  "uiNameRequired":{"zh": "名称不能为空。", "en": "Enter a name."},
+  "uiCreate":{"zh": "创建", "en": "Create"},
+  "uiConfirmDelete":{"zh": "确认删除", "en": "Confirm deletion"},
+  "uiConfirmAction":{"zh": "确认操作", "en": "Confirm action"},
+  "uiConfirm":{"zh": "确认", "en": "Confirm"}
 };

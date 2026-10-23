@@ -1,6 +1,9 @@
 name: Publish Docker image
 
 on:
+  push:
+    tags:
+      - 'v*.*.*'
   release:
     types: [published]
   workflow_dispatch:
@@ -24,7 +27,10 @@ concurrency:
 
 jobs:
   publish:
-    if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == false
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.release.prerelease == false
+    permissions:
+      contents: write
+      packages: write
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -34,8 +40,8 @@ jobs:
       - name: Validate version and credentials
         id: version
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
-          UPDATE_LATEST: ${{ github.event_name == 'release' || inputs.update_latest }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
+          UPDATE_LATEST: ${{ github.event_name == 'release' || github.event_name == 'push' || inputs.update_latest }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         shell: bash
         run: |
@@ -132,3 +138,32 @@ jobs:
             echo '```'
             echo 'Platforms: linux/amd64, linux/arm64'
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish GitHub Release after successful image publication
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          notes="$RUNNER_TEMP/release-notes.md"
+          python - <<'PYTHON'
+          import os, re
+          from pathlib import Path
+          text = Path('CHANGELOG.md').read_text(encoding='utf-8')
+          tag = os.environ['RELEASE_TAG']
+          match = re.search(r'^# ' + re.escape(tag) + r'(?:[ \t]|$).*?(?=^# v|\Z)', text, re.M | re.S)
+          if not match:
+              raise SystemExit('Missing CHANGELOG entry for ' + tag)
+          Path(os.environ['RUNNER_TEMP'], 'release-notes.md').write_text(match.group(0).strip() + '\n', encoding='utf-8')
+          PYTHON
+          archive="$RUNNER_TEMP/M3U-Studio-$RELEASE_TAG.zip"
+          git archive --format=zip --prefix=m3u-studio/ --output="$archive" HEAD
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "$archive" --clobber
+          else
+            gh release create "$RELEASE_TAG" "$archive" --verify-tag --latest \
+              --title "M3U Studio $RELEASE_TAG" --notes-file "$notes"
+          fi

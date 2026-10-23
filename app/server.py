@@ -2,6 +2,9 @@ import io, json, os, re, secrets, sqlite3, warnings, unicodedata
 from collections import OrderedDict
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit, unquote, quote, parse_qs
+from urllib.request import Request, build_opener, HTTPRedirectHandler
+from urllib.error import HTTPError, URLError
+from http.client import HTTPException
 from flask import Flask, request, jsonify, Response, send_from_directory, abort, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta, datetime, timezone
@@ -202,7 +205,7 @@ def fcc_address(value):
     if (not endpoint.hostname or not port or endpoint.username or endpoint.password
         or endpoint.path or endpoint.query or endpoint.fragment or any(c.isspace() for c in value)
         or not re.fullmatch(r'[a-zA-Z0-9_.:\[\]-]+', value)):
-        raise ValueError('FCC 地址格式应为 IP:端口，例如 10.255.14.152:15970')
+        raise ValueError('FCC 地址格式应为 IP:端口，例如 203.0.113.10:9000')
     return value
 
 def playback_url(ch):
@@ -546,6 +549,43 @@ def parse_playlist(text, language="zh"):
 def import_file():
     try: return jsonify(parse_playlist(request.get_json().get('text'), 'en' if request.headers.get('Accept-Language', '').startswith('en') else 'zh'))
     except (ValueError, TypeError, AttributeError) as error: return jsonify(error=str(error)), 400
+
+class PlaylistRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if urlsplit(newurl).scheme not in ('http', 'https'):
+            raise ValueError('列表链接仅支持 HTTP/HTTPS')
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+@app.route('/api/import/url', methods=['POST'])
+def import_from_url():
+    try:
+        raw = request.get_json()
+        link = raw.get('url') if isinstance(raw, dict) else None
+        if not isinstance(link, str) or not link.strip() or len(link) > 8192:
+            raise ValueError('请输入有效的列表链接')
+        link = link.strip()
+        parsed = urlsplit(link)
+        if parsed.scheme not in ('http', 'https') or not parsed.hostname:
+            raise ValueError('列表链接仅支持 HTTP/HTTPS')
+        if re.search(r'[\x00-\x1f\x7f]', link):
+            raise ValueError('请输入有效的列表链接')
+        link = urlunsplit((parsed.scheme, parsed.netloc, quote(parsed.path, safe="/%:@!$&'()*+,;="), quote(parsed.query, safe="=&%/:?@!$'()*+,;+"), ''))
+        remote = Request(link, headers={'User-Agent': 'M3U-Studio-Import', 'Accept-Encoding': 'identity'})
+        with build_opener(PlaylistRedirect()).open(remote, timeout=10) as response:
+            data = response.read(app.config['MAX_CONTENT_LENGTH'] + 1)
+        if len(data) > app.config['MAX_CONTENT_LENGTH']:
+            return jsonify(error='列表文件超过 8MB'), 413
+        if data.lstrip().lower().startswith((b'<!doctype html', b'<html', b'<head', b'<body')):
+            raise ValueError('链接返回了网页，请使用 M3U/TXT 文件直链')
+        return jsonify(parse_playlist(data.decode('utf-8-sig'), 'en' if request.headers.get('Accept-Language', '').startswith('en') else 'zh'))
+    except HTTPError as error:
+        return jsonify(error='无法读取列表链接，请检查地址或稍后重试', http_status=error.code), 502
+    except (URLError, OSError, TimeoutError, HTTPException):
+        return jsonify(error='无法读取列表链接，请检查地址或稍后重试'), 502
+    except UnicodeDecodeError:
+        return jsonify(error='列表文件需使用 UTF-8 编码'), 400
+    except ValueError as error:
+        return jsonify(error=str(error)), 400
 
 @app.route('/api/backup')
 def export_backup():

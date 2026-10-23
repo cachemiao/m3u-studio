@@ -15,7 +15,7 @@ function setup(language='en'){
   return nodes.get(selector);
  };
  const state={epg:'',lists:['one','two'].map(id=>({id,name:id,groups:['News'],channels:[{id:'same',name:'Existing',group:'News',url:'https://example.test/old'}]}))};
- const context={state,selected:'one',group:'',core,importContext:null,$:get,uid:()=> 'new',json:(method,data)=>({method,data}),
+ const context={setImportMode(){},state,selected:'one',group:'',core,importContext:null,$:get,uid:()=> 'new',json:(method,data)=>({method,data}),
   changed(){context.changes++},changes:0,toast:message=>messages.push(String(message)),
   api:(url,options)=>new Promise((resolve,reject)=>requests.push({url,options,resolve,reject})),
   window:{M3UI18n:{setText:(node,text)=>node.textContent=String(text),dynamic:fn=>({toString:fn}),error:message=>message}},
@@ -49,13 +49,14 @@ test('all-invalid imports never create an empty playlist or call validation',asy
  assert.equal(JSON.stringify(state),before);assert.equal(requests.length,1);assert.equal(context.changes,0);
 });
 for(const phase of ['parse','validate']){
- for(const change of ['playlist','text','name','file']){
+ for(const change of ['playlist','text','name','file','url']){
   test(`changes to ${change} while awaiting ${phase} block stale import results`,async()=>{
    const {context,state,get,requests,messages,submit}=setup();context.openImport();
    const pending=submit();
    if(phase==='validate'){requests[0].resolve(parsed());await tick()}
    if(change==='playlist')state.lists[0].channels[0].name='User edit';
    if(change==='text')get('#playlistText').value='New input';
+   if(change==='url')get('#playlistUrl').value='https://example.test/changed.m3u';
    if(change==='name')get('#importListName').value='New name';
    if(change==='file')get('#playlistFile').files=[{name:'new.txt',size:10,lastModified:1}];
    const before=JSON.stringify(state);
@@ -103,4 +104,20 @@ test('validation rejection leaves the draft intact and the import form available
  requests[1].reject(Error('Validation failed'));await pending;
  assert.equal(JSON.stringify(state),original);assert.equal(get('#importDialog').open,true);
  assert.equal(get('#importForm button.primary').disabled,false);assert.equal(messages.at(-1),'Validation failed');
+});
+
+test('URL import uses the new endpoint and keeps the existing validate/apply flow',async()=>{
+ const {context,state,get,requests,submit}=setup();context.openImport(true);get('#importListName').value='Remote';get('#playlistUrl').value=' https://example.test/list.m3u ';
+ const pending=submit();assert.equal(requests[0].url,'/api/import/url');assert.equal(requests[0].options.data.url,'https://example.test/list.m3u');assert.equal(state.lists.length,2);
+ requests[0].resolve(parsed());await tick();assert.equal(requests[1].url,'/api/validate');requests[1].resolve(requests[1].options.data);await pending;
+ assert.equal(state.lists.length,3);assert.equal(state.lists[2].name,'Remote');
+});
+test('URL failures keep existing channels and leave the form available',async()=>{
+ const {context,state,get,requests,submit,messages}=setup();context.openImport();get('#playlistUrl').value='https://example.test/missing';const before=JSON.stringify(state);
+ const pending=submit();requests[0].reject(Error('Unable to read playlist'));await pending;
+ assert.equal(JSON.stringify(state),before);assert.equal(get('#importDialog').open,true);assert.equal(get('#importForm button.primary').disabled,false);assert.match(messages.at(-1),/Unable to read/);
+});
+test('selecting a file clears the URL so the selected file is actually imported',async()=>{
+ const {context,get}=setup();context.openImport();get('#playlistUrl').value='https://example.test/list.m3u';const file={text:async()=> '#EXTM3U'};get('#playlistFile').files=[file];
+ await get('#playlistFile').onchange({target:get('#playlistFile')});assert.equal(get('#playlistUrl').value,'');assert.equal(get('#playlistText').value,'#EXTM3U');
 });

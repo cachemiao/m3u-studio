@@ -1,3 +1,19 @@
+# v0.6.0 验证 / Validation · 2026-10-23
+
+- Python: 67 tests passed. Node: 62 tests passed, including 8 new multi-channel drag cases.
+- 多选拖动：真实鼠标拖动、不连续选择保持顺序、移动到分组、持续上下滚动、单次撤销／重做、取消及触屏取消检查通过。
+- Dragging: native mouse interaction, non-contiguous order, group transfer, stationary edge autoscroll, one-step undo/redo, Escape and touch cancellation passed.
+- 主题与弹窗：六种主题色 × 深浅模式的下拉选中态检查通过；桌面与窄屏表单滚动、固定底栏、复制按钮反馈及悬停提示检查通过。
+- Themes/dialogs: 12 dropdown palette combinations; form scrolling, fixed action areas, copy feedback and top-layer tooltips passed.
+- 中英文布局：320、390、768、1024、1440、1920 宽度及深／浅／跟随系统模式检查，无页面横向溢出。
+- Responsive UI: Chinese/English, six viewport widths and light/dark/system modes checked without horizontal page overflow.
+- README 本地链接、锚点和内嵌 Compose 与独立配置一致性检查通过；67 项后端测试覆盖远程 URL 导入限制及认证保护。
+- README links/anchors and embedded Compose parity passed; backend tests cover URL import limits and authentication.
+- 测试使用独立数据和示例地址，未修改生产频道或用户凭据。Chromium 验证不等于所有浏览器实机验证；不支持可自定义原生 select 的浏览器保留系统下拉外观。
+- Checks used isolated data and example URLs. Chromium coverage is not an all-browser guarantee; browsers without customizable native select retain platform picker styling.
+- 标签工作流在应用测试与 AMD64/ARM64 镜像推送成功后创建 GitHub Release；本地检查不替代远端 Actions 结果。
+- The tag workflow creates the GitHub Release only after tests and AMD64/ARM64 image publication succeed; local checks do not replace Actions results.
+
 # v0.5.4 验证 / Validation · 2026-10-21
 
 - Python: 43 tests passed; JavaScript: 49 tests passed.

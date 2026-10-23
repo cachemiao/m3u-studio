@@ -3,18 +3,24 @@ document.addEventListener('DOMContentLoaded',()=>{
  for(const menu of document.querySelectorAll('.preference-menu')){
   const trigger=document.querySelector(`[popovertarget="${menu.id}"]`);
   function position(){
-   const box=trigger.getBoundingClientRect(),width=168;
+   const box=trigger.getBoundingClientRect(),width=menu.getBoundingClientRect().width||parseFloat(getComputedStyle(menu).width)||168;
    menu.style.left=Math.max(8,Math.min(box.right-width,innerWidth-width-8))+'px';
    menu.style.top=(box.bottom+8)+'px';
   }
-  menu.addEventListener('beforetoggle',event=>{if(event.newState==='open')position()});
+  menu.addEventListener('beforetoggle',event=>{
+   if(event.newState!=='open')return;
+   const display=menu.style.display;
+   menu.style.display='grid';
+   position();
+   menu.style.display=display;
+  });
   menu.addEventListener('toggle',event=>{
    trigger.setAttribute('aria-expanded',String(event.newState==='open'));
-   if(event.newState==='open')(menu.querySelector('[aria-checked="true"]')||menu.querySelector('button')).focus();
+   if(event.newState==='open'){position();(menu.querySelector('[aria-checked="true"]')||menu.querySelector('button')).focus({preventScroll:true});}
   });
   menu.addEventListener('click',event=>{
    if(!event.target.closest('button'))return;
-   menu.hidePopover();trigger.focus();
+   menu.hidePopover();trigger.focus({preventScroll:true});
   });
   menu.addEventListener('keydown',event=>{
    const items=[...menu.querySelectorAll('button')],index=items.indexOf(document.activeElement);
@@ -23,7 +29,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(event.key==='ArrowUp')next=(index+items.length-1)%items.length;
    if(event.key==='Home')next=0;
    if(event.key==='End')next=items.length-1;
-   if(next!==undefined){event.preventDefault();items[next].focus()}
+   if(next!==undefined){event.preventDefault();items[next].focus({preventScroll:true})}
   });
   trigger.setAttribute('aria-expanded','false');
   addEventListener('resize',()=>{if(menu.matches(':popover-open'))position()});

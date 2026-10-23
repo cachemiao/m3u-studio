@@ -47,7 +47,7 @@ Install pytest in the virtual environment, then run tests relevant to your chang
 Node.js 18+ is used for frontend logic tests, not to build or run the app:
 
 ```sh
-node --test tests/test_editor_core.cjs tests/test_i18n.cjs tests/test_import.cjs tests/test_logo_upload.cjs tests/test_source_check.cjs
+node --test tests/test_channel_drag.cjs tests/test_editor_core.cjs tests/test_i18n.cjs tests/test_import.cjs tests/test_logo_upload.cjs tests/test_source_check.cjs
 ```
 
 For UI changes, check both languages, light/dark modes and mobile widths. Validate deployment changes with `docker compose -f docker-compose.image.yml config --quiet`. See [VALIDATION.md](../VALIDATION.md) for more verification notes.

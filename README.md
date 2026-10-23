@@ -26,32 +26,26 @@
 
 ## 界面预览
 
-![M3U Studio 深色模式频道管理](docs/images/channel-editor.png)
+![多选频道合并拖动与撤销演示](docs/images/multi-drag-zh.gif)
+
+以下界面与功能适用于 **v0.6.0 及以上版本**。频道与台标由用户自行添加。
 
 <details>
-<summary>查看浅色模式</summary>
+<summary>查看深色／浅色截图</summary>
+
+![M3U Studio 深色模式频道管理](docs/images/channel-editor.png)
 
 ![M3U Studio 浅色模式频道管理](docs/images/channel-editor-light.png)
 
 </details>
 
-截图为即将发布的新版界面，当前公开版本可能有所不同。频道与台标由用户自行添加。
-
-<details>
-<summary>查看多选拖动演示（新版预览）</summary>
-
-![多选频道合并拖动与撤销演示](docs/images/multi-drag-zh.gif)
-
-</details>
-
 ## 核心功能
 
-- **多列表与订阅**：独立订阅、合并订阅、自定义短地址，支持 M3U / TXT 导入。
-- **便捷整理**：搜索筛选、多选频道合并拖动、边缘自动滚动，支持列表与分组排序。
-- **批量操作与检测**：编辑字段、替换地址、跨列表移动或复制，检测频道响应耗时。
-- **台标与节目表**：台标库与自动匹配，配置 EPG、回放及 FCC 参数。
-- **修改可恢复**：撤销 / 重做、浏览器草稿、最近 30 份发布前配置，以及 JSON 备份恢复。
-- **外观与本地部署**：六种主题色、深浅模式、中英文界面与触屏操作；数据保存在本地，前端不依赖外部 CDN。
+- **草稿与发布历史**：浏览器自动保存草稿，支持撤销／重做；检查后发布，并可恢复最近 30 份发布前配置。
+- **台标自动匹配**：统一台标库、搜索与批量上传，按名称和别名匹配；配置 EPG 与回放参数。
+- **源检测与批量编辑**：检查频道响应耗时，批量替换地址、修改字段，跨列表移动或复制频道。
+- **多列表与订阅**：导入 M3U / TXT 文件、文本或链接，生成独立／合并订阅，支持自定义短地址。
+- **多选拖动整理**：选中频道合并拖动、边缘自动滚动，支持列表与分组排序。
 
 ## 快速启动
 
@@ -67,7 +61,43 @@ docker compose up -d
 
 打开 **`http://设备IP:8324`**，首次创建管理账号，密码至少 8 个字符；数据保存在 `m3u-studio-data` 命名卷中。
 
-**NAS 部署／下载失败：** 在 GitHub 打开 [docker-compose.image.yml](docker-compose.image.yml)，将内容粘贴到飞牛 OS、群晖等 NAS 的 Compose／项目编辑器；也可在空目录保存为 `docker-compose.yml` 后执行 `docker compose up -d`。
+**NAS 部署：** 将下面的配置粘贴到飞牛 OS、群晖等 NAS 的 Compose／项目编辑器即可启动。也可在空目录保存为 `docker-compose.yml`，执行 `docker compose up -d`，无需访问下载地址。
+
+<details>
+<summary>直接复制 Compose 配置</summary>
+
+```yaml
+# Standalone image deployment: no source checkout or .env required.
+# Save as docker-compose.yml, then run: docker compose up -d
+services:
+  m3u-studio:
+    image: cachemiao/m3u-studio:latest
+    container_name: m3u-studio
+    ports:
+      - "8324:8324"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - m3u-studio-data:/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  m3u-studio-data:
+    name: m3u-studio-data
+```
+
+配置文件：[docker-compose.image.yml](docker-compose.image.yml)。
+
+</details>
 
 [其他部署方式、端口修改与升级备份 →](docs/部署与维护.md)
 
@@ -97,17 +127,9 @@ docker compose up -d
 
 代码采用 [GNU GPL v2.0](LICENSE)（`GPL-2.0-only`）许可证。Copyright © 2026 cachemiao。
 
-项目不提供直播源或电视台台标，请使用有权使用的资源。它负责频道管理与订阅分发，播放、UDP 转 HTTP、回放和 FCC 能力取决于外部服务及播放器。
+项目不提供直播源或电视台台标，请使用有权使用的资源。它负责频道管理与订阅分发，播放、UDP 转 HTTP 和回放能力取决于外部服务及播放器。
 
-## Star History
-
-<a href="https://star-history.com/#cachemiao/m3u-studio&amp;Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date&amp;theme=dark">
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date">
-    <img alt="Star History · cachemiao/m3u-studio" src="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date" width="100%">
-  </picture>
-</a>
+**FCC（快速换台）** 面向组播 IPTV 场景，需配合 [rtp2httpd](https://github.com/stackia/rtp2httpd) 等支持服务和播放器使用。
 
 <p align="center">
   <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=zh"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
