@@ -18,26 +18,24 @@
 
 <p align="center">M3U Studio is a self-hosted IPTV channel manager.<br>Organize channels, groups, logos and EPG in your browser, then publish <strong>M3U / TXT subscriptions</strong> for your player.</p>
 
-<p align="center">Built with <strong>Python / Flask + SQLite</strong> and plain HTML / CSS / JavaScript. No frontend Node build is required.</p>
-
 <p align="center">
   <a href="#screenshots">Screenshots</a> · <a href="#features">Features</a> · <a href="#quick-start">Quick start</a> · <a href="#get-started">Get started</a> · <a href="#documentation">Docs and development</a> · <a href="#feedback-and-contributions">Contributing</a>
 </p>
 
 ## Screenshots
 
-![Dragging selected channels together and undoing the move](docs/images/multi-drag-en.gif)
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>Dark mode</strong></td>
+    <td width="50%" align="center"><strong>Light mode</strong></td>
+  </tr>
+  <tr>
+    <td width="50%"><a href="docs/images/channel-editor-en.png"><img src="docs/images/channel-editor-en.png" width="100%" alt="M3U Studio channel management in dark mode"></a></td>
+    <td width="50%"><a href="docs/images/channel-editor-en-light.png"><img src="docs/images/channel-editor-en-light.png" width="100%" alt="M3U Studio channel management in light mode"></a></td>
+  </tr>
+</table>
 
-The interface and features below apply to **v0.6.0 and later**. Channels and logos are user-provided.
-
-<details>
-<summary>View dark / light screenshots</summary>
-
-![M3U Studio channel management in dark mode](docs/images/channel-editor-en.png)
-
-![M3U Studio channel management in light mode](docs/images/channel-editor-en-light.png)
-
-</details>
+The interface and features above apply to **v0.6.0 and later**. Channels and logos are user-provided. [Watch the multi-select dragging demo →](docs/UserGuide.md#dragging-and-ordering)
 
 ## Features
 
@@ -111,6 +109,8 @@ Configuration file: [docker-compose.image.yml](docker-compose.image.yml).
 Channel changes update subscriptions only after publishing. Logo uploads, replacements and deletions take effect immediately. Back up the entire data directory for a full backup; JSON exports exclude images and accounts.
 
 ## Documentation
+
+Built with **Python / Flask + SQLite** and plain HTML / CSS / JavaScript. No frontend Node build is required.
 
 - [User guide](docs/UserGuide.md): imports, dragging, bulk editing, logos, EPG and subscription URLs.
 - [Deployment and maintenance](docs/Deployment.md): installation, upgrades and backups.

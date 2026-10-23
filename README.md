@@ -18,26 +18,24 @@
 
 <p align="center">M3U Studio 是一个可自行部署的 IPTV 频道管理工具。<br>通过网页管理频道、分组、台标与 EPG，整理后生成 <strong>M3U / TXT 订阅</strong>，在播放器中使用。</p>
 
-<p align="center">基于 <strong>Python / Flask + SQLite</strong>，前端使用原生 HTML / CSS / JavaScript，无需 Node 构建。</p>
-
 <p align="center">
   <a href="#界面预览">界面预览</a> · <a href="#核心功能">核心功能</a> · <a href="#快速启动">快速启动</a> · <a href="#开始使用">开始使用</a> · <a href="#文档">文档与开发</a> · <a href="#反馈与贡献">反馈与贡献</a>
 </p>
 
 ## 界面预览
 
-![多选频道合并拖动与撤销演示](docs/images/multi-drag-zh.gif)
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>深色模式</strong></td>
+    <td width="50%" align="center"><strong>浅色模式</strong></td>
+  </tr>
+  <tr>
+    <td width="50%"><a href="docs/images/channel-editor.png"><img src="docs/images/channel-editor.png" width="100%" alt="M3U Studio 深色模式频道管理"></a></td>
+    <td width="50%"><a href="docs/images/channel-editor-light.png"><img src="docs/images/channel-editor-light.png" width="100%" alt="M3U Studio 浅色模式频道管理"></a></td>
+  </tr>
+</table>
 
-以下界面与功能适用于 **v0.6.0 及以上版本**。频道与台标由用户自行添加。
-
-<details>
-<summary>查看深色／浅色截图</summary>
-
-![M3U Studio 深色模式频道管理](docs/images/channel-editor.png)
-
-![M3U Studio 浅色模式频道管理](docs/images/channel-editor-light.png)
-
-</details>
+以上界面与功能适用于 **v0.6.0 及以上版本**。频道与台标由用户自行添加。[查看多选拖动演示 →](docs/使用指南.md#多选拖动与排序)
 
 ## 核心功能
 
@@ -111,6 +109,8 @@ volumes:
 频道修改发布后才更新订阅；台标文件的上传、替换和删除立即生效。完整备份请保留数据目录，JSON 备份不包含图片和账号。
 
 ## 文档
+
+基于 **Python / Flask + SQLite**，前端使用原生 HTML / CSS / JavaScript，无需 Node 构建。
 
 - [使用指南](docs/使用指南.md)：导入、拖动、批量编辑、台标、EPG 和订阅地址。
 - [部署与维护](docs/部署与维护.md)：安装、升级、数据备份及旧版本迁移。

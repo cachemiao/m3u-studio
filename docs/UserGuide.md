@@ -55,6 +55,8 @@ The web interface displays complete URLs. Renaming a playlist does not change it
 
 ## Dragging and ordering
 
+![Dragging selected channels together and undoing the move](images/multi-drag-en.gif)
+
 Select several channels and drag the handle of any selected channel. They travel together in one card and keep their display order when dropped. Hold the pointer near the top or bottom of the channel area to keep scrolling. An insertion line indicates the drop position.
 
 Drop the card onto a sidebar group to move all selected channels into that group. Dragging an unselected channel moves only that channel. Press Esc to cancel. Touch dragging and undo/redo are supported. Reordering is disabled while searching.
