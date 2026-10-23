@@ -107,6 +107,7 @@ volumes:
 4. 打开 **订阅与 EPG**，复制订阅地址到播放器。
 
 频道修改发布后才更新订阅；台标文件的上传、替换和删除立即生效。完整备份请保留数据目录，JSON 备份不包含图片和账号。
+**FCC（快速换台）** 面向组播 IPTV 场景，需配合 [rtp2httpd](https://github.com/stackia/rtp2httpd) 等支持服务和播放器使用。
 
 ## 文档
 
@@ -128,8 +129,6 @@ volumes:
 代码采用 [GNU GPL v2.0](LICENSE)（`GPL-2.0-only`）许可证。Copyright © 2026 cachemiao。
 
 项目不提供直播源或电视台台标，请使用有权使用的资源。它负责频道管理与订阅分发，播放、UDP 转 HTTP 和回放能力取决于外部服务及播放器。
-
-**FCC（快速换台）** 面向组播 IPTV 场景，需配合 [rtp2httpd](https://github.com/stackia/rtp2httpd) 等支持服务和播放器使用。
 
 <p align="center">
   <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=zh"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
