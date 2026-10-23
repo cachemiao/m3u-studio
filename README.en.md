@@ -39,11 +39,13 @@ The interface and features above apply to **v0.6.0 and later**. Channels and log
 
 ## Features
 
-- **Drafts and publish history:** browser draft autosave, undo/redo, review before publishing, and restoration of the last 30 pre-publish snapshots.
-- **Automatic logo matching:** a searchable library, batch uploads and matching by name or alias; EPG and catch-up parameters.
-- **Source checks and bulk edits:** check response times, replace URLs, edit fields and move or copy channels between playlists.
-- **Playlists and subscriptions:** import M3U / TXT files, text or URLs; publish separate or combined subscriptions with custom short URLs.
-- **Multi-select dragging:** move selected channels together, scroll automatically at the edges, and reorder playlists and groups.
+- **Edit first, publish when ready:** drafts are saved automatically in your browser, with undo/redo support. Review before publishing and keep the last 30 pre-publish snapshots for recovery.
+- **Multi-select dragging:** move selected channels together with automatic edge scrolling, and freely reorder playlists and groups.
+- **Automatic logo matching:** a shared logo library with matching by name and alias, search and batch uploads.
+- **Bulk editing and source checks:** replace URLs and edit fields in bulk, move or copy channels between playlists, and check channel response times to help identify unresponsive sources.
+- **Multiple playlist subscriptions:** import M3U / TXT from files, pasted text or URLs, then publish separate or combined subscriptions with custom short URLs.
+- **EPG, catch-up and FCC:** configure program guides, catch-up and FCC parameters per channel and include them in subscription exports.
+- **Self-hosted:** keep your data on your own device, with no external frontend CDN dependencies. Chinese/English interfaces, light/dark themes and mobile support are included.
 
 ## Quick start
 
@@ -108,6 +110,8 @@ Configuration file: [docker-compose.image.yml](docker-compose.image.yml).
 
 Channel changes update subscriptions only after publishing. Logo uploads, replacements and deletions take effect immediately. Back up the entire data directory for a full backup; JSON exports exclude images and accounts.
 
+**FCC (fast channel changing)** targets multicast IPTV setups and requires a supporting service such as [rtp2httpd](https://github.com/stackia/rtp2httpd) and a compatible player.
+
 ## Documentation
 
 Built with **Python / Flask + SQLite** and plain HTML / CSS / JavaScript. No frontend Node build is required.
@@ -128,8 +132,6 @@ Report bugs through [Issues](https://github.com/cachemiao/m3u-studio/issues) or 
 Released under [GNU GPL v2.0](LICENSE) (`GPL-2.0-only`). Copyright © 2026 cachemiao.
 
 The project includes no live stream sources or TV channel logos. Use resources you have permission to use. It manages channels and distributes subscriptions; playback, UDP-to-HTTP conversion and catch-up depend on external services and players.
-
-**FCC (fast channel changing)** targets multicast IPTV setups and requires a supporting service such as [rtp2httpd](https://github.com/stackia/rtp2httpd) and a compatible player.
 
 <p align="center">
   <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=en"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
