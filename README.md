@@ -12,8 +12,11 @@
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-F9A8D4?logo=docker&amp;logoColor=white" alt="Docker Architectures"></a>
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=F9A8D4" alt="Docker Pulls"></a>
   <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=F9A8D4" alt="GitHub Stars"></a>
-  <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-Channel-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram Channel"></a>
-  <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-Group-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram Group"></a>
+</p>
+
+<p align="center">
+  <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-Channel-F9A8D4?logo=telegram&amp;logoColor=white" alt="Telegram Channel"></a>
+  <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-Group-F9A8D4?logo=telegram&amp;logoColor=white" alt="Telegram Group"></a>
 </p>
 
 <p align="center">
