@@ -1,20 +1,15 @@
 <p align="center">
-  <img src="app/static/favicon.svg" width="96" height="96" alt="M3U Studio Logo">
+  <img src="docs/images/logo.svg" width="96" height="96" alt="M3U Studio Logo">
 </p>
 
 <h1 align="center">M3U Studio</h1>
 
-<p align="center">IPTV channel management and subscription server</p>
+<p align="center">Organize IPTV channels. Publish your own subscriptions.</p>
 
 <p align="center">
-  <a href="https://github.com/cachemiao/m3u-studio/releases"><img src="https://img.shields.io/github/v/release/cachemiao/m3u-studio?color=0f766e" alt="Latest release"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0-blue" alt="GNU GPL v2.0 License"></a>
-  <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=0f766e" alt="Docker pulls"></a>
-  <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=0f766e" alt="GitHub Stars"></a>
-  <a href="https://x.com/cachemiao"><img src="https://img.shields.io/badge/X-@cachemiao-000000?logo=x&amp;logoColor=white" alt="Follow on X"></a>
-  <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-2496ED?logo=docker&amp;logoColor=white" alt="Docker Architectures"></a>
-  <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-Channel-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram channel"></a>
-  <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-Group-26A5E4?logo=telegram&amp;logoColor=white" alt="Telegram group"></a>
+  <a href="https://github.com/cachemiao/m3u-studio/releases"><img src="https://img.shields.io/github/v/release/cachemiao/m3u-studio?color=F9A8D4" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0-F9A8D4" alt="GNU GPL v2.0 License"></a>
+  <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=F9A8D4" alt="Docker pulls"></a>
 </p>
 
 <p align="center">
@@ -23,67 +18,35 @@
 
 <p align="center"><a href="README.md">简体中文</a> · <strong>English</strong></p>
 
-An easy-to-deploy IPTV channel management and subscription server built with **Python / Flask**, supporting **M3U and TXT**. Manage multiple playlists, groups, channel logos and EPG in your browser, then publish subscriptions with customizable short URLs. Deploy with **Docker**.
-
-Developed as a personal learning and hobby project, with source code released under the **GNU GPL v2.0 License**. The project does not include live stream sources or third-party channel logo images. Please contact the author through an [Issue](https://github.com/cachemiao/m3u-studio/issues) about any potentially infringing content.
-
-Questions, bug reports and feature requests are welcome in [Issues](https://github.com/cachemiao/m3u-studio/issues).
-
----
-
-## Features
-
-- **Multiple playlists:** separate subscriptions, custom short names, optional combined subscriptions, and drag-and-drop ordering of playlists, groups and channels.
-- **Import and export:** import UTF-8 M3U / TXT, repair supported fields, skip invalid channels with a report, and publish M3U / TXT subscriptions.
-- **Logo library:** starts empty and supports search, local and batch uploads, name and alias matching, and conservative fuzzy matching. For duplicate names, choose to replace the existing image or stop the upload. Direct image URLs can be assigned separately.
-- **Bulk editing:** change groups, EPG or FCC, replace text in live and catch-up URLs, or copy and move channels between playlists; preview before applying.
-- **Source checks:** measure response times for selected channels or the current playlist, with inline rechecks, progress, cancellation and failure retries.
-- **EPG, catch-up and FCC:** configure channel EPG IDs, XMLTV URLs, catch-up parameters and fast channel switching parameters. When the EPG ID is blank, M3U uses the channel name as its ID for matching by the player.
-- **Undo and history:** undo/redo drafts, retain the last 30 pre-publish configuration snapshots, and export/restore JSON configurations.
-- **Themes, languages and mobile:** light/dark/system themes, Chinese/English, responsive layout and touch dragging.
-- **Local storage:** account, configuration and uploaded images stay in your data directory. The frontend has no external CDN dependency.
-
-M3U Studio edits playlists and serves subscriptions. Stream URLs and EPG must be provided by the user. Stream forwarding, such as UDP-to-HTTP conversion, requires a separate service.
-
-For logo resources, see [m3u-logos](https://github.com/cachemiao/m3u-logos). Check the rights to any images before using them.
-
-FCC requires a service such as [rtp2httpd](https://github.com/stackia/rtp2httpd) and the corresponding [FCC server addresses](https://rtp2httpd.com/reference/cn-fcc-collection).
+M3U Studio is a self-hosted IPTV channel manager. Organize channels, groups, logos and EPG in your browser, then publish **M3U / TXT subscriptions** for your player.
 
 ## Screenshots
 
-Dark mode is the default. Light, dark and system themes are available. The interface supports Simplified Chinese and English: choose a language on the sign-in page or in the app header. The initial language follows your browser; your choice is remembered in this browser. Playlist names, channel names, groups and URLs are never translated when switching languages.
+![M3U Studio channel management in dark mode](docs/images/channel-editor-en.png)
 
-Channels and logos in the screenshots are user-supplied examples. The project does not include stream sources or logo images.
+<details>
+<summary>View light mode</summary>
 
-### Channel management
+![M3U Studio channel management in light mode](docs/images/channel-editor-en-light.png)
 
-![Channel editor](docs/images/channel-editor.png)
+</details>
 
-### Logo library management
+Screenshots preview the upcoming interface; the current public version may differ. Channels and logos are user-provided.
 
-![Logo library](docs/images/logo-library.png)
+## Features
 
-### Subscriptions and EPG
+- **Playlists and subscriptions:** separate and combined subscriptions, custom short URLs, and M3U / TXT imports.
+- **Easy organization:** search, drag selected channels together, automatic edge scrolling, and playlist and group ordering.
+- **Bulk editing and checks:** edit fields, replace URLs, move or copy between playlists, and check source response times.
+- **Logos and program guides:** a searchable logo library, automatic matching, EPG, catch-up and FCC parameters.
+- **Recoverable changes:** undo/redo, browser drafts, the last 30 pre-publish snapshots, and JSON backup/restore.
+- **Appearance and local deployment:** six accent colors, light/dark modes, Chinese/English and touch controls; local data storage with no frontend CDN dependency.
 
-![Subscriptions and EPG](docs/images/subscriptions.png)
+## Quick start
 
-## Quick start with Docker (recommended)
+Install Docker, then choose either option below. The image supports **AMD64 / ARM64**.
 
-Install Docker first. Images support **AMD64 and ARM64**; Docker selects the appropriate architecture.
-
-### 1. Pull the image
-
-```sh
-docker pull cachemiao/m3u-studio:latest
-```
-
-You can also use GitHub Container Registry. Replace the image name in the run command or Compose configuration as well:
-
-```sh
-docker pull ghcr.io/cachemiao/m3u-studio:latest
-```
-
-### 2. Start the container
+### Option A: Docker command
 
 ```sh
 docker run -d \
@@ -97,238 +60,63 @@ docker run -d \
   cachemiao/m3u-studio:latest
 ```
 
-- `-p 8324:8324`: web interface and subscriptions. Change to `-p 8325:8324` if the host port is occupied, then access port 8325.
-- `-v m3u-studio-data:/data`: persist accounts, playlists, logos and backups in a Docker named volume. Reuse this volume when recreating the container.
-- `-e TZ=Asia/Shanghai`: container timezone; change as needed.
-- `--restart unless-stopped`: restart automatically with Docker unless manually stopped.
+Open **`http://SERVER_IP:8324`** and create your admin account on the first visit. Passwords require at least 8 characters.
 
-### 3. Open the web interface
+Data stays in the `m3u-studio-data` volume. If the port is occupied, change `-p 8324:8324` to `-p 8325:8324` and visit port 8325.
 
-Visit **`http://YOUR_SERVER_IP:8324`**. On first use, create an administrator account with a password of at least 8 characters. No `TOKEN`, administrator environment variables or `.env` file are needed for a new installation.
+### Option B: Docker Compose (recommended for NAS)
 
-[Docker Hub](https://hub.docker.com/r/cachemiao/m3u-studio) · [Releases](https://github.com/cachemiao/m3u-studio/releases)
+One Compose file pulls the official image directly. **No repository clone, local build or `.env` file is needed.**
 
-## Docker Compose (for long-term maintenance)
-
-Docker Compose is required. Create `compose.yaml` in an empty directory:
-
-```yaml
-services:
-  m3u-studio:
-    image: cachemiao/m3u-studio:latest
-    container_name: m3u-studio
-    ports:
-      - "8324:8324"
-    environment:
-      TZ: Asia/Shanghai
-    volumes:
-      - m3u-studio-data:/data
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-volumes:
-  m3u-studio-data:
-    name: m3u-studio-data
-```
+**Command line:** run in a new directory:
 
 ```sh
-docker compose pull
+mkdir m3u-studio && cd m3u-studio
+curl -fsSL https://raw.githubusercontent.com/cachemiao/m3u-studio/main/docker-compose.image.yml -o docker-compose.yml
 docker compose up -d
 ```
 
-Open **`http://YOUR_SERVER_IP:8324`**. This example uses the same named volume as the Docker Run command above. Choose either Docker Run or Compose. To switch from Docker Run to Compose, stop and remove the existing container first, keeping the data volume.
+> If `raw.githubusercontent.com` is unavailable, open [docker-compose.image.yml](docker-compose.image.yml) on GitHub, copy its contents into `docker-compose.yml` in an empty directory, then run `docker compose up -d`.
 
-### Bind-mount a host directory
+**fnOS, Synology and other NAS systems:** create a project in the Docker Compose/project interface, paste the contents of [docker-compose.image.yml](docker-compose.image.yml), and deploy. No command line is required; menu names vary by NAS platform.
 
-To store files directly on the host, use `./data:/data` instead. The container runs as non-root **UID 10001**. Prepare the directory before starting:
+The default image comes from Docker Hub and supports AMD64 / ARM64. Data is initialized automatically in the `m3u-studio-data` named volume, with no host-directory permission setup. Open **`http://SERVER_IP:8324`** to create your admin account. There is no default password.
 
-```sh
-mkdir -p data/database data/logo data/backup
-sudo chown -R 10001:10001 data
-```
+See [Deployment and maintenance](docs/Deployment.md) for Docker Compose, the GHCR mirror, source builds, upgrades and full backups.
 
-For Docker Run, use `-v "$PWD/data:/data"`; for Compose, use `- ./data:/data`. An empty host directory does not contain your existing named-volume data; copy it first when migrating.
+## Get started
 
-## Upgrade and maintenance
+1. Create a playlist and import M3U / TXT from a file, pasted text or a file URL. You can also add channels manually.
+2. Organize groups and ordering, then configure logos, EPG, catch-up and FCC.
+3. Review your changes and click **Save & publish**.
+4. Open **Subscriptions & EPG** and copy a subscription URL to your player.
 
-`latest` follows the latest stable release. To pin a version, use a version tag, for example `cachemiao/m3u-studio:0.5.0`. Back up before upgrading and retain the original data mount.
+Channel changes update subscriptions only after publishing. Logo uploads, replacements and deletions take effect immediately. Back up the entire data directory for a full backup; JSON exports exclude images and accounts.
 
-**Compose upgrade:**
+## Documentation
 
-```sh
-docker compose pull
-docker compose up -d
-```
-
-**Docker Run upgrade:**
-
-```sh
-docker pull cachemiao/m3u-studio:latest
-docker stop m3u-studio
-docker rm m3u-studio
-```
-
-Run the startup command again with the same `m3u-studio-data:/data` mount.
-
-| Operation | Docker | Compose |
-| --- | --- | --- |
-| Logs | `docker logs --tail=100 m3u-studio` | `docker compose logs --tail=100` |
-| Restart | `docker restart m3u-studio` | `docker compose restart` |
-| Stop | `docker stop m3u-studio` | `docker compose stop` |
-| Start | `docker start m3u-studio` | `docker compose start` |
-
-Health check (adjust the port if changed):
-
-```sh
-curl -fsS http://127.0.0.1:8324/healthz
-```
-
-The expected response is `{"status":"ok"}`.
-
-## Build from source
-
-Download the source or release archive. In the directory containing `docker-compose.yml`, run:
-
-```sh
-sh setup.sh
-# If requested by setup.sh: sudo chown -R 10001:10001 data
-docker compose up -d --build
-```
-
-The repository's Compose file builds from source, uses container name `iptv-manager`, and mounts `./data`. The first build downloads the base image and dependencies.
-
-## Basic usage
-
-1. Click **＋** beside **Playlists** and choose **Create empty playlist** or **Import as new playlist**. For an existing playlist, click **Import channels** to append M3U / TXT; the dialog shows the target playlist. You can also create groups and add channels manually.
-2. Edit stream URLs, EPG, catch-up and FCC; choose or upload logos.
-3. Organize using drag-and-drop, search, bulk editing and logo matching.
-4. Review the draft and click **Save & publish**.
-5. Open **Subscriptions & EPG** and copy subscription URLs to your player.
-
-Channel changes update subscriptions after publishing. Unpublished changes applied to the playlist are saved in this browser and can be restored after reloading or signing in again. If the server configuration has changed, review it before publishing. Unsubmitted dialog forms are not included. If browser storage is unavailable, publish or export JSON promptly. Logo upload, replacement and deletion take effect immediately. Channel-logo assignments still require publishing; image changes cannot be undone through draft or publish history.
-
-### Import results
-
-Import normalizes commas in channel and group names to spaces, clears invalid logo URLs, sets unknown catch-up types to `default`, and replaces invalid catch-up days with 7. Unsupported stream protocols or channels that cannot be repaired are skipped. The report includes line numbers, names and reasons. Accepted channels must still satisfy publication validation.
-
-Ordinary commas in TXT URLs are preserved; a comma immediately followed by another `scheme://` URL separates the catch-up URL. The report shows imported, repaired and skipped counts, with up to 1,000 detail entries. Imports only append channels and keep existing channels. If all channels are invalid, no playlist is created and the original playlist is unchanged. Duplicate channel IDs are adjusted automatically to avoid conflicts. If the form or playlist content changes during import, the result is blocked; review your changes and import again.
-
-## Source response-time checks
-
-1. Select channels to check, or leave the selection empty to check the entire current playlist.
-2. Click **Batch check** to open the dialog, then click **Start check**.
-3. View progress and results. You can cancel, filter failures, retry failures or recheck all channels in the current scope.
-
-Click a channel's time or status badge to recheck that channel inline without opening the dialog.
-
-- **≤300ms**: green; **>300ms**: yellow; **Timeout**: red.
-- Up to 4 concurrent requests, with a 5-second timeout each. HTTP/HLS uses limited reads rather than continuously downloading the stream. UDP/RTP/RTSP is unsupported.
-- Checks run from the deployment server. Response time does not measure player startup time or verify playback.
-- Results are for reference and never delete or modify channels. Results stay on the current page and clear on reload. Closing the dialog cancels further checks.
-
-### Move or copy between playlists
-
-Select channels, open **Bulk edit**, and enable **Move or copy to another playlist**. Choose the action, target playlist and target group. Keep original groups, select an existing target group, or enter a new group name. Missing groups are created automatically and channels are appended to the target playlist.
-
-**Copy** is selected by default and keeps the original channels. **Move** removes selected channels from the source and displays a red warning. Preview before applying; changes support undo. Click **Save & publish** when ready to update subscriptions.
-
-## Subscription URLs
-
-| Content | Path |
-| --- | --- |
-| Combined M3U | `/tv.m3u` |
-| Combined TXT | `/tv.txt` |
-| Playlist M3U | `/lists/PLAYLIST_ID/tv.m3u` |
-| Playlist TXT | `/lists/PLAYLIST_ID/tv.txt` |
-| Local logo | `/logo/CCTV1.png` |
-
-**For long-term subscriptions on a TV, use a permanent ID URL**, such as `/lists/PLAYLIST_ID/tv.m3u`. Renaming the playlist or changing its subscription short name does not change this URL. After organizing channels, click **Save & publish** and refresh the existing subscription in your player; there is no need to enter the URL again.
-
-Set a **Subscription short name** in Playlist settings, such as `home`. After publishing, use `/home.m3u` or `/home.txt`. Names are 1–24 ASCII letters, digits, underscores or hyphens, starting with a letter or digit. Names are lowercased, must be unique and cannot use reserved routes. Clear the name to disable it. Changing the short name invalidates the old short URL, so players using it need the new URL. Permanent ID URLs remain valid.
-
-The web interface displays complete URLs. Renaming a playlist does not change its subscription ID. Subscriptions and logos do not require login. Your player must be able to reach the server.
-
-## Data and backup
-
-All container data is under `/data`. The recommended installation stores it in the `m3u-studio-data` named volume; bind-mount and source installations use `./data`. The table below shows host-directory paths; named volumes contain the same subdirectories.
-
-| Directory | Contents |
-| --- | --- |
-| `data/database/` | SQLite configuration, account hashes and session key |
-| `data/logo/` | Uploaded logo images |
-| `data/backup/` | Recent pre-publish JSON snapshots |
-
-**Settings → Export JSON** includes all playlists and the current draft, but excludes accounts and logo images. Before a full migration or upgrade, stop the container and back up the entire data directory. Retain any existing `.env` file as well.
-
-### Full backup of a named-volume installation
-
-Run on the host. Stop the service first to keep SQLite data consistent, then copy the entire data directory:
-
-```sh
-docker stop m3u-studio
-backup_dir="./m3u-studio-backup-$(date +%Y%m%d-%H%M%S)"
-umask 077
-mkdir -p "$backup_dir"
-docker cp m3u-studio:/data/. "$backup_dir/"
-docker start m3u-studio
-```
-
-Backups include account and session keys; keep them private. Preserve the volume when upgrading or removing containers; `docker compose down -v` removes Compose-managed volumes.
-
-### Full backup of a bind-mount or source installation
-
-Run in the deployment directory:
-
-```sh
-docker compose stop
-backup_file="../m3u-studio-backup-$(date +%Y%m%d-%H%M%S).tar.gz"
-umask 077
-if [ -f .env ]; then
-  tar -czf "$backup_file" data .env
-else
-  tar -czf "$backup_file" data
-fi
-docker compose start
-```
-
-For source upgrades, retain `data/` and any existing `.env`, update the source, then run `sh setup.sh` and `docker compose up -d --build`. See the [Upgrade guide](docs/使用指南.md#从旧版本升级).
-
-## Scope and compatibility
-
-- Deploy on a trusted LAN or VPN. Configure HTTPS and access restrictions if exposing it publicly; subscription URLs can reveal stream URLs.
-- EPG uses existing XMLTV URLs; the project does not download or generate program guides.
-- Catch-up and FCC depend on your player and stream service. FCC needs a service supporting the parameter, such as rtp2httpd.
-- TXT has no logo or EPG metadata. Unknown M3U extension attributes and comments are not preserved.
-
-## More documentation
-
-- [Detailed user guide](docs/使用指南.md)
+- [User guide](docs/UserGuide.md): imports, dragging, bulk editing, logos, EPG and subscription URLs.
+- [Deployment and maintenance](docs/Deployment.md): installation, upgrades and backups.
 - [Changelog](CHANGELOG.md)
 
-## Feedback and contributions
+## Feedback and community
 
-Questions and suggestions are welcome in Issues. Please include the version, deployment method, browser/player and reproduction steps. Remove credentials, tokens and private addresses from examples.
+Report bugs or suggest features through [Issues](https://github.com/cachemiao/m3u-studio/issues). Include your version, deployment method and reproduction steps. Remove private URLs and credentials from examples.
 
-## ☕ Support
+[Telegram channel](https://t.me/m3ustudio_news) · [Telegram group](https://t.me/m3ustudio_chat) · [X](https://x.com/cachemiao) · [Support the project ☕](https://cachemiao.github.io/m3u-studio/support.html?lang=en)
 
-If you enjoy M3U Studio, consider [buying me a coffee](https://cachemiao.github.io/m3u-studio/support.html?lang=en)! Your support helps keep this project maintained and improving. Thank you for your support!
+## License and scope
 
-## License and logo images
+Released under [GNU GPL v2.0](LICENSE) (`GPL-2.0-only`). Copyright © 2026 cachemiao.
 
-Code is licensed under [GNU GPL v2.0 only](LICENSE) (`GPL-2.0-only`), Copyright (c) 2026 cachemiao.
+The project includes no live stream sources or TV channel logos. Use resources you have permission to use. It manages channels and distributes subscriptions; playback, UDP-to-HTTP conversion, catch-up and FCC depend on external services and players. Deployment on a trusted LAN or VPN is recommended.
 
-- Commercial use and selling copies are allowed.
-- Private modifications and internal use do not require publishing source code.
-- When distributing modified versions covered by GPL, license them under GPL v2.0 and provide the corresponding source code to recipients as required by the license.
-- When distributing binaries, comply with GPL v2.0's source-code provision requirements, such as supplying corresponding source or a valid written offer.
-- Retain copyright notices and the license. The software is provided without warranty.
+## Star History
 
-Channel logos, names and third-party trademarks are not original project code; the code license does not grant additional rights to those materials. The project does not distribute TV station logo images. Upload only images you are entitled to use in Logo library management. Naming images after their channels helps automatic matching.
+<a href="https://star-history.com/#cachemiao/m3u-studio&amp;Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date&amp;theme=dark">
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date">
+    <img alt="Star History · cachemiao/m3u-studio" src="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date" width="100%">
+  </picture>
+</a>

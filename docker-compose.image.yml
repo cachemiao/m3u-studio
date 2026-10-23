@@ -1,0 +1,26 @@
+# Standalone image deployment: no source checkout or .env required.
+# Save as docker-compose.yml, then run: docker compose up -d
+services:
+  m3u-studio:
+    image: cachemiao/m3u-studio:latest
+    container_name: m3u-studio
+    ports:
+      - "8324:8324"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - m3u-studio-data:/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  m3u-studio-data:
+    name: m3u-studio-data
