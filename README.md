@@ -26,12 +26,8 @@
 
 <table>
   <tr>
-    <td width="50%" align="center"><strong>深色模式</strong></td>
-    <td width="50%" align="center"><strong>浅色模式</strong></td>
-  </tr>
-  <tr>
-    <td width="50%"><a href="docs/images/channel-editor.png"><img src="docs/images/channel-editor.png" width="100%" alt="M3U Studio 深色模式频道管理"></a></td>
-    <td width="50%"><a href="docs/images/channel-editor-light.png"><img src="docs/images/channel-editor-light.png" width="100%" alt="M3U Studio 浅色模式频道管理"></a></td>
+    <td width="50%" align="center"><a href="docs/images/channel-editor.png"><img src="docs/images/channel-editor.png" width="100%" alt="M3U Studio 深色模式频道管理"></a><br><sub>深色模式</sub></td>
+    <td width="50%" align="center"><a href="docs/images/channel-editor-light.png"><img src="docs/images/channel-editor-light.png" width="100%" alt="M3U Studio 浅色模式频道管理"></a><br><sub>浅色模式</sub></td>
   </tr>
 </table>
 

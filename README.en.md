@@ -26,12 +26,8 @@
 
 <table>
   <tr>
-    <td width="50%" align="center"><strong>Dark mode</strong></td>
-    <td width="50%" align="center"><strong>Light mode</strong></td>
-  </tr>
-  <tr>
-    <td width="50%"><a href="docs/images/channel-editor-en.png"><img src="docs/images/channel-editor-en.png" width="100%" alt="M3U Studio channel management in dark mode"></a></td>
-    <td width="50%"><a href="docs/images/channel-editor-en-light.png"><img src="docs/images/channel-editor-en-light.png" width="100%" alt="M3U Studio channel management in light mode"></a></td>
+    <td width="50%" align="center"><a href="docs/images/channel-editor-en.png"><img src="docs/images/channel-editor-en.png" width="100%" alt="M3U Studio channel management in dark mode"></a><br><sub>Dark mode</sub></td>
+    <td width="50%" align="center"><a href="docs/images/channel-editor-en-light.png"><img src="docs/images/channel-editor-en-light.png" width="100%" alt="M3U Studio channel management in light mode"></a><br><sub>Light mode</sub></td>
   </tr>
 </table>
 
