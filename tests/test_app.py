@@ -120,7 +120,7 @@ def test_combined_txt_groups(server,auth):
 def test_first_run_setup_login_and_no_reinitialization(server,auth):
     with server.db() as conn: conn.execute('DELETE FROM account')
     c=server.app.test_client()
-    assert c.get('/api/auth/status').json=={'initialized':False,'authenticated':False,'username':''}
+    assert c.get('/api/auth/status').json=={'initialized':False,'authenticated':False,'username':'','version':server.APP_VERSION}
     assert c.get('/api/state').status_code==401
     assert c.post('/api/auth/setup',json={'username':'测试用户','password':'123'},headers=auth).status_code==400
     assert c.post('/api/auth/setup',json={'username':'测试用户','password':'my-password-123'},headers=auth).status_code==200

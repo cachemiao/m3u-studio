@@ -1,3 +1,31 @@
+# v0.6.1 · 版本提示与橙色主题 / Version indicator and orange theme · 2026-10-23
+
+## 中文更新说明
+
+- 页头 Logo、M3U Studio 和版本号组成统一的项目链接；版本号与名称基线对齐，有新版本时显示主题色圆点。
+- 使用期间自动检查 GitHub 最新稳定版本，服务器缓存检查结果，每 24 小时最多请求一次；重启后保留缓存，网络失败不打断编辑。
+- 不增加自动安装或 Docker 控制权限，升级仍通过 Docker / NAS 的镜像更新流程完成。
+- 原黄色主题替换为橙色（#CC7D5E），提供深浅模式配色，并将已保存的黄色偏好自动迁移到橙色；默认粉色不变。
+- 简化账号菜单，去除“当前账号”标题；不在设置中增加版本检测模块或侧栏项目说明。
+- 修复重命名分组误显示“保存账号”，改为“保存”；统一输入框、下拉框和文本框的聚焦描边，消除双框及校验错误时的双色边框。
+- README 并排展示深浅两张截图，将拖动 GIF 移到中英文使用指南，技术栈说明移至文档区。
+
+## English release notes
+
+- Combined the header logo, product name and baseline-aligned version into one project link. A theme-colored dot indicates an available update.
+- Automatically check GitHub's latest stable release while the editor is in use. Server-side caching limits outbound checks to once every 24 hours, survives restarts and keeps network failures from interrupting editing.
+- No automatic installation or Docker control permissions are introduced. Continue upgrading through your Docker or NAS image-update workflow.
+- Replaced yellow with orange (#CC7D5E), including light/dark palettes and migration of saved yellow preferences. Pink remains the default.
+- Simplified the account menu and omitted the settings update module and sidebar project metadata.
+- Fixed the group rename action's incorrect "Save account" label. Unified focused input, select and textarea outlines, including validation errors.
+- Display dark/light screenshots side by side in both READMEs; moved drag demos into the guides and the technical stack description into the documentation section.
+
+## 验证 / Validation
+
+- 84 项 Python 测试、62 项 JavaScript 测试通过。 / 84 Python tests and 62 JavaScript tests passed.
+- 浏览器验证覆盖六种主题 × 深浅模式、窄屏布局、橙色偏好迁移、版本提示、中英文文案和输入框校验。 / Browser checks cover all six accents in light/dark modes, narrow layouts, orange preference migration, update indicators, bilingual labels and input validation.
+
+
 # v0.6.0 · 频道整理与粉色主题 / Channel organization and pink themes · 2026-10-23
 
 ## 中文更新说明

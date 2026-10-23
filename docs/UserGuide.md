@@ -65,7 +65,7 @@ Switching playlists clears selection; searching or switching groups keeps it. Bu
 
 ## Language and appearance
 
-Use the top language menu for Chinese/English and the theme menu for light/dark/system mode. **Settings → Appearance** offers pink, purple, blue, yellow, green and cyan. New users start with pink and dark mode; existing browser preferences are preserved. These preferences do not require publishing or alter channel data.
+Use the top language menu for Chinese/English and the theme menu for light/dark/system mode. **Settings → Appearance** offers pink, purple, blue, orange, green and cyan. New users start with pink and dark mode; existing browser preferences are preserved. These preferences do not require publishing or alter channel data.
 
 ## Logo library
 

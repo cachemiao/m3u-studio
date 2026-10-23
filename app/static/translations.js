@@ -1,5 +1,8 @@
 /* Shared UI messages; keep placeholders identical in both languages. */
 window.M3UTranslations = {
+"uiSave":{"zh":"保存","en":"Save"},
+"updateNew":{"zh": "有新版本", "en": "Update available"},
+
 "uiDraggingChannels":{"zh":"移动 {p0} 个频道","en":"Moving {p0} channels"},
 "uiMoreDraggedChannels":{"zh":"另有 {p0} 个频道","en":"{p0} more channels"},
 "uiGroupColumn":{"zh": "\u5206\u7ec4", "en": "Group"},
@@ -1448,7 +1451,7 @@ window.M3UTranslations = {
   "accentPurple": {"zh": "紫色", "en": "Purple"},
   "accentPink": {"zh": "粉色", "en": "Pink"},
   "accentBlue": {"zh": "蓝色", "en": "Blue"},
-  "accentYellow": {"zh": "黄色", "en": "Yellow"},
+  "accentOrange": {"zh": "橙色", "en": "Orange"},
   "accentGreen": {"zh": "绿色", "en": "Green"},
   "accentCyan": {"zh": "青色", "en": "Cyan"},
   "uiSearchCompact": {"zh":"搜索","en":"Search"},

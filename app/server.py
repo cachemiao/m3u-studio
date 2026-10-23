@@ -13,6 +13,7 @@ from threading import Lock, BoundedSemaphore
 import sys
 sys.path.insert(0, str(Path(__file__).parent))
 from probe import probe_http
+from release_updates import ReleaseChecker
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 ROOT = Path(__file__).parent
@@ -22,6 +23,8 @@ USERNAME = os.environ.get('ADMIN_USER', 'admin')
 for directory in ('database', 'logo', 'backup'):
     (DATA / directory).mkdir(parents=True, exist_ok=True)
 app = Flask(__name__, static_folder=None)
+APP_VERSION = (ROOT / 'VERSION').read_text(encoding='utf-8').strip()
+release_checker = ReleaseChecker(APP_VERSION, DATA / 'update-check.json')
 app.config.update(MAX_CONTENT_LENGTH=8 * 1024 * 1024, SESSION_COOKIE_HTTPONLY=True,
                   SESSION_COOKIE_SAMESITE='Strict', PERMANENT_SESSION_LIFETIME=timedelta(days=7))
 Image.MAX_IMAGE_PIXELS = 16_000_000
@@ -94,7 +97,11 @@ def credentials(raw):
 def auth_status():
     record = account()
     return jsonify(initialized=bool(record), authenticated=logged_in(record),
-                   username=record[0] if logged_in(record) else '')
+                   username=record[0] if logged_in(record) else '', version=APP_VERSION)
+
+@app.route('/api/version')
+def version_status():
+    return jsonify(release_checker.check())
 
 @app.route('/api/auth/setup', methods=['POST'])
 def auth_setup():

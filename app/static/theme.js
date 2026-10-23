@@ -36,10 +36,11 @@
 (() => {
  'use strict';
  const key='m3u-studio-accent';
- const colors=['purple','pink','blue','yellow','green','cyan'];
+ const colors=['purple','pink','blue','orange','green','cyan'];
  const valid=value=>colors.includes(value);
+ const normalize=value=>value==='yellow'?'orange':value;
  let preference='pink';
- try { const saved=localStorage.getItem(key); if(valid(saved))preference=saved; } catch {}
+ try { const saved=normalize(localStorage.getItem(key)); if(valid(saved)){preference=saved;if(saved==='orange')localStorage.setItem(key,saved);} } catch {}
  function apply(){
   document.documentElement.dataset.accent=preference;
   document.querySelectorAll('[data-accent-choice]').forEach(node=>node.setAttribute('aria-checked',String(node.dataset.accentChoice===preference)));
@@ -47,7 +48,7 @@
  }
  function set(value){if(!valid(value))return;preference=value;try{localStorage.setItem(key,value)}catch{}apply();}
  apply();
- window.addEventListener('storage',event=>{if(event.key!==key&&event.key!==null)return;preference=valid(event.newValue)?event.newValue:'pink';apply();});
+ window.addEventListener('storage',event=>{if(event.key!==key&&event.key!==null)return;const value=normalize(event.newValue);preference=valid(value)?value:'pink';apply();});
  document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('[data-accent-choice]').forEach(node=>node.addEventListener('click',()=>set(node.dataset.accentChoice)));
   document.querySelector('#appearanceSettings').addEventListener('click',()=>document.querySelector('#appearanceDialog').showModal());
