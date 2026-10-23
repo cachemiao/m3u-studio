@@ -16,11 +16,13 @@
 
 <p align="center"><a href="README.md">简体中文</a> · <strong>English</strong></p>
 
-M3U Studio is a self-hosted IPTV channel manager. Organize channels, groups, logos and EPG in your browser, then publish **M3U / TXT subscriptions** for your player.
+<p align="center">M3U Studio is a self-hosted IPTV channel manager. Organize channels, groups, logos and EPG in your browser, then publish <strong>M3U / TXT subscriptions</strong> for your player.</p>
 
-Built with **Python / Flask + SQLite** and plain HTML / CSS / JavaScript. No frontend Node build is required.
+<p align="center">Built with <strong>Python / Flask + SQLite</strong> and plain HTML / CSS / JavaScript. No frontend Node build is required.</p>
 
-**Contents:** [Screenshots](#screenshots) · [Features](#features) · [Quick start](#quick-start) · [Get started](#get-started) · [Docs and development](#documentation) · [Contributing](#feedback-and-contributions)
+<p align="center">
+  <a href="#screenshots">Screenshots</a> · <a href="#features">Features</a> · <a href="#quick-start">Quick start</a> · <a href="#get-started">Get started</a> · <a href="#documentation">Docs and development</a> · <a href="#feedback-and-contributions">Contributing</a>
+</p>
 
 ## Screenshots
 

@@ -16,11 +16,13 @@
 
 <p align="center"><strong>简体中文</strong> · <a href="README.en.md">English</a></p>
 
-M3U Studio 是一个可自行部署的 IPTV 频道管理工具。通过网页管理频道、分组、台标与 EPG，整理后生成 **M3U / TXT 订阅**，在播放器中使用。
+<p align="center">M3U Studio 是一个可自行部署的 IPTV 频道管理工具。通过网页管理频道、分组、台标与 EPG，整理后生成 <strong>M3U / TXT 订阅</strong>，在播放器中使用。</p>
 
-基于 **Python / Flask + SQLite**，前端使用原生 HTML / CSS / JavaScript，无需 Node 构建。
+<p align="center">基于 <strong>Python / Flask + SQLite</strong>，前端使用原生 HTML / CSS / JavaScript，无需 Node 构建。</p>
 
-**目录：** [界面预览](#界面预览) · [核心功能](#核心功能) · [快速启动](#快速启动) · [开始使用](#开始使用) · [文档与开发](#文档) · [反馈与贡献](#反馈与贡献)
+<p align="center">
+  <a href="#界面预览">界面预览</a> · <a href="#核心功能">核心功能</a> · <a href="#快速启动">快速启动</a> · <a href="#开始使用">开始使用</a> · <a href="#文档">文档与开发</a> · <a href="#反馈与贡献">反馈与贡献</a>
+</p>
 
 ## 界面预览
 
