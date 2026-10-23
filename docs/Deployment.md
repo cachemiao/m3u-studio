@@ -2,6 +2,8 @@
 
 [Home](../README.en.md) · [User guide](UserGuide.md) · [简体中文](部署与维护.md)
 
+Fresh installations create accounts in the web UI and **do not need `.env`**. References to backing up `.env` apply only to legacy installations that already have one.
+
 ## Quick start with Docker (recommended)
 
 Install Docker first. Images support **AMD64 and ARM64**; Docker selects the appropriate architecture.
@@ -140,7 +142,7 @@ sh setup.sh
 docker compose up -d --build
 ```
 
-The repository's Compose file builds from source, uses container name `iptv-manager`, and mounts `./data`. The first build downloads the base image and dependencies.
+The repository's `docker-compose.yml` uses `build:` for source builds and mounts `./data`. It retains the legacy service/container name `iptv-manager`; the image deployment above uses `m3u-studio`. Manage source deployments with `docker compose` from their own directory to avoid mixing container names. The first build downloads the base image and dependencies.
 
 ## Data and backup
 

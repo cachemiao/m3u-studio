@@ -2,3 +2,7 @@ data/
 .env
 __pycache__/
 .pytest_cache/
+
+# Local development
+.venv/
+data-dev/

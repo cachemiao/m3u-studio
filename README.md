@@ -14,18 +14,13 @@
   <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=F9A8D4" alt="GitHub Stars"></a>
 </p>
 
-<p align="center">
-  <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-Channel-F9A8D4?logo=telegram&amp;logoColor=white" alt="Telegram Channel"></a>
-  <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-Group-F9A8D4?logo=telegram&amp;logoColor=white" alt="Telegram Group"></a>
-</p>
-
-<p align="center">
-  <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=zh"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
-</p>
-
 <p align="center"><strong>简体中文</strong> · <a href="README.en.md">English</a></p>
 
 M3U Studio 是一个可自行部署的 IPTV 频道管理工具。通过网页管理频道、分组、台标与 EPG，整理后生成 **M3U / TXT 订阅**，在播放器中使用。
+
+基于 **Python / Flask + SQLite**，前端使用原生 HTML / CSS / JavaScript，无需 Node 构建。
+
+**目录：** [界面预览](#界面预览) · [核心功能](#核心功能) · [快速启动](#快速启动) · [开始使用](#开始使用) · [文档与开发](#文档) · [反馈与贡献](#反馈与贡献)
 
 ## 界面预览
 
@@ -40,6 +35,13 @@ M3U Studio 是一个可自行部署的 IPTV 频道管理工具。通过网页管
 
 截图为即将发布的新版界面，当前公开版本可能有所不同。频道与台标由用户自行添加。
 
+<details>
+<summary>查看多选拖动演示（新版预览）</summary>
+
+![多选频道合并拖动与撤销演示](docs/images/multi-drag-zh.gif)
+
+</details>
+
 ## 核心功能
 
 - **多列表与订阅**：独立订阅、合并订阅、自定义短地址，支持 M3U / TXT 导入。
@@ -51,31 +53,9 @@ M3U Studio 是一个可自行部署的 IPTV 频道管理工具。通过网页管
 
 ## 快速启动
 
-先安装 Docker，以下两种方式任选其一。镜像支持 **AMD64 / ARM64**。
+> **访问说明：** 推荐在可信内网或 VPN 中部署。订阅与台标地址无需登录，能访问订阅的人可查看其中的播放源；公网部署请配置 HTTPS 反向代理和访问限制。
 
-### 方式 A：Docker 命令
-
-```sh
-docker run -d \
-  --name m3u-studio \
-  -p 8324:8324 \
-  -v m3u-studio-data:/data \
-  -e TZ=Asia/Shanghai \
-  --restart unless-stopped \
-  --security-opt no-new-privileges:true \
-  --cap-drop ALL \
-  cachemiao/m3u-studio:latest
-```
-
-打开 **`http://设备IP:8324`**，首次访问时创建管理账号，密码至少 8 个字符。
-
-数据保存在 `m3u-studio-data` 卷中。端口冲突时，将 `-p 8324:8324` 改为 `-p 8325:8324`，并通过 8325 访问。
-
-### 方式 B：Compose 部署（推荐 NAS）
-
-只需一个 Compose 文件，直接拉取官方镜像，**无需 clone 仓库、无需本地构建或配置 `.env`**。
-
-**命令行**：在空目录运行：
+安装 Docker 和 Compose 后执行。仅需一个配置文件，直接拉取 **AMD64 / ARM64** 镜像，无需 clone、构建或配置 `.env`：
 
 ```sh
 mkdir m3u-studio && cd m3u-studio
@@ -83,13 +63,11 @@ curl -fsSL https://raw.githubusercontent.com/cachemiao/m3u-studio/main/docker-co
 docker compose up -d
 ```
 
-> 如果 `raw.githubusercontent.com` 无法访问，在 GitHub 打开 [docker-compose.image.yml](docker-compose.image.yml)，复制内容，在空目录中保存为 `docker-compose.yml`，再执行 `docker compose up -d`。
+打开 **`http://设备IP:8324`**，首次创建管理账号，密码至少 8 个字符；数据保存在 `m3u-studio-data` 命名卷中。
 
-**飞牛 OS（fnOS）／群晖等 NAS**：打开 Docker 的 Compose／项目部署界面，新建项目，将 [docker-compose.image.yml](docker-compose.image.yml) 的内容粘贴到配置编辑器中启动即可，无需命令行。不同 NAS 的菜单名称可能略有区别。
+**NAS 部署／下载失败：** 在 GitHub 打开 [docker-compose.image.yml](docker-compose.image.yml)，将内容粘贴到飞牛 OS、群晖等 NAS 的 Compose／项目编辑器；也可在空目录保存为 `docker-compose.yml` 后执行 `docker compose up -d`。
 
-默认从 Docker Hub 拉取 AMD64 / ARM64 镜像；数据自动保存在命名卷 `m3u-studio-data` 中，无需手动创建宿主机目录或设置写入权限。启动后访问 **`http://设备IP:8324`** 创建管理账号，无默认密码。
-
-更多方式见 [部署与维护](docs/部署与维护.md)：Docker Compose、GHCR 镜像源、源码构建、升级和完整备份。
+[其他部署方式、端口修改与升级备份 →](docs/部署与维护.md)
 
 ## 开始使用
 
@@ -104,19 +82,20 @@ docker compose up -d
 
 - [使用指南](docs/使用指南.md)：导入、拖动、批量编辑、台标、EPG 和订阅地址。
 - [部署与维护](docs/部署与维护.md)：安装、升级、数据备份及旧版本迁移。
+- [开发与贡献](docs/开发指南.md)：不使用 Docker 的本地运行、测试和 PR 流程。
 - [更新记录](CHANGELOG.md)
 
-## 反馈与交流
+## 反馈与贡献
 
-遇到问题或有功能建议，欢迎提交 [Issue](https://github.com/cachemiao/m3u-studio/issues)。请附版本、部署方式和复现步骤，示例中去除私人地址与凭据。
+欢迎提交 [Issue](https://github.com/cachemiao/m3u-studio/issues) 或 [Pull Request](https://github.com/cachemiao/m3u-studio/pulls)。问题反馈请附版本、部署方式和复现步骤；贡献代码前请阅读 [开发指南](docs/开发指南.md)，示例中去除私人地址与凭据。
 
-[Telegram 频道](https://t.me/m3ustudio_news) · [Telegram 群组](https://t.me/m3ustudio_chat) · [支持项目 ☕](https://cachemiao.github.io/m3u-studio/support.html?lang=zh)
+[Telegram 频道](https://t.me/m3ustudio_news) · [Telegram 群组](https://t.me/m3ustudio_chat)
 
 ## 许可与使用范围
 
 代码采用 [GNU GPL v2.0](LICENSE)（`GPL-2.0-only`）许可证。Copyright © 2026 cachemiao。
 
-项目不提供直播源或电视台台标，请使用有权使用的资源。它负责频道管理与订阅分发，播放、UDP 转 HTTP、回放和 FCC 能力取决于外部服务及播放器。推荐部署在可信内网或 VPN 中。
+项目不提供直播源或电视台台标，请使用有权使用的资源。它负责频道管理与订阅分发，播放、UDP 转 HTTP、回放和 FCC 能力取决于外部服务及播放器。
 
 ## Star History
 
@@ -127,3 +106,7 @@ docker compose up -d
     <img alt="Star History · cachemiao/m3u-studio" src="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date" width="100%">
   </picture>
 </a>
+
+<p align="center">
+  <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=zh"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
+</p>

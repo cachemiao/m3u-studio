@@ -11,22 +11,16 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0-F9A8D4" alt="GNU GPL v2.0 License"></a>
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/docker/pulls/cachemiao/m3u-studio?color=F9A8D4" alt="Docker pulls"></a>
   <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=F9A8D4" alt="GitHub Stars"></a>
-  <a href="https://x.com/cachemiao"><img src="https://img.shields.io/badge/X-@cachemiao-000000?logo=x&amp;logoColor=white" alt="Follow on X"></a>
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-F9A8D4?logo=docker&amp;logoColor=white" alt="Docker Architectures"></a>
-</p>
-
-<p align="center">
-  <a href="https://t.me/m3ustudio_news"><img src="https://img.shields.io/badge/Telegram-Channel-F9A8D4?logo=telegram&amp;logoColor=white" alt="Telegram channel"></a>
-  <a href="https://t.me/m3ustudio_chat"><img src="https://img.shields.io/badge/Telegram-Group-F9A8D4?logo=telegram&amp;logoColor=white" alt="Telegram group"></a>
-</p>
-
-<p align="center">
-  <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=en"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
 </p>
 
 <p align="center"><a href="README.md">简体中文</a> · <strong>English</strong></p>
 
 M3U Studio is a self-hosted IPTV channel manager. Organize channels, groups, logos and EPG in your browser, then publish **M3U / TXT subscriptions** for your player.
+
+Built with **Python / Flask + SQLite** and plain HTML / CSS / JavaScript. No frontend Node build is required.
+
+**Contents:** [Screenshots](#screenshots) · [Features](#features) · [Quick start](#quick-start) · [Get started](#get-started) · [Docs and development](#documentation) · [Contributing](#feedback-and-contributions)
 
 ## Screenshots
 
@@ -41,6 +35,13 @@ M3U Studio is a self-hosted IPTV channel manager. Organize channels, groups, log
 
 Screenshots preview the upcoming interface; the current public version may differ. Channels and logos are user-provided.
 
+<details>
+<summary>Watch multi-select dragging (upcoming interface)</summary>
+
+![Dragging selected channels together and undoing the move](docs/images/multi-drag-en.gif)
+
+</details>
+
 ## Features
 
 - **Playlists and subscriptions:** separate and combined subscriptions, custom short URLs, and M3U / TXT imports.
@@ -52,31 +53,9 @@ Screenshots preview the upcoming interface; the current public version may diffe
 
 ## Quick start
 
-Install Docker, then choose either option below. The image supports **AMD64 / ARM64**.
+> **Access:** deploy on a trusted LAN or VPN. Subscription and logo URLs do not require login; anyone who can access a subscription can read its stream URLs. For public deployment, configure HTTPS and access restrictions through a reverse proxy.
 
-### Option A: Docker command
-
-```sh
-docker run -d \
-  --name m3u-studio \
-  -p 8324:8324 \
-  -v m3u-studio-data:/data \
-  -e TZ=Asia/Shanghai \
-  --restart unless-stopped \
-  --security-opt no-new-privileges:true \
-  --cap-drop ALL \
-  cachemiao/m3u-studio:latest
-```
-
-Open **`http://SERVER_IP:8324`** and create your admin account on the first visit. Passwords require at least 8 characters.
-
-Data stays in the `m3u-studio-data` volume. If the port is occupied, change `-p 8324:8324` to `-p 8325:8324` and visit port 8325.
-
-### Option B: Docker Compose (recommended for NAS)
-
-One Compose file pulls the official image directly. **No repository clone, local build or `.env` file is needed.**
-
-**Command line:** run in a new directory:
+Install Docker and Compose, then run these commands. One configuration file pulls the **AMD64 / ARM64** image, with no repository clone, local build or `.env` required:
 
 ```sh
 mkdir m3u-studio && cd m3u-studio
@@ -84,13 +63,11 @@ curl -fsSL https://raw.githubusercontent.com/cachemiao/m3u-studio/main/docker-co
 docker compose up -d
 ```
 
-> If `raw.githubusercontent.com` is unavailable, open [docker-compose.image.yml](docker-compose.image.yml) on GitHub, copy its contents into `docker-compose.yml` in an empty directory, then run `docker compose up -d`.
+Open **`http://SERVER_IP:8324`** and create your admin account; passwords require at least 8 characters. Data stays in the `m3u-studio-data` named volume.
 
-**fnOS, Synology and other NAS systems:** create a project in the Docker Compose/project interface, paste the contents of [docker-compose.image.yml](docker-compose.image.yml), and deploy. No command line is required; menu names vary by NAS platform.
+**NAS / download fallback:** open [docker-compose.image.yml](docker-compose.image.yml) on GitHub and paste it into your fnOS, Synology or other NAS Compose/project editor. Alternatively, save it as `docker-compose.yml` in an empty directory and run `docker compose up -d`.
 
-The default image comes from Docker Hub and supports AMD64 / ARM64. Data is initialized automatically in the `m3u-studio-data` named volume, with no host-directory permission setup. Open **`http://SERVER_IP:8324`** to create your admin account. There is no default password.
-
-See [Deployment and maintenance](docs/Deployment.md) for Docker Compose, the GHCR mirror, source builds, upgrades and full backups.
+[Other deployment methods, port changes, upgrades and backups →](docs/Deployment.md)
 
 ## Get started
 
@@ -105,19 +82,20 @@ Channel changes update subscriptions only after publishing. Logo uploads, replac
 
 - [User guide](docs/UserGuide.md): imports, dragging, bulk editing, logos, EPG and subscription URLs.
 - [Deployment and maintenance](docs/Deployment.md): installation, upgrades and backups.
+- [Development and contributing](docs/Development.md): local setup without Docker, tests and the PR workflow.
 - [Changelog](CHANGELOG.md)
 
-## Feedback and community
+## Feedback and contributions
 
-Report bugs or suggest features through [Issues](https://github.com/cachemiao/m3u-studio/issues). Include your version, deployment method and reproduction steps. Remove private URLs and credentials from examples.
+Report bugs through [Issues](https://github.com/cachemiao/m3u-studio/issues) or contribute a [Pull Request](https://github.com/cachemiao/m3u-studio/pulls). Include your version, deployment method and reproduction steps in reports; read the [development guide](docs/Development.md) before contributing code. Remove private URLs and credentials from examples.
 
-[Telegram channel](https://t.me/m3ustudio_news) · [Telegram group](https://t.me/m3ustudio_chat) · [X](https://x.com/cachemiao) · [Support the project ☕](https://cachemiao.github.io/m3u-studio/support.html?lang=en)
+[Telegram channel](https://t.me/m3ustudio_news) · [Telegram group](https://t.me/m3ustudio_chat) · [X](https://x.com/cachemiao)
 
 ## License and scope
 
 Released under [GNU GPL v2.0](LICENSE) (`GPL-2.0-only`). Copyright © 2026 cachemiao.
 
-The project includes no live stream sources or TV channel logos. Use resources you have permission to use. It manages channels and distributes subscriptions; playback, UDP-to-HTTP conversion, catch-up and FCC depend on external services and players. Deployment on a trusted LAN or VPN is recommended.
+The project includes no live stream sources or TV channel logos. Use resources you have permission to use. It manages channels and distributes subscriptions; playback, UDP-to-HTTP conversion, catch-up and FCC depend on external services and players.
 
 ## Star History
 
@@ -128,3 +106,7 @@ The project includes no live stream sources or TV channel logos. Use resources y
     <img alt="Star History · cachemiao/m3u-studio" src="https://api.star-history.com/svg?repos=cachemiao/m3u-studio&amp;type=Date" width="100%">
   </picture>
 </a>
+
+<p align="center">
+  <a href="https://cachemiao.github.io/m3u-studio/support.html?lang=en"><img src="docs/images/support-button.svg" width="260" alt="Buy me a coffee"></a>
+</p>
