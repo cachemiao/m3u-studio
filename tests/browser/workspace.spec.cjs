@@ -113,6 +113,8 @@ test("demo resets and makes no backend/external requests", async ({ page }) => {
     requests.push({ url: r.url(), method: r.method() }),
   );
   await page.goto("/demo/?lang=zh");
+  await expect(page.locator("#backupArchive")).toBeDisabled();
+  await expect(page.locator("#exportLogos")).toBeDisabled();
   await expect(page.locator(".channel")).toHaveCount(24);
   await page.locator("#import").click();
   await page.locator("#demoSampleApply").click();
@@ -135,4 +137,92 @@ test("demo resets and makes no backend/external requests", async ({ page }) => {
       ),
     ).toBeTruthy();
   }
+});
+
+test("configuration/logo ZIP round trip stays a draft and library exports separately", async ({
+  page,
+}, testInfo) => {
+  const fs = require("node:fs");
+  const path = require("node:path");
+  await openWorkspace(page);
+  const uploaded = await page.request.post("/api/logos", {
+    headers,
+    multipart: {
+      file: {
+        name: "Browser backup sample.png",
+        mimeType: "image/png",
+        buffer: fs.readFileSync(path.resolve("demo/logos/城市综合 HD.png")),
+      },
+    },
+  });
+  expect(uploaded.ok()).toBeTruthy();
+  const published = await (await page.request.get("/api/state")).json();
+  await page.locator(".channel").first().hover();
+  await page.locator(".channel .actions button").first().click();
+  await page.locator("#channelForm [name=name]").fill("Archive draft");
+  await page.locator("#channelForm button.primary").click();
+  await page.locator("#preferences").click();
+  await expect(page.locator("#preferencesDialog #manageLogos")).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath("backup-settings.png") });
+  const downloadEvent = page.waitForEvent("download");
+  await page.locator("#backupArchive").click();
+  const download = await downloadEvent;
+  expect(download.suggestedFilename()).toBe("m3u-studio-backup.zip");
+  const saved = testInfo.outputPath("backup.zip");
+  await download.saveAs(saved);
+  await page.locator("#preferencesDialog .close").click();
+  await page.locator(".channel").first().hover();
+  await page.locator(".channel .actions button").first().click();
+  await page.locator("#channelForm [name=name]").fill("Discard this edit");
+  await page.locator("#channelForm button.primary").click();
+  await page.locator("#preferences").click();
+  await page.locator("#restoreFile").setInputFiles(saved);
+  await expect(page.locator("#interactionDialog")).toBeVisible();
+  await page.locator("#interactionConfirm").click();
+  await expect(page.locator("#preferencesDialog")).not.toBeVisible();
+  await expect(page.locator(".channel-name").first()).toHaveText(
+    "Archive draft",
+  );
+  expect(await (await page.request.get("/api/state")).json()).toEqual(
+    published,
+  );
+  await expect(page.locator("#toast")).toContainText("已载入草稿");
+  expect(
+    await page
+      .locator(".aside-bottom > button")
+      .evaluateAll((nodes) => nodes.map((n) => n.id)),
+  ).toEqual(["settings", "manageLogos", "preferences"]);
+  await page.locator("#manageLogos").click();
+  await expect(page.locator("#logoManagerDialog")).toBeVisible();
+  await expect(page.locator("#managerLogoGrid img")).toHaveCount(1);
+  await page
+    .locator("#managerLogoGrid img")
+    .evaluateAll((images) =>
+      Promise.all(images.map((image) => image.decode())),
+    );
+  await page.screenshot({ path: testInfo.outputPath("logo-library.png") });
+  const logosEvent = page.waitForEvent("download");
+  await page.locator("#exportLogos").click();
+  expect((await logosEvent).suggestedFilename()).toBe("m3u-studio-logos.zip");
+  await page.locator("#logoManagerDialog .close").click();
+  await page.screenshot({ path: testInfo.outputPath("sidebar.png") });
+  await page.locator("#preferences").click();
+  for (const width of [390, 768, 1500]) {
+    await page.setViewportSize({ width, height: 960 });
+    const bounds = await page.locator("#preferencesDialog").boundingBox();
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+  }
+  await page
+    .locator("#restoreFile")
+    .setInputFiles({
+      name: "legacy.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify(published)),
+    });
+  await page.locator("#interactionConfirm").click();
+  await expect(page.locator(".channel-name").first()).toHaveText("Sample 0");
+  expect(await (await page.request.get("/api/state")).json()).toEqual(
+    published,
+  );
 });

@@ -560,6 +560,21 @@
         }
       };
       ctx.$("#manageLogos").onclick = ctx.openLogoManager;
+      ctx.$("#exportLogos").onclick = async (event) => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        try {
+          await ctx.downloadArchive(
+            "/api/logos/export",
+            {},
+            "m3u-studio-logos.zip",
+          );
+        } catch (error) {
+          ctx.toast(window.M3UI18n.error(error.message));
+        } finally {
+          button.disabled = false;
+        }
+      };
       ctx.$("#pickerManageLogos").onclick = ctx.openLogoManager;
       ctx.$("#managerLogoSearch").oninput = ctx.renderLogoManager;
       ctx.$("#managerUpload").onclick = () => ctx.$("#managerLogoFile").click();

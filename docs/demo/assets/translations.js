@@ -1,7 +1,26 @@
 /* Shared UI messages; keep placeholders identical in both languages. */
 window.M3UTranslations = {
+"archiveWorkspaceChanged":{"zh": "工作区已变化，未替换草稿；已导入的台标会保留，请重新操作。", "en": "The workspace changed; the draft was not replaced. Any imported logos remain in the library. Please try again."},
+"archiveCount":{"zh": "台标数量过多或存在不支持的文件", "en": "Too many logos or unsupported files in the library"},
+"archiveLogosSize":{"zh": "台标库超过备份大小限制", "en": "Logo library exceeds the backup size limit"},
+"archiveSize":{"zh": "压缩包超过 64MB 限制", "en": "Archive exceeds 64MB"},
+"archiveLimit":{"zh": "备份 ZIP 超过 64MB", "en": "Backup ZIP exceeds 64MB"},
+"archiveRestoreFailed":{"zh": "恢复未完成，新增台标已撤回，请重试", "en": "Restore incomplete; newly added logos were removed. Please try again"},
+"archiveExportFailed":{"zh": "读取台标失败，导出未完成，请重试", "en": "Could not read logos; export incomplete. Please try again"},
+"archiveReadFailed":{"zh": "读取台标失败，备份未完成，请重试", "en": "Could not read logos; backup incomplete. Please try again"},
+"archiveBusy":{"zh": "正在处理备份，请稍后重试", "en": "A backup operation is in progress; please try again shortly"},
+"archiveInvalid":{"zh": "备份格式、配置或图片无效，未恢复任何内容", "en": "Invalid backup format, configuration or images; nothing was restored"},
+"archiveFailed":{"zh": "打包备份失败", "en": "Archive operation failed"},
+"archiveTooLarge":{"zh": "ZIP 最大 64MB，JSON 最大 8MB", "en": "ZIP limit: 64MB; JSON limit: 8MB"},
+"archiveRestored":{"zh": "已载入草稿；新增 {p0} 个台标，重命名 {p1} 个，缺失引用 {p2} 处。请检查后发布。", "en": "Draft loaded; {p0} logos added, {p1} renamed, {p2} missing references. Review before publishing."},
+"archiveRestoreConfirm":{"zh": "恢复配置将替换当前工作区内容，确认后仍需保存并发布。台标会立即加入图库；同名不同内容将另存，不覆盖现有图片。是否继续？", "en": "Replace the current workspace with this backup? You must still save and publish. Logos are added immediately; conflicting images are renamed without overwriting existing files."},
+"archiveExport":{"zh": "导出 ZIP", "en": "Export ZIP"},
+"archiveDesc":{"zh": "打包全部列表、当前草稿和整个台标库，不含账号与发布历史", "en": "Package all lists, current drafts and the entire logo library; excludes accounts and publication history"},
+"archiveTitle":{"zh": "配置与台标备份", "en": "Configuration & logo backup"},
+"logoExportAll":{"zh": "全部导出", "en": "Export all"},
+"logoLibraryTitle":{"zh": "台标库", "en": "Logo library"},
 "uiSourceBlocked":{"zh":"策略限制","en":"Blocked by policy"},
-"uiSourceBlockedHint":{"zh":"目标被访问策略限制；内网地址需由管理员配置允许范围。","en":"Target blocked by network policy. Ask the administrator to allow the required private host or network."},
+"uiSourceBlockedHint":{"zh": "目标被访问策略限制，请检查地址或高级访问限制。", "en": "Target blocked by network policy. Check the address or advanced access restrictions."},
 "uiCopyStreamHint":{"zh":"点击复制完整地址","en":"Click to copy the full URL"},
 "uiCopyStreamFailed":{"zh":"复制失败，请手动复制","en":"Copy failed; please copy manually"},
 "uiSave":{"zh":"保存","en":"Save"},
@@ -792,34 +811,19 @@ window.M3UTranslations = {
     "zh": "查看历史",
     "en": "View history"
   },
-  "m188": {
-    "zh": "导出配置备份",
-    "en": "Export configuration backup"
-  },
-  "m189": {
-    "zh": "导出全部列表和当前页面的未保存修改",
-    "en": "Export all playlists, including unsaved changes on this page"
-  },
+  "m188":{"zh": "配置 JSON 备份", "en": "Configuration JSON backup"},
+  "m189":{"zh": "导出全部列表和当前草稿，不含台标图片", "en": "Export all lists and current drafts without logo images"},
   "m190": {
     "zh": "导出 JSON",
     "en": "Export JSON"
   },
-  "m191": {
-    "zh": "恢复 JSON 配置",
-    "en": "Restore JSON configuration"
-  },
-  "m192": {
-    "zh": "从备份恢复，确认后再保存并发布",
-    "en": "Restore a backup, then review before publishing"
-  },
+  "m191":{"zh": "恢复备份", "en": "Restore backup"},
+  "m192":{"zh": "支持配置与台标 ZIP 或旧版 JSON，检查后再发布", "en": "Accepts configuration/logo ZIP or legacy JSON; review before publishing"},
   "m193": {
     "zh": "选择备份",
     "en": "Choose backup"
   },
-  "m194": {
-    "zh": "配置 JSON 不含台标图片和台标库设置；完整备份请保留 data 目录。",
-    "en": "Configuration JSON excludes logo images and library settings. Back up the data directory for a full backup."
-  },
+  "m194":{"zh": "ZIP 包含配置与台标图片；账号和发布历史的完整迁移仍需备份 data 目录。", "en": "ZIP includes configuration and logo images. Back up the data directory to also migrate accounts and publication history."},
   "m195": {
     "zh": "当前密码",
     "en": "Current password"

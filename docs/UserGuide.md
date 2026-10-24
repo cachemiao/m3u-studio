@@ -101,3 +101,13 @@ For complete backups, see [Deployment and maintenance](Deployment.md#data-and-ba
 
 - [m3u-logos](https://github.com/cachemiao/m3u-logos): check the image permissions before use.
 - [rtp2httpd](https://github.com/stackia/rtp2httpd): an external playback service with FCC support.
+
+## Configuration and logo archives
+
+Use **Settings → Configuration & logo backup → Export ZIP** to package all lists, the current applied draft and the entire local logo library, including unused images. External logo links are retained without downloading them. Accounts, session secrets and publication history are excluded.
+
+**Restore backup** accepts this ZIP or legacy JSON. Configuration is validated and loaded into the draft; review it before publishing. Images join the library immediately. Identical files are reused; differing name conflicts receive new filenames and only the restored references change. Existing images are never overwritten or deleted. Missing image references are reported rather than silently removed.
+
+The sidebar **Logo library → Export all** downloads every visible library image regardless of search filters. This image-only ZIP cannot restore configuration; extract it and use batch upload to import the images.
+
+ZIP uploads are limited to 64MB, expanded content to 128MB and logos to 5,000 files. Legacy JSON retains its 8MB limit. Back up the full data directory to also migrate accounts and publication history.

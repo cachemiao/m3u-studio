@@ -22,7 +22,28 @@
     );
     ctx.$("#listDialog").showModal();
   }
+  async function downloadArchive(path, options, filename) {
+    const response = await ctx.request(path, {
+      ...options,
+      headers: {
+        "X-IPTV-Request": "1",
+        "Accept-Language": window.M3UI18n.locale,
+        ...options?.headers,
+      },
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw Error(data.error || ctx.t("archiveFailed"));
+    }
+    const address = URL.createObjectURL(await response.blob());
+    const link = ctx.el("a");
+    link.href = address;
+    link.download = filename;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(address), 1000);
+  }
   return {
+    downloadArchive,
     openListSettings,
     install() {
       ctx.$("#settings").onclick = () => {
@@ -119,29 +140,87 @@
         ctx.toast(ctx.t("m50"));
       };
       ctx.$("#restore").onclick = () => ctx.$("#restoreFile").click();
+      ctx.$("#backupArchive").onclick = async (event) => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        try {
+          await downloadArchive(
+            "/api/backup/archive",
+            ctx.json("POST", ctx.model.state),
+            "m3u-studio-backup.zip",
+          );
+        } catch (error) {
+          ctx.toast(window.M3UI18n.error(error.message));
+        } finally {
+          button.disabled = false;
+        }
+      };
       ctx.$("#restoreFile").onchange = async (e) => {
+        const button = ctx.$("#restore");
         try {
           const file = e.target.files[0];
           if (!file) return;
-          const raw = JSON.parse(await file.text());
-          if (!Array.isArray(raw.lists)) throw Error(ctx.t("m51"));
+          const zipped = file.name.toLowerCase().endsWith(".zip");
+          if (file.size > (zipped ? 64 : 8) * 1024 * 1024)
+            throw Error(ctx.t("archiveTooLarge"));
           if (
-            !(await ctx.uiConfirm(ctx.t("m52"), {
-              title: ctx.t("uiConfirmAction"),
-              confirmLabel: ctx.t("m125"),
-            }))
+            !(await ctx.uiConfirm(
+              ctx.t(zipped ? "archiveRestoreConfirm" : "m52"),
+              {
+                title: ctx.t("uiConfirmAction"),
+                confirmLabel: ctx.t("m125"),
+              },
+            ))
           )
             return;
+          button.disabled = true;
+          const owner = ctx.model.workspaceOwner;
+          const fingerprint = ctx.core.fingerprint(ctx.model.state);
+          const revision = ctx.model.state.revision;
+          let raw, report;
+          if (zipped) {
+            const form = new FormData();
+            form.append("file", file);
+            report = await ctx.api("/api/backup/restore", {
+              method: "POST",
+              body: form,
+            });
+            raw = report.state;
+            ctx.model.logoLibrary = null;
+          } else {
+            raw = await ctx.api(
+              "/api/validate",
+              ctx.json("POST", JSON.parse(await file.text())),
+            );
+          }
+          if (
+            ctx.model.workspaceOwner !== owner ||
+            ctx.model.state?.revision !== revision ||
+            ctx.core.fingerprint(ctx.model.state) !== fingerprint
+          ) {
+            ctx.toast(ctx.t("archiveWorkspaceChanged"));
+            return;
+          }
           ctx.model.state.lists = raw.lists;
           ctx.model.state.epg = raw.epg || "";
           ctx.model.selected = ctx.model.state.lists[0]?.id;
           ctx.model.group = "";
           ctx.$("#preferencesDialog").close();
           ctx.changed();
+          if (report)
+            ctx.toast(
+              ctx.t("archiveRestored", {
+                p0: report.imported,
+                p1: report.renamed,
+                p2: report.missing,
+              }),
+            );
         } catch (err) {
           ctx.toast(window.M3UI18n.error(err.message));
+        } finally {
+          button.disabled = false;
+          e.target.value = "";
         }
-        e.target.value = "";
       };
       document
         .querySelectorAll(".close")

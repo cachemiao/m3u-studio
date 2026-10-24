@@ -226,3 +226,5 @@
   #appShell .channel-status { grid-column:3/5; padding-right:calc(100px * var(--studio-ui-scale)); }
   #appShell .channel-epg { justify-self:end; max-width:calc(100px * var(--studio-ui-scale)); }
 }
+
+#appShell #manageLogos::before { -webkit-mask:var(--studio-icon-30) center/contain no-repeat; mask:var(--studio-icon-30) center/contain no-repeat; }

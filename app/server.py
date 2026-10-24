@@ -17,6 +17,7 @@ from release_updates import ReleaseChecker
 from network_policy import AddressPolicy, AddressBlocked
 from remote_playlist import download_playlist
 from database_schema import ensure_schema
+from backup_routes import register_backup_routes
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 ROOT = Path(__file__).parent
@@ -306,7 +307,7 @@ def headers(response):
 @app.errorhandler(400)
 @app.errorhandler(413)
 def bad_request(error):
-    return jsonify(error='请求格式错误或文件超过 8MB'), error.code
+    return jsonify(error=('备份 ZIP 超过 64MB' if request.path == '/api/backup/restore' else '请求格式错误或文件超过 8MB')), error.code
 
 # Shared cap across authenticated requests in this worker, including multiple tabs.
 probe_slots = BoundedSemaphore(4)
@@ -678,6 +679,8 @@ def delete_logo(filename):
         conn.execute('INSERT OR IGNORE INTO hidden_logos VALUES (?)', (filename,))
         (DATA / 'logo' / filename).unlink(missing_ok=True)
     return jsonify(ok=True)
+
+register_backup_routes(app, DATA, db, validate, logo_catalog, valid_logo_filename)
 
 @app.route('/logo/<filename>')
 def logo(filename):

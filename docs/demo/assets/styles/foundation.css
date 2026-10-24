@@ -172,9 +172,9 @@ h1,h2,h3{font-weight:600;letter-spacing:-.025em}h1{font-size:calc(22px * var(--s
 #appShell .empty { margin: calc(20px * var(--studio-ui-scale)) 0; border: calc(1px * var(--studio-ui-scale)) dashed var(--empty-border); border-radius: calc(8px * var(--studio-ui-scale)); padding: calc(56px * var(--studio-ui-scale)) calc(24px * var(--studio-ui-scale)); background: var(--surface); font-size: calc(13px * var(--studio-ui-scale)); line-height: 1.9; }
 #appShell .empty::before { content: '≡'; display: block; color: var(--accent-text); font-size: calc(28px * var(--studio-ui-scale)); margin-bottom: calc(12px * var(--studio-ui-scale)); }
 /* One local SVG stroke vocabulary; labels and existing accessible names remain intact. */
-#appShell button:is(#listSettings, #import, #add, #undo, #redo, #batchEdit, #checkSources, #autoLogo, #settings, #preferences),
+#appShell button:is(#listSettings, #import, #add, #undo, #redo, #batchEdit, #checkSources, #autoLogo, #settings, #manageLogos, #preferences),
 #appShell .actions button { display: inline-flex; align-items: center; gap: calc(6px * var(--studio-ui-scale)); }
-#appShell button:is(#listSettings, #import, #add, #undo, #redo, #batchEdit, #checkSources, #autoLogo, #settings, #preferences)::before,
+#appShell button:is(#listSettings, #import, #add, #undo, #redo, #batchEdit, #checkSources, #autoLogo, #settings, #manageLogos, #preferences)::before,
 #appShell .actions button::before { content: ''; flex: 0 0 var(--icon-size); display: block; width: var(--icon-size); height: var(--icon-size); background: currentColor; }
 #appShell .handle, #appShell .nav-handle { font-size: 0; display: inline-flex; align-items: center; justify-content: center; }
 #appShell .handle::before, #appShell .nav-handle::before { content: ''; display: block; width: calc(14px * var(--studio-ui-scale)); height: calc(18px * var(--studio-ui-scale)); background: currentColor; }

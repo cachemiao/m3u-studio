@@ -57,6 +57,8 @@ window.M3UDemo.installUI = function (ctx) {
   $("#demoReset").onclick = () => location.reload();
   const disabled = [
     "backup",
+    "backupArchive",
+    "exportLogos",
     "restore",
     "restoreFile",
     "playlistFile",
