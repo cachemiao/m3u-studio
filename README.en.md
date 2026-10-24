@@ -31,7 +31,7 @@
   </tr>
 </table>
 
-The interface and features above apply to **v0.6.0 and later**. Channels and logos are user-provided. [Try the live demo →](https://cachemiao.github.io/m3u-studio/demo/?lang=en)
+Try channel organization, drag-and-drop sorting and bulk editing online, with no installation required. [Try the live demo →](https://cachemiao.github.io/m3u-studio/demo/?lang=en)
 
 ## Features
 

@@ -31,7 +31,7 @@
   </tr>
 </table>
 
-以上界面与功能适用于 **v0.6.0 及以上版本**。频道与台标由用户自行添加。[在线体验 →](https://cachemiao.github.io/m3u-studio/demo/?lang=zh)
+无需安装，即可在线体验频道整理、拖动排序和批量编辑等功能。[在线体验 →](https://cachemiao.github.io/m3u-studio/demo/?lang=zh)
 
 ## 核心功能
 
