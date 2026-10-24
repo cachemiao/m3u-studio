@@ -8,8 +8,8 @@ M3U = '\ufeff#EXTM3U\n#EXTINF:-1 tvg-id="remote.one" group-title="综合",远程
 
 @pytest.fixture
 def remote(monkeypatch, server):
-    from network_policy import AddressPolicy
-    server.import_policy = AddressPolicy(['127.0.0.1/32'])
+    from outbound_helpers import LocalHTTPPolicy
+    server.import_policy = LocalHTTPPolicy()
     monkeypatch.setenv('no_proxy', '127.0.0.1,localhost')
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):

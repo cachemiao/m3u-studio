@@ -6,7 +6,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parents[1] / "app"))
 from network_policy import AddressPolicy, AddressBlocked, connect_checked
-from remote_playlist import PolicyRedirect
+from outbound_helpers import LocalHTTPPolicy
 from test_app import server, auth, client
 
 
@@ -22,15 +22,13 @@ from test_app import server, auth, client
         "fd00:ec2::254",
         "::ffff:127.0.0.1",
         "::ffff:169.254.169.254",
-        "192.168.1.1",
-        "10.0.0.1",
-        "172.16.0.1",
-        "fc00::1",
+        "100.64.0.1",
+        "192.0.2.1",
         "224.0.0.1",
         "fe80::1",
     ],
 )
-def test_default_blocks_nonpublic_targets(value):
+def test_default_blocks_sensitive_or_special_targets(value):
     assert not AddressPolicy().allows(value)
 
 
@@ -38,7 +36,8 @@ def test_separate_allowlists_preserve_explicit_private_iptv():
     source = AddressPolicy(["192.168.1.20/32", "fc00:1234::/64"], [80, 3224])
     assert source.allows("192.168.1.20") and not source.allows("192.168.1.21")
     assert source.allows("fc00:1234::1") and not source.allows("fc00:5678::1")
-    assert not AddressPolicy().allows("192.168.1.20")
+    assert AddressPolicy().allows("192.168.1.20")
+    assert not source.allows("8.8.8.8")
     with pytest.raises(AddressBlocked):
         source.check_url("http://192.168.1.20:22")
     assert AddressPolicy().allows("8.8.8.8")
@@ -51,10 +50,18 @@ def test_sensitive_endpoints_cannot_be_enabled_with_broad_allowlist():
         "100.100.100.200",
         "fd00:ec2::254",
         "::ffff:169.254.169.254",
+        "::ffff:127.0.0.1",
+        "0.0.0.0",
+        "240.0.0.1",
+        "224.0.0.1",
+        "ff02::1",
+        "fe80::1",
+        "100::1",
     ]:
         assert not policy.allows(value)
     assert not policy.allows("127.0.0.1")
-    assert AddressPolicy(["127.0.0.1/32"]).allows("127.0.0.1")
+    assert not AddressPolicy(["127.0.0.1/32"]).allows("127.0.0.1")
+    assert not AddressPolicy(["::1/128"]).allows("::1")
 
 
 def test_mixed_dns_answers_fail_closed_and_do_not_connect(monkeypatch):
@@ -146,7 +153,7 @@ def test_redirect_is_checked_before_connecting_to_metadata(server, auth, monkeyp
         return lookup(host, *args)
 
     monkeypatch.setattr(socket, "getaddrinfo", checked_lookup)
-    server.import_policy = server.source_policy = AddressPolicy(["127.0.0.1/32"])
+    server.import_policy = server.source_policy = LocalHTTPPolicy()
     try:
         c = client(server, auth)
         url = f"http://127.0.0.1:{http.server_port}/start"
@@ -162,3 +169,57 @@ def test_redirect_is_checked_before_connecting_to_metadata(server, auth, monkeyp
         http.shutdown()
         http.server_close()
         thread.join()
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "192.168.1.1",
+        "10.0.0.1",
+        "172.16.0.1",
+        "172.31.255.254",
+        "fc00::1",
+        "fd12:3456::1",
+        "::ffff:192.168.1.20",
+        "8.8.8.8",
+        "2606:4700:4700::1111",
+    ],
+)
+def test_default_supports_public_and_home_networks(value):
+    assert AddressPolicy().allows(value)
+
+
+def test_environment_allowlists_are_optional_strict_and_independent(monkeypatch):
+    for prefix in ("IMPORT", "SOURCE"):
+        monkeypatch.setenv(prefix + "_ALLOWED_NETWORKS", "")
+        monkeypatch.setenv(prefix + "_ALLOWED_PORTS", "")
+    assert AddressPolicy.from_environment("IMPORT").allows("192.168.1.30")
+    assert AddressPolicy.from_environment("SOURCE").allows("192.168.1.20")
+    monkeypatch.setenv("IMPORT_ALLOWED_NETWORKS", "192.168.1.30/32")
+    monkeypatch.setenv("IMPORT_ALLOWED_PORTS", "8080")
+    policy = AddressPolicy.from_environment("IMPORT")
+    assert policy.allows("192.168.1.30")
+    assert not policy.allows("192.168.1.20")
+    assert not policy.allows("8.8.8.8")
+    with pytest.raises(AddressBlocked):
+        policy.check_url("http://192.168.1.30:80/")
+    assert policy.check_url("http://192.168.1.30:8080/")
+    assert AddressPolicy.from_environment("SOURCE").allows("192.168.1.20")
+
+
+def test_private_dns_target_is_validated_and_pinned_without_configuration(monkeypatch):
+    monkeypatch.setattr(
+        socket,
+        "getaddrinfo",
+        Mock(
+            return_value=[
+                (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("192.168.1.20", 5140))
+            ]
+        ),
+    )
+    sock = Mock()
+    monkeypatch.setattr(socket, "socket", Mock(return_value=sock))
+    assert (
+        connect_checked(AddressPolicy(), ("iptv.home", 5140), monotonic() + 1) is sock
+    )
+    sock.connect.assert_called_once_with(("192.168.1.20", 5140))

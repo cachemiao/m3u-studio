@@ -28,6 +28,11 @@ _HARD_DENY = tuple(
     )
 )
 
+_HOME_NETWORKS = tuple(
+    ipaddress.ip_network(value)
+    for value in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7")
+)
+
 
 def address(value):
     ip = ipaddress.ip_address(value)
@@ -62,19 +67,18 @@ class AddressPolicy:
 
     def allows(self, value):
         ip = address(value)
-        if any(ip.version == net.version and ip in net for net in _HARD_DENY):
+        if ip.is_loopback or ip.is_reserved or any(
+            ip.version == net.version and ip in net for net in _HARD_DENY
+        ):
             return False
         if isinstance(ip, ipaddress.IPv6Address) and (ip.sixtofour or ip.teredo):
             return False
-        matches = [
-            net for net in self.networks if net.version == ip.version and ip in net
-        ]
-        # Loopback is only permitted by an explicit single-host exception, not a broad CIDR.
-        if ip.is_loopback:
-            return any(net.prefixlen == ip.max_prefixlen for net in matches)
-        return bool(matches) or (
-            ip.is_global and not ip.is_multicast and not ip.is_reserved
-        )
+        # A configured list replaces the default range; it is a strict allowlist.
+        if self.networks:
+            return any(net.version == ip.version and ip in net for net in self.networks)
+        return any(
+            net.version == ip.version and ip in net for net in _HOME_NETWORKS
+        ) or (ip.is_global and not ip.is_multicast and not ip.is_reserved)
 
     def check_url(self, url):
         if (
