@@ -48,22 +48,11 @@ for title,indices in [('户外与生活示例',[18,20,22]),('纪录与音乐示�
 seed={'version':(ROOT/'app/VERSION').read_text().strip(),'state':state,'logos':logo_paths,'samples':samples}
 (ASSETS/'demo-state.js').write_text('window.M3UDemoSeed = '+json.dumps(seed,ensure_ascii=False)+';\n',encoding='utf-8')
 
-app=(ROOT/'app/static/app.js').read_text(encoding='utf-8')
-def replace(old,new):
-    global app
-    assert app.count(old)==1, f'Demo build needs review: {old[:80]}'
-    app=app.replace(old,new,1)
-start=app.index('async function api(');end=app.index('const json=',start)
-app=app[:start]+"async function api(path,options={}){return M3UDemo.api(path,options)}\n"+app[end:]
-replace("draftStore=core.createDraftStore(window.localStorage,'m3u-studio-draft:'+username);const saved=draftStore.read();",'draftStore=null;const saved=null;')
-replace('if(dirty||pendingFormChanges()){e.preventDefault();e.returnValue=\'\'}','if(false){e.preventDefault();e.returnValue=\'\'}')
-replace("await fetch('/api/source-check'","await M3UDemo.fetch('/api/source-check'")
-replace("const ch=Object.fromEntries(new FormData(e.target));ch.id=", "const ch=Object.fromEntries(new FormData(e.target));if(!M3UDemo.isLogo(ch.logo)){toast(t('demoLogoOnly'));return}ch.id=")
-replace("function applyLogoChoice(path,target=logoPickerContext){", "function applyLogoChoice(path,target=logoPickerContext){\n if(!M3UDemo.isLogo(path))return toast(t('demoLogoOnly'));")
-replace("function updateLogoPreview(path,name=logoPickerChannel?.name||'',candidate=false){", "function updateLogoPreview(path,name=logoPickerChannel?.name||'',candidate=false){\n if(!M3UDemo.isLogo(path))path='';")
-assert 'fetch(' not in app.replace('M3UDemo.fetch(', '')
-assert 'createDraftStore(window.localStorage' not in app
-(ASSETS/'app.js').write_text(app,encoding='utf-8')
+shutil.copy2(ROOT/'app/static/app.js', ASSETS/'app.js')
+for name in ['workspace-model.js','transport.js']:
+    shutil.copy2(ROOT/'app/static'/name, ASSETS/name)
+shutil.copytree(ROOT/'app/static/controllers', ASSETS/'controllers', dirs_exist_ok=True)
+shutil.copytree(ROOT/'app/static/styles', ASSETS/'styles', dirs_exist_ok=True)
 
 index=(ROOT/'app/static/index.html').read_text(encoding='utf-8')
 index=index.replace('/static/','assets/')

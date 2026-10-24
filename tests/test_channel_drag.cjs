@@ -4,13 +4,12 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 const core=require('../app/static/editor-core.js');
-const source=fs.readFileSync(path.join(__dirname,'../app/static/app.js'),'utf8');
-const move=source.slice(source.indexOf('function relocate('),source.indexOf("$('#channelScroll').addEventListener('dragover'"));
+const createDragging=require('../app/static/controllers/dragging.js');
 function setup(ids=['a','c','e']){
  const state={epg:'',lists:[{id:'one',name:'One',groups:['News','Films'],channels:['a','b','c','d','e','f'].map((id,i)=>({id,name:id,group:i<4?'News':'Films',url:'https://example.test/'+id,epg_id:'epg.'+id,days:7}))}]};
  const history=core.createHistory();history.reset(state);
  const context={selected:'one',channelDrag:{ids,listId:'one'},current:()=>state.lists[0],changes:0,changed(){context.changes++;history.record(state)}};
- vm.createContext(context);vm.runInContext(move,context);
+ context.model=context;Object.assign(context,createDragging(context));
  return {state,history,context,ids:()=>state.lists[0].channels.map(c=>c.id),group:id=>state.lists[0].channels.find(c=>c.id===id).group};
 }
 test('a non-contiguous selection is inserted as one block in selection display order',()=>{

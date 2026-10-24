@@ -4,18 +4,17 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 const core=require('../app/static/editor-core.js');
-const source=fs.readFileSync(path.join(__dirname,'../app/static/app.js'),'utf8');
-const flow=source.slice(source.indexOf('function openImport('),source.indexOf("$('#pickLogo').onclick="));
+const flow=fs.readFileSync(path.join(__dirname,'../app/static/controllers/imports.js'),'utf8');
 const parsed=()=>({groups:['News'],channels:[{id:'same',name:'New',group:'News',url:'https://example.test/new'}]});
 function setup(language='en'){
  const nodes=new Map(),requests=[],messages=[];
  const get=selector=>{
   if(!nodes.has(selector))nodes.set(selector,{value:'',files:[],disabled:false,hidden:false,open:false,
-   showModal(){this.open=true},close(){this.open=false},reset(){for(const id of ['#playlistText','#importListName'])get(id).value='';get('#playlistFile').files=[]}});
+   setAttribute(){},addEventListener(){},showModal(){this.open=true},close(){this.open=false},reset(){for(const id of ['#playlistText','#importListName'])get(id).value='';get('#playlistFile').files=[]}});
   return nodes.get(selector);
  };
  const state={epg:'',lists:['one','two'].map(id=>({id,name:id,groups:['News'],channels:[{id:'same',name:'Existing',group:'News',url:'https://example.test/old'}]}))};
- const context={setImportMode(){},state,selected:'one',group:'',core,importContext:null,$:get,uid:()=> 'new',json:(method,data)=>({method,data}),
+ const context={document:{querySelectorAll:()=>[]},setImportMode(){},state,selected:'one',group:'',core,importContext:null,$:get,uid:()=> 'new',json:(method,data)=>({method,data}),
   changed(){context.changes++},changes:0,toast:message=>messages.push(String(message)),
   api:(url,options)=>new Promise((resolve,reject)=>requests.push({url,options,resolve,reject})),
   window:{M3UI18n:{setText:(node,text)=>node.textContent=String(text),dynamic:fn=>({toString:fn}),error:message=>message}},
@@ -23,7 +22,7 @@ function setup(language='en'){
  vm.createContext(context);
  vm.runInContext(fs.readFileSync(path.join(__dirname,'../app/static/translations.js'),'utf8'),context);
  context.t=(key,params={})=>context.window.M3UTranslations[key][language].replace(/\{(p\d+)\}/g,(_,p)=>params[p]);
- vm.runInContext(flow,context);
+ context.model=context;vm.runInContext(flow,context);const controller=context.M3UStudio.createImports(context);Object.assign(context,controller);controller.install();
  const submit=()=>get('#importForm').onsubmit({preventDefault(){}});
  return {context,state,get,requests,messages,submit};
 }

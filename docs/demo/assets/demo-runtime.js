@@ -74,6 +74,6 @@
   const outcomes=[{status:'ok',ms:68+code%160},{status:'ok',ms:320+code%240},{status:'timeout'},{status:'unavailable'},{status:'ok',ms:85+code%80}];
   return new Response(JSON.stringify(outcomes[code%5]),{status:200,headers:{'Content-Type':'application/json'}});
  }
- window.M3UDemo={api,fetch:simulatedFetch,isLogo,sample:index=>copy(seed.samples[index]||seed.samples[0])};
+ window.M3UDemo={createDraftStore:()=>null,api,fetch:simulatedFetch,isLogo,sample:index=>copy(seed.samples[index]||seed.samples[0])};
  window.M3UUpdates={setCurrentVersion(version){const n=document.getElementById('headerVersion');if(n)n.textContent='v '+version}};
 })();

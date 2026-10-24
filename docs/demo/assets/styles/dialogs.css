@@ -1,0 +1,314 @@
+#appShell #logout, #appShell #save { display:inline-flex; align-items:center; justify-content:center; gap:calc(6px * var(--studio-ui-scale)); }
+#appShell #logout::before, #appShell #save::before { content:''; display:block; width:calc(15px * var(--studio-ui-scale)); height:calc(15px * var(--studio-ui-scale)); flex:0 0 calc(15px * var(--studio-ui-scale)); background:currentColor; }
+@media(min-width:881.1px) and (max-width:1375px) {
+ #appShell { --channel-columns:calc(15px * var(--studio-ui-scale)) calc(12px * var(--studio-ui-scale)) calc(40px * var(--studio-ui-scale)) minmax(0,1fr) calc(72px * var(--studio-ui-scale)) calc(68px * var(--studio-ui-scale)) calc(72px * var(--studio-ui-scale)) calc(72px * var(--studio-ui-scale)) calc(120px * var(--studio-ui-scale)); }
+}
+@media(max-width:880px) {
+ #appShell .channel-group { grid-column:3/5; grid-row:3; justify-self:start; max-width:calc(100% - calc(104px * var(--studio-ui-scale))); }
+ #appShell .channel-epg { grid-column:4; grid-row:3; justify-self:end; max-width:calc(100px * var(--studio-ui-scale)); }
+ #appShell #channels .channel .actions { grid-column:3/5; grid-row:4; }
+ #appShell .channel-table-head .head-group { display:none; }
+}
+#appShell #logout::before {mask:var(--studio-icon-35) center/contain no-repeat;-webkit-mask:var(--studio-icon-35) center/contain no-repeat;}
+#appShell #save::before {mask:var(--studio-icon-36) center/contain no-repeat;-webkit-mask:var(--studio-icon-36) center/contain no-repeat;}
+@media(max-width:418px) {
+ #appShell header > div:last-child { gap:calc(2px * var(--studio-ui-scale)); }
+ #appShell header .appearance-controls { padding-inline:calc(1px * var(--studio-ui-scale)); }
+ #appShell header .appearance-controls .icon-button,
+ #appShell header .appearance-controls #themeToggle { width:calc(28px * var(--studio-ui-scale)); min-width:calc(28px * var(--studio-ui-scale)); padding:calc(5px * var(--studio-ui-scale)); }
+ #appShell header #logout { padding-inline:calc(4px * var(--studio-ui-scale)); gap:calc(4px * var(--studio-ui-scale)); }
+}
+@media(max-width:418px) {
+ #appShell header #status { display:block; flex:1 1 0; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+ #appShell header #status::before { display:inline-block; margin-right:calc(4px * var(--studio-ui-scale)); vertical-align:middle; }
+}
+
+/* Default presentation scale: 110%; browser zoom can remain at 100%. */
+:root { --studio-ui-scale:1.1; }
+#appShell .workspace-search #search { background-size:calc(16px * var(--studio-ui-scale)) calc(16px * var(--studio-ui-scale)); }
+:root[data-theme] #appShell .logo,
+:root[data-theme] #appShell .logo:hover:not(:disabled),
+:root[data-theme] .logo-preview-stage,
+:root[data-theme] #logoGrid button img,
+:root[data-theme] .library-logo-card img {
+ background:#1f2128; box-shadow:inset 0 0 0 calc(1px * var(--studio-ui-scale)) rgba(255,255,255,.06); border:0; color:#e5e7ef;
+}
+#appShell .logo img, .logo-preview-stage img, #logoGrid button img, .library-logo-card img { object-fit:contain; }
+#logoGrid button img { width:100%; border-radius:calc(6px * var(--studio-ui-scale)); }
+#preferencesDialog .setting-row { padding:calc(11px * var(--studio-ui-scale)) calc(4px * var(--studio-ui-scale)); gap:calc(16px * var(--studio-ui-scale)); }
+#preferencesDialog .setting-row h3 { margin:0 0 calc(3px * var(--studio-ui-scale)); }
+#preferencesDialog .setting-row p { line-height:1.5; }
+dialog .dialog-head { padding-bottom:calc(12px * var(--studio-ui-scale)); margin-bottom:calc(14px * var(--studio-ui-scale)); }
+dialog .form-grid > label { margin-block:calc(11px * var(--studio-ui-scale)); }
+dialog footer { padding-top:calc(12px * var(--studio-ui-scale)); margin-top:calc(16px * var(--studio-ui-scale)); }
+#batchDialog .batch-section { padding:calc(12px * var(--studio-ui-scale)); margin-block:calc(10px * var(--studio-ui-scale)); }
+#batchDialog .batch-section-title { min-height:calc(28px * var(--studio-ui-scale)); }
+#batchForm footer { padding-block:calc(12px * var(--studio-ui-scale)); }
+#settingsDialog #links strong { margin-top:calc(14px * var(--studio-ui-scale)); }
+.preview-row, .source-check-row { padding-block:calc(9px * var(--studio-ui-scale)); }
+.preference-menu:popover-open { gap:calc(1px * var(--studio-ui-scale)); }
+.preference-menu button { min-height:calc(28px * var(--studio-ui-scale)); padding:calc(4px * var(--studio-ui-scale)) calc(8px * var(--studio-ui-scale)); }
+@media(max-width:880px) {
+ #preferencesDialog .setting-row { padding:calc(10px * var(--studio-ui-scale)) 0; gap:calc(10px * var(--studio-ui-scale)); }
+ .preference-menu button { min-height:calc(30px * var(--studio-ui-scale)); }
+}
+/* Keep logo backing hairlines at one device-independent pixel. */
+:root[data-theme] #appShell .logo,
+:root[data-theme] #appShell .logo:hover:not(:disabled),
+:root[data-theme] .logo-preview-stage,
+:root[data-theme] #logoGrid button img,
+:root[data-theme] .library-logo-card img { box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); }
+#appShell #selectVisible { margin:0; }
+#appShell .bulk-toolbar:not(.has-selection) { padding-left:calc(12px * var(--studio-ui-scale)); }
+#appShell .bulk-toolbar.has-selection > .check { padding-left:calc(5px * var(--studio-ui-scale)); }
+@media(max-width:880px) {
+ #appShell .bulk-toolbar:not(.has-selection) { padding-left:calc(8px * var(--studio-ui-scale)); }
+ #appShell .bulk-toolbar.has-selection > .check { padding-left:calc(1px * var(--studio-ui-scale)); }
+}
+
+/* Inset select chevrons consistently across native platforms. */
+dialog select:not([multiple]):not([size]) {
+ appearance:none; -webkit-appearance:none;
+ padding-right:calc(34px * var(--studio-ui-scale));
+ background-image:var(--studio-icon-37);
+ background-repeat:no-repeat;
+ background-position:right calc(12px * var(--studio-ui-scale)) center;
+ background-size:calc(16px * var(--studio-ui-scale)) calc(16px * var(--studio-ui-scale));
+}
+#channelForm .form-grid > label { margin-block:calc(9.5px * var(--studio-ui-scale)); }
+#channelForm input:not([type="checkbox"]):not([type="radio"]),
+#channelForm select,
+#channelForm .inputrow > button { padding-block:calc(7.5px * var(--studio-ui-scale)); }
+@media (forced-colors:active) {
+ dialog select:not([multiple]):not([size]) { appearance:auto; -webkit-appearance:auto; background-image:none; }
+}
+/* Size preference menus to their labels, retaining a stable checkmark column. */
+.preference-menu { width:max-content; min-width:calc(88px * var(--studio-ui-scale)); max-width:calc(100vw - 16px); }
+.preference-menu button { white-space:nowrap; }
+.preference-menu button::after { content:'✓'; visibility:hidden; margin-left:calc(12px * var(--studio-ui-scale)); }
+.preference-menu button[aria-checked="true"]::after { visibility:visible; }
+/* Preserve source-check result colors when the button is hovered. */
+.source-latency.green { --result-text:#13743a; --result-bg:#dff6e7; }
+.source-latency.yellow { --result-text:#815000; --result-bg:#fff0ba; }
+.source-latency.red { --result-text:#a32828; --result-bg:#ffe1e1; }
+[data-theme="dark"] .source-latency.green { --result-text:#8ee3ac; --result-bg:#163925; }
+[data-theme="dark"] .source-latency.yellow { --result-text:#f4d779; --result-bg:#423719; }
+[data-theme="dark"] .source-latency.red { --result-text:#ffaaaa; --result-bg:#482525; }
+button.source-latency:is(.green,.yellow,.red):hover:not(:disabled) { color:var(--result-text); background:var(--result-bg); border-color:currentColor; }
+
+/* Accent presets; purple retains the existing default palette. */
+
+#appearanceDialog { width:calc(490px * var(--studio-ui-scale)); max-width:calc(100vw - 24px); }
+#appearanceDialog fieldset { border:0; padding:0; margin:calc(18px * var(--studio-ui-scale)) 0; min-width:0; }
+#appearanceDialog legend { padding:0; margin-bottom:calc(9px * var(--studio-ui-scale)); color:var(--label); font-weight:600; }
+.appearance-modes, .accent-choices { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:calc(8px * var(--studio-ui-scale)); }
+#appearanceDialog [role="radio"] { display:flex; align-items:center; justify-content:center; gap:calc(8px * var(--studio-ui-scale)); min-width:0; padding:calc(9px * var(--studio-ui-scale)) calc(8px * var(--studio-ui-scale)); }
+#appearanceDialog [role="radio"][aria-checked="true"] { background:var(--selected-bg); border-color:var(--selected-border); color:var(--accent-text); }
+.accent-choices button::after { content:'✓'; visibility:hidden; font-size:calc(12px * var(--studio-ui-scale)); }
+.accent-choices button[aria-checked="true"]::after { visibility:visible; }
+.accent-dot { width:calc(16px * var(--studio-ui-scale)); height:calc(16px * var(--studio-ui-scale)); flex:0 0 calc(16px * var(--studio-ui-scale)); border-radius:50%; background:var(--swatch); box-shadow:inset 0 0 0 1px #0001; }
+[data-accent-choice="purple"] { --swatch:var(--swatch-purple); }
+[data-accent-choice="pink"] { --swatch:var(--swatch-pink); }
+[data-accent-choice="blue"] { --swatch:var(--swatch-blue); }
+[data-accent-choice="orange"] { --swatch:var(--swatch-orange); }
+[data-accent-choice="green"] { --swatch:var(--swatch-green); }
+[data-accent-choice="cyan"] { --swatch:var(--swatch-cyan); }
+#preferencesDialog .pref-appearance::before { mask:var(--studio-icon-38) center/contain no-repeat; }
+:root[data-accent] button.primary:hover:not(:disabled) { color:var(--on-primary); }
+@media(max-width:500px) {
+ .accent-choices { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ #appearanceDialog [role="radio"] { font-size:calc(12px * var(--studio-ui-scale)); }
+}
+
+
+/* Compact workspace controls; wrap import/add before squeezing bulk actions. */
+#appShell .toolbar-title[hidden] { display:none; }
+#appShell .toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:calc(8px * var(--studio-ui-scale)) calc(12px * var(--studio-ui-scale)); margin:0; padding:0 0 calc(10px * var(--studio-ui-scale)); border-bottom:calc(1px * var(--studio-ui-scale)) solid var(--work-border); }
+#appShell .toolbar .workspace-commandbar { display:flex; flex-wrap:wrap; flex:1 1 auto; width:max-content; max-width:100%; align-items:center; gap:calc(8px * var(--studio-ui-scale)); min-width:0; padding:0; border:0; }
+#appShell .toolbar .toolbar-controls { margin-left:auto; flex:0 0 auto; }
+#appShell .toolbar .toolbar-controls button { height:calc(32px * var(--studio-ui-scale)); min-height:calc(32px * var(--studio-ui-scale)); padding-inline:calc(10px * var(--studio-ui-scale)); font-size:calc(12px * var(--studio-ui-scale)); }
+#appShell .toolbar .bulk-toolbar { flex:1 1 auto; min-width:0; min-height:calc(36px * var(--studio-ui-scale)); }
+#appShell .toolbar .bulk-toolbar.has-selection { flex:0 1 auto; flex-wrap:nowrap; max-width:100%; padding-block:calc(3px * var(--studio-ui-scale)); }
+#appShell .toolbar .bulk-toolbar button,
+#appShell .toolbar .bulk-toolbar #selectionCount { font-size:calc(11px * var(--studio-ui-scale)); }
+#appShell .toolbar .bulk-toolbar button { min-height:calc(28px * var(--studio-ui-scale)); padding:calc(4px * var(--studio-ui-scale)) calc(5px * var(--studio-ui-scale)); }
+#appShell .toolbar .workspace-search { flex:0 0 auto; width:calc(88px * var(--studio-ui-scale)); max-width:100%; min-width:0; margin:0 0 0 auto; transition:width .18s ease; }
+#appShell .toolbar:has(.bulk-toolbar.has-selection) .workspace-search { margin-left:0; }
+#appShell .toolbar .workspace-search:focus-within,
+#appShell .toolbar .workspace-search:has(#search:not(:placeholder-shown)) { width:calc(170px * var(--studio-ui-scale)); }
+#appShell .toolbar .workspace-search #search { width:100%; min-width:0; height:calc(32px * var(--studio-ui-scale)); font-size:calc(12px * var(--studio-ui-scale)); }
+:root[lang="en"] { --compact-search-width:calc(100px * var(--studio-ui-scale)); }
+#appShell .toolbar .workspace-search:not(:focus-within):not(:has(#search:not(:placeholder-shown))) { width:var(--compact-search-width,calc(88px * var(--studio-ui-scale))); }
+@media(max-width:880px) {
+ #appShell .toolbar .workspace-commandbar { flex-basis:100%; gap:calc(6px * var(--studio-ui-scale)); }
+ #appShell .toolbar .bulk-toolbar.has-selection { flex-basis:100%; }
+ #appShell .toolbar .bulk-actions { width:auto; flex:1 1 auto; }
+ #appShell .toolbar .workspace-search { margin-left:auto; }
+ #appShell .toolbar .workspace-search:focus-within,
+ #appShell .toolbar .workspace-search:has(#search:not(:placeholder-shown)) { width:min(calc(170px * var(--studio-ui-scale)),calc(100% - 44px)); }
+}
+@media(prefers-reduced-motion:reduce) { #appShell .toolbar .workspace-search { transition:none; } }
+
+/* Search belongs to the import/add group; move that group as one row. */
+#appShell .toolbar .toolbar-controls { flex:0 1 auto; flex-wrap:nowrap; max-width:100%; min-width:0; }
+#appShell .toolbar .toolbar-controls > button { flex:0 0 auto; }
+#appShell .toolbar .toolbar-controls .workspace-search { flex-shrink:1; margin:0; }
+#appShell .toolbar .toolbar-controls,
+:root[lang="en"] #appShell .toolbar .toolbar-controls { display:flex; flex-wrap:nowrap; align-items:center; flex:0 1 auto; width:auto; }
+#appShell .toolbar .toolbar-controls .workspace-search #search,
+#appShell .toolbar .toolbar-controls > button { height:calc(36px * var(--studio-ui-scale)); min-height:calc(36px * var(--studio-ui-scale)); }
+#appShell .toolbar .toolbar-controls .workspace-search #search:focus { outline-offset:calc(-2px * var(--studio-ui-scale)); }
+/* Consistent header spacing and a compact account menu. */
+#appShell header > div.header-tools { gap:calc(8px * var(--studio-ui-scale)); }
+#appShell header .history-controls { display:flex; align-items:center; gap:calc(8px * var(--studio-ui-scale)); }
+#appShell header .appearance-controls { gap:calc(8px * var(--studio-ui-scale)); margin:0; padding:0; border:0; }
+#appShell header #status { margin-right:0; }
+#appShell header #save { margin-left:0; }
+#appShell header #undo, #appShell header #redo { padding-inline:calc(7px * var(--studio-ui-scale)); }
+#appShell header #userMenuButton { border-radius:50%; color:var(--accent-text); background:var(--selected-bg); border:1px solid color-mix(in srgb,var(--accent-text) 20%,transparent); }
+#appShell header #userMenuButton:hover { border-color:var(--accent-text); }
+#userMenu { width:calc(160px * var(--studio-ui-scale)); max-width:calc(100vw - 16px); }
+#userMenu .account-summary { display:grid; gap:calc(3px * var(--studio-ui-scale)); padding:calc(9px * var(--studio-ui-scale)) calc(8px * var(--studio-ui-scale)); margin-bottom:calc(4px * var(--studio-ui-scale)); border-bottom:1px solid var(--border); }
+#userMenu .account-summary small { font-size:calc(11px * var(--studio-ui-scale)); color:var(--muted); }
+#userMenu .account-summary strong { font-size:calc(13px * var(--studio-ui-scale)); font-weight:600; overflow-wrap:anywhere; }
+#userMenu button { justify-content:flex-start; gap:calc(8px * var(--studio-ui-scale)); }
+#userMenu button::after { content:none; }
+#userMenu #logout { width:100%; margin:0; font-size:inherit; border:0; color:var(--label); }
+#userMenu #logout::before { width:calc(15px * var(--studio-ui-scale)); height:calc(15px * var(--studio-ui-scale)); flex:0 0 calc(15px * var(--studio-ui-scale)); }
+@media(max-width:880px) {
+ #appShell header > div.header-tools,
+ #appShell header .history-controls,
+ #appShell header .appearance-controls { gap:calc(6px * var(--studio-ui-scale)); }
+ #appShell header #status { margin-right:auto; }
+}
+@media(max-width:418px) {
+ #appShell header > div.header-tools,
+ #appShell header .history-controls,
+ #appShell header .appearance-controls { gap:calc(4px * var(--studio-ui-scale)); }
+ #appShell header #undo, #appShell header #redo { padding-inline:calc(3px * var(--studio-ui-scale)); }
+ #appShell header #userMenuButton { width:calc(28px * var(--studio-ui-scale)); min-width:calc(28px * var(--studio-ui-scale)); height:calc(28px * var(--studio-ui-scale)); min-height:calc(28px * var(--studio-ui-scale)); }
+}
+#appShell #userMenu #logout { justify-content:flex-start; padding-inline:calc(8px * var(--studio-ui-scale)); }
+#userMenu #userAccountSettings::before { content:''; width:calc(15px * var(--studio-ui-scale)); height:calc(15px * var(--studio-ui-scale)); flex:0 0 calc(15px * var(--studio-ui-scale)); background:currentColor; mask:var(--studio-icon-39) center/contain no-repeat; -webkit-mask:var(--studio-icon-39) center/contain no-repeat; }
+
+/* Match account menu type and the visible spacing beside the avatar. */
+#appShell #userMenu button { font-size:calc(12px * var(--studio-ui-scale)); font-weight:500; line-height:1.4; }
+@media(min-width:881.1px) { #appShell header #save { margin-left:calc(8px * var(--studio-ui-scale)); } }
+
+/* Popover controls stay still while pressed; menus open at their final position. */
+#appShell button[popovertarget]:active:not(:disabled),
+.preference-menu button:active:not(:disabled) { transform:none; }
+.preference-menu { animation:none; transition:none; }
+/* Account menu rows share fixed icon and text columns. */
+#appShell #userMenu button { display:grid; grid-template-columns:calc(15px * var(--studio-ui-scale)) minmax(0,1fr); align-items:center; column-gap:calc(8px * var(--studio-ui-scale)); width:100%; min-height:calc(30px * var(--studio-ui-scale)); padding:calc(4px * var(--studio-ui-scale)) calc(8px * var(--studio-ui-scale)); margin:0; border:0; text-align:left; }
+/* Match the workspace action row to the header's 32px control height. */
+#appShell .toolbar .bulk-toolbar { min-height:calc(32px * var(--studio-ui-scale)); }
+#appShell .toolbar .bulk-toolbar.has-selection { padding-block:calc(3px * var(--studio-ui-scale)); }
+#appShell .toolbar .bulk-toolbar button { height:calc(24px * var(--studio-ui-scale)); min-height:calc(24px * var(--studio-ui-scale)); padding-block:calc(3px * var(--studio-ui-scale)); }
+#appShell .toolbar .toolbar-controls .workspace-search #search,
+#appShell .toolbar .toolbar-controls > button { height:calc(32px * var(--studio-ui-scale)); min-height:calc(32px * var(--studio-ui-scale)); }
+@media(max-width:880px) { #appShell .toolbar .bulk-toolbar button { height:auto; } }
+/* Shared application dialogs and quieter action hierarchy. */
+#interactionDialog { width:min(calc(420px * var(--studio-ui-scale)),calc(100vw - 24px)); }
+#interactionDialog [hidden] { display:none !important; }
+#interactionMessage { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.6; color:var(--label); }
+#interactionField { margin-bottom:0; }
+#interactionError { font-size:13px; font-weight:400; line-height:1.5; color:var(--danger-text); }
+#interactionInput[aria-invalid="true"] { border-color:var(--danger-text); }
+#interactionInput[aria-invalid="true"]:focus { outline-color:var(--danger-text); }
+button.danger-fill { background:var(--danger-text); border-color:var(--danger-text); color:var(--toast-text); }
+button.danger-fill:hover:not(:disabled) { background:var(--danger-text); border-color:var(--danger-text); color:var(--toast-text); }
+:root[data-theme="dark"] button.danger-fill, :root[data-theme="dark"] button.danger-fill:hover:not(:disabled) { color:var(--on-primary); }
+#resetAccent.text-button { background:transparent; border-color:transparent; color:var(--accent-text); box-shadow:none; }
+#resetAccent.text-button:hover { background:var(--selected-bg); }
+#appearanceDone { background:transparent; border-color:var(--border-strong); color:var(--text); box-shadow:none; }
+/* Keep form actions reachable while their dialog scrolls. */
+dialog form > footer, dialog > footer { position:sticky; bottom:0; z-index:2; padding-bottom:calc(12px * var(--studio-ui-scale)); background:var(--surface); }
+#batchForm footer { position:sticky; bottom:0; }
+@media(max-width:880px) { dialog form > footer, dialog > footer, #batchForm footer { bottom:0; } }
+/* Logo source tabs use the same rounded controls as the import tabs. */
+#logosDialog .logo-tabs { gap:calc(4px * var(--studio-ui-scale)); padding-bottom:calc(6px * var(--studio-ui-scale)); margin-block:calc(16px * var(--studio-ui-scale)); }
+#logosDialog .logo-tabs button { flex:1; min-height:calc(32px * var(--studio-ui-scale)); padding:calc(6px * var(--studio-ui-scale)) calc(11px * var(--studio-ui-scale)); border:calc(1px * var(--studio-ui-scale)) solid transparent; border-radius:var(--radius-sm); background:transparent; color:var(--muted); }
+#logosDialog .logo-tabs [aria-selected="true"] { border-color:var(--selected-border); background:var(--selected-bg); color:var(--accent-text); }
+/* Scroll the fields, keeping the header/footer outside the clipping region. */
+dialog.fixed-action-dialog { --dialog-max-height:88dvh; max-height:var(--dialog-max-height); padding:0; overflow:hidden; }
+dialog.fixed-action-dialog > form { display:flex; flex-direction:column; min-height:0; max-height:calc(var(--dialog-max-height) - calc(2px * var(--studio-ui-scale))); }
+dialog.fixed-action-dialog > form > .dialog-head { flex:0 0 auto; margin:0; padding:calc(20px * var(--studio-ui-scale)) calc(24px * var(--studio-ui-scale)) calc(14px * var(--studio-ui-scale)); }
+dialog.fixed-action-dialog .dialog-scroll-body { flex:1 1 auto; min-height:0; overflow:auto; padding:0 calc(24px * var(--studio-ui-scale)) calc(16px * var(--studio-ui-scale)); scrollbar-gutter:stable; }
+dialog.fixed-action-dialog > form > footer,
+#batchForm > footer { flex:0 0 auto; position:sticky; bottom:0; z-index:2; margin:0; padding:calc(12px * var(--studio-ui-scale)) calc(24px * var(--studio-ui-scale)); background:var(--surface); }
+#appShell .nav-item > button:not(.small):hover:not(:disabled) { background:transparent; }
+#appShell #groups .nav-item:not([data-group]) > button:not(.small) { padding-left:calc(10px * var(--studio-ui-scale)); }
+#appShell #newList, #appShell #newGroup { display:inline-flex; align-items:center; justify-content:center; padding:0; }
+#appShell #newList svg, #appShell #newGroup svg { width:calc(16px * var(--studio-ui-scale)); height:calc(16px * var(--studio-ui-scale)); flex:0 0 calc(16px * var(--studio-ui-scale)); fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; }
+@media(max-width:880px) {
+ dialog.fixed-action-dialog { --dialog-max-height:90dvh; }
+ dialog.fixed-action-dialog > form > .dialog-head { padding:calc(16px * var(--studio-ui-scale)); }
+ dialog.fixed-action-dialog .dialog-scroll-body { padding-inline:calc(16px * var(--studio-ui-scale)); }
+ dialog.fixed-action-dialog > form > footer, #batchForm > footer { padding-inline:calc(16px * var(--studio-ui-scale)); }
+}
+
+/* Top-layer descriptions remain readable over sticky table headings. */
+#channelFeatureTooltip {
+ position:fixed; inset:auto; margin:0; pointer-events:none;
+ max-width:calc(100vw - 16px); overflow-wrap:anywhere;
+ padding:calc(5px * var(--studio-ui-scale)) calc(8px * var(--studio-ui-scale));
+ border:1px solid var(--border-strong); border-radius:var(--radius-sm);
+ color:var(--text); background:var(--surface); box-shadow:var(--elevation);
+ font:calc(11px * var(--studio-ui-scale))/1.5 var(--font-sans);
+}
+/* Keep native values, validation and keyboard behavior; theme its modern picker. */
+@supports (appearance:base-select) {
+ @media not (forced-colors:active) {
+  dialog select:not([multiple]):not([size]),
+  dialog select:not([multiple]):not([size])::picker(select) {
+   appearance:base-select;
+  }
+  dialog select:not([multiple]):not([size])::picker-icon { display:none; }
+  dialog select::picker(select) {
+   margin-block:calc(5px * var(--studio-ui-scale));
+   padding:calc(4px * var(--studio-ui-scale));
+   max-height:min(320px,45dvh); overflow:auto;
+   border:1px solid var(--border-strong); border-radius:var(--radius-sm);
+   background:var(--surface); color:var(--text); box-shadow:var(--elevation);
+   font:inherit;
+  }
+  dialog select option {
+   padding:calc(7px * var(--studio-ui-scale)) calc(10px * var(--studio-ui-scale));
+   border-left:3px solid transparent; border-radius:calc(4px * var(--studio-ui-scale));
+   background:var(--surface); color:var(--text); min-height:0;
+  }
+  dialog select option:checked {
+   background:var(--selected-bg); color:var(--accent-text);
+   border-left-color:var(--selected-border); font-weight:600;
+  }
+  dialog select option:hover, dialog select option:focus-visible {
+   background:color-mix(in srgb,var(--primary) 15%,var(--surface));
+   color:var(--accent-text); outline:0;
+  }
+  dialog select option::checkmark { color:var(--accent-text); }
+ }
+}
+
+/* A selected block travels together; insertion position stays unambiguous. */
+#appShell .channel.drag-source { opacity:.35; }
+#appShell .channel.drop-before { box-shadow:inset 0 3px var(--selected-border); transition:none; }
+#appShell .channel.drop-after { box-shadow:inset 0 -3px var(--selected-border); transition:none; }
+.channel-drag-bundle {
+ position:fixed; z-index:1000; pointer-events:none; width:calc(240px * var(--studio-ui-scale));
+ max-width:calc(100vw - 16px); padding:calc(10px * var(--studio-ui-scale));
+ background:var(--surface); color:var(--text); border:1px solid var(--selected-border);
+ border-radius:var(--radius-md); box-shadow:var(--elevation); font-size:calc(12px * var(--studio-ui-scale));
+}
+.channel-drag-bundle strong { display:block; color:var(--accent-text); margin-bottom:calc(5px * var(--studio-ui-scale)); }
+.drag-bundle-name { padding:calc(4px * var(--studio-ui-scale)) calc(7px * var(--studio-ui-scale)); background:var(--selected-bg); margin-top:calc(3px * var(--studio-ui-scale)); border-radius:var(--radius-sm); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.channel-drag-bundle small { display:block; color:var(--muted); margin-top:calc(5px * var(--studio-ui-scale)); }
+
+/* Copy full stream URLs without adding another toolbar action. */
+#appShell .stream { display:flex; align-items:baseline; gap:8px; cursor:pointer; user-select:text; }
+.stream-url { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#appShell .stream:hover, #appShell .stream:focus-visible { color:var(--accent-text); opacity:1; }
+#appShell .stream:focus-visible { outline:2px solid var(--selected-border); outline-offset:2px; border-radius:3px; }
+.stream-copy-feedback { flex:none; font-family:var(--font-ui,inherit); font-size:11px; color:var(--accent-text); }
+.stream-copy-feedback:empty { display:none; }
+#appShell .stream.is-copy-error .stream-copy-feedback { color:var(--danger-text); }
