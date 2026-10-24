@@ -1,8 +1,8 @@
 services:
-  iptv-manager:
+  m3u-studio:
     build: .
     image: m3u-studio:local
-    container_name: iptv-manager
+    container_name: m3u-studio
     ports:
       - "8324:8324"
     environment:

@@ -142,7 +142,9 @@ sh setup.sh
 docker compose up -d --build
 ```
 
-The repository's `docker-compose.yml` uses `build:` for source builds and mounts `./data`. It retains the legacy service/container name `iptv-manager`; the image deployment above uses `m3u-studio`. Manage source deployments with `docker compose` from their own directory to avoid mixing container names. The first build downloads the base image and dependencies.
+The repository's `docker-compose.yml` uses `build:` for source builds. Both the service and container are named `m3u-studio`; data remains mounted from `./data`. Manage each deployment with `docker compose` from its own project directory. The first build downloads the base image and dependencies.
+
+When upgrading an older source deployment, run `docker compose down` with its original Compose configuration **before updating the source**. Then update the source and run `docker compose up -d --build` to avoid port conflicts with the previous container. Keep the existing `./data` directory.
 
 ## Data and backup
 
