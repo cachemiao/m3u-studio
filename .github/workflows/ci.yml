@@ -31,8 +31,9 @@ jobs:
       - run: git diff --exit-code -- docs/demo
       - run: python -m pytest tests -q
       - run: npm test
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:browser
+      - run: npm run test:browser -- --browser=webkit --grep="mobile toolbar"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

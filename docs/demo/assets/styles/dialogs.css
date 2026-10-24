@@ -312,3 +312,13 @@ dialog.fixed-action-dialog > form > footer,
 .stream-copy-feedback { flex:none; font-family:var(--font-ui,inherit); font-size:11px; color:var(--accent-text); }
 .stream-copy-feedback:empty { display:none; }
 #appShell .stream.is-copy-error .stream-copy-feedback { color:var(--danger-text); }
+
+/* Keep the idle select-all control beside search/actions on small screens. */
+@media(max-width:880px) {
+ #appShell .toolbar { flex-direction:row; }
+ #appShell .toolbar .workspace-commandbar { flex:0 0 auto; width:auto; }
+ #appShell .toolbar .bulk-toolbar:not(.has-selection) { flex:0 0 auto; width:auto; padding-block:0; }
+ #appShell .toolbar .toolbar-controls,
+ :root[lang="en"] #appShell .toolbar .toolbar-controls { flex:1 1 0; justify-content:flex-end; }
+ #appShell .toolbar:has(.bulk-toolbar.has-selection) .workspace-commandbar { flex-basis:100%; width:100%; }
+}

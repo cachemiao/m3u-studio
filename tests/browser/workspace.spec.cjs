@@ -301,3 +301,63 @@ test("version button checks updates while brand and persistent dot link to proje
   expect(calls).toBe(3);
   expect(await (await page.request.get("/api/state")).json()).toEqual(before);
 });
+
+test("mobile toolbar keeps select-all aligned with search and wraps selected actions", async ({
+  page,
+}, testInfo) => {
+  await openWorkspace(page);
+  for (const language of ["zh", "en"]) {
+    await page.evaluate(
+      (language) => window.M3UI18n.setLanguage(language),
+      language,
+    );
+    for (const width of [320, 390, 430, 768]) {
+      await page.setViewportSize({ width, height: 960 });
+      const aligned = async () => {
+        const check = await page.locator("#selectVisible").boundingBox();
+        const search = await page.locator("#search").boundingBox();
+        return (
+          Math.abs(check.y + check.height / 2 - search.y - search.height / 2) <
+          2
+        );
+      };
+      await expect.poll(aligned).toBeTruthy();
+      await page.locator("#search").fill("Sample");
+      await expect.poll(aligned).toBeTruthy();
+      for (const selector of ["#search", "#import", "#add"]) {
+        const box = await page.locator(selector).boundingBox();
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(width);
+      }
+      await page.locator("#search").fill("");
+      await page.locator("#search").evaluate((input) => input.blur());
+      if (width === 390 && language === "zh")
+        await page.screenshot({
+          path: testInfo.outputPath("mobile-toolbar.png"),
+          animations: "disabled",
+        });
+      await page.locator(".channel-select").first().check();
+      await expect(page.locator(".bulk-toolbar")).toHaveClass(/has-selection/);
+      for (const selector of [
+        "#batchEdit",
+        "#batchDelete",
+        "#checkSources",
+        "#autoLogo",
+      ]) {
+        const box = await page.locator(selector).boundingBox();
+        expect(box.x + box.width).toBeLessThanOrEqual(width);
+      }
+      if (width === 390 && language === "zh")
+        await page.screenshot({
+          path: testInfo.outputPath("mobile-selected.png"),
+          animations: "disabled",
+        });
+      await page.locator("#clearSelection").click();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBeTruthy();
+    }
+  }
+});
