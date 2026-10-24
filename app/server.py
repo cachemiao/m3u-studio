@@ -16,6 +16,7 @@ from probe import probe_http
 from release_updates import ReleaseChecker
 from network_policy import AddressPolicy, AddressBlocked
 from remote_playlist import download_playlist
+from database_schema import ensure_schema
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 ROOT = Path(__file__).parent
@@ -45,16 +46,10 @@ def db():
     conn.execute('PRAGMA journal_mode=WAL')
     return conn
 
-with db() as conn:
-    conn.execute('CREATE TABLE IF NOT EXISTS state (id INTEGER PRIMARY KEY, revision INTEGER NOT NULL, payload TEXT NOT NULL)')
-    conn.execute('INSERT OR IGNORE INTO state VALUES (1, 0, ?)', (json.dumps({'lists': [], 'epg': ''}),))
-    conn.execute('CREATE TABLE IF NOT EXISTS history (revision INTEGER PRIMARY KEY, created_at TEXT NOT NULL, payload TEXT NOT NULL)')
+# Schema migration runs before credential migration or any ordinary writes.
+ensure_schema(DATA / 'database/iptv.db')
 
-# 保存在数据卷中，重建容器不会重置账号或登录密钥。
 with db() as conn:
-    conn.execute('CREATE TABLE IF NOT EXISTS account (id INTEGER PRIMARY KEY, username TEXT NOT NULL, password_hash TEXT NOT NULL, version TEXT NOT NULL)')
-    conn.execute('CREATE TABLE IF NOT EXISTS security (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
-    conn.execute('INSERT OR IGNORE INTO security VALUES (?,?)', ('session_key', secrets.token_hex(32)))
     app.secret_key = conn.execute("SELECT value FROM security WHERE key='session_key'").fetchone()[0]
     # v0.1 的 .env 仅用于一次迁移。已存在网页账号时绝不覆盖。
     if PASSWORD and not conn.execute('SELECT 1 FROM account WHERE id=1').fetchone():

@@ -60,3 +60,18 @@ For UI changes, check both languages, light/dark modes and mobile widths. Valida
 4. Check `git diff --check` and `git status` before submitting. Do not commit `data/`, `data-dev/`, `.venv/`, `.env`, credentials, private stream URLs or logos you cannot distribute.
 
 [Report an issue](https://github.com/cachemiao/m3u-studio/issues) · [Browse pull requests](https://github.com/cachemiao/m3u-studio/pulls)
+
+## Daily CI and browser baselines
+
+Main pushes, engineering branches and pull requests run application checks without release credentials. Node.js 24 is test tooling only.
+
+```sh
+npm ci --ignore-scripts
+npm test
+npx playwright install chromium
+TEST_PYTHON="$PWD/.venv/bin/python" npm run test:browser
+```
+
+On Windows, set `TEST_PYTHON` to the virtual environment Python executable before running browser tests. The test server uses a temporary database and a test-only account, never the deployed data directory.
+
+See the engineering documents for [frontend boundaries](engineering/frontend.md), [outbound target policy](engineering/network-access.md), [schema and restore rules](engineering/database-migrations.md) and the unimplemented [server-draft design](engineering/server-drafts-design.md). Browser draft behavior is unchanged.

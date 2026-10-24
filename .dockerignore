@@ -7,3 +7,10 @@ tests
 
 # Do not rebundle assets left in an old checkout after upgrading.
 app/builtin/
+
+# Development-only tooling and generated test reports
+node_modules
+test-results
+playwright-report
+.venv
+data-dev
