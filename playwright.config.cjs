@@ -4,7 +4,7 @@ module.exports = defineConfig({
   workers: 1,
   timeout: 30000,
   retries: process.env.CI ? 1 : 0,
-  reporter: "list",
+  reporter: process.env.CI ? [["list"], ["github"]] : "list",
   use: {
     baseURL: "http://127.0.0.1:8357",
     viewport: { width: 1500, height: 960 },
