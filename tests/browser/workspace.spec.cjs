@@ -1,4 +1,8 @@
 const { test, expect } = require("@playwright/test");
+const version = require("node:fs")
+  .readFileSync(require("node:path").resolve("app/VERSION"), "utf8")
+  .trim();
+const nextVersion = version.replace(/\d+$/, (patch) => Number(patch) + 1);
 const headers = { "X-IPTV-Request": "1" };
 async function openWorkspace(page) {
   await page.request.post("/api/auth/login", {
@@ -34,7 +38,7 @@ async function openWorkspace(page) {
     },
   });
   await page.route("**/api/version", (r) =>
-    r.fulfill({ json: { current_version: "0.6.2", update_available: false } }),
+    r.fulfill({ json: { current_version: version, update_available: false } }),
   );
   await page.goto("/");
   await expect(page.locator(".channel")).toHaveCount(12);
@@ -238,7 +242,7 @@ test("version button checks updates while brand and persistent dot link to proje
   const project = "https://github.com/cachemiao/m3u-studio";
   await expect(page.locator("#projectBrand")).toHaveAttribute("href", project);
   await expect(page.locator("#projectBrand #headerVersion")).toHaveCount(0);
-  await expect(page.locator("#headerVersion")).toHaveText("v 0.6.2");
+  await expect(page.locator("#headerVersion")).toHaveText("v " + version);
   let available = false,
     failed = false,
     calls = 0;
@@ -247,8 +251,8 @@ test("version button checks updates while brand and persistent dot link to proje
     calls++;
     return route.fulfill({
       json: {
-        current_version: "0.6.2",
-        latest_version: available ? "0.6.3" : "0.6.2",
+        current_version: version,
+        latest_version: available ? nextVersion : version,
         update_available: available,
         check_failed: failed,
       },

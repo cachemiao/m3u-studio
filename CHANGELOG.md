@@ -1,3 +1,35 @@
+# v0.6.3 · 配置与台标备份、版本检查 / Backup archives and version checks · 2026-10-24
+
+## 中文更新说明
+
+- 新增配置与台标 ZIP 备份，包含全部列表、当前已应用的草稿和整个本地台标库；保留 JSON 导出与旧版 JSON 恢复。
+- ZIP 恢复先校验配置、图片与压缩包路径；配置载入草稿，检查后再发布。同名同内容台标复用，不同内容另存并更新恢复引用，不覆盖或删除现有台标。恢复过程中工作区变化时，不覆盖新草稿。
+- 台标库入口移到侧栏“订阅与 EPG”和“设置”之间，新增“全部导出”，不受搜索条件影响。
+- 改进新版本提示，点击版本号检查更新，通过对话气泡提示结果。发现新版后保留主题色圆点，点击圆点打开项目。
+- 拆分前端状态、通信与功能控制器，保持现有布局、操作和浏览器草稿方式；演示版通过独立适配器复用代码。
+- 完善远程导入与源检测的地址、DNS 和重定向校验。默认支持公网与家庭内网，敏感地址持续拦截；严格白名单为可选高级配置。
+- 引入 SQLite 结构版本基线、迁移与恢复测试，新增日常 CI 与浏览器关键流程检查。
+
+**备份范围：** ZIP 不含账号、登录密钥或发布历史，也不下载外部台标链接。台标恢复立即生效，不随草稿撤销；缺失的本地图片引用会报告数量。包含账号与历史的完整迁移请备份整个数据目录。ZIP 上限 64MB、展开 128MB、最多 5000 张台标。
+
+**升级说明：** 浏览器草稿未迁到服务端。普通家庭内网无需新增白名单配置；回环、链路本地、已知云元数据等敏感目标将被拒绝。升级前保留数据目录备份；跨数据库结构版本回退应恢复兼容备份。
+
+## English release notes
+
+- Added ZIP backups containing all lists, the current applied draft and the entire local logo library. JSON export and legacy JSON restore remain supported.
+- Archives are fully validated before import. Configuration is loaded as a draft for review before publishing. Identical logos are reused; differing name conflicts are renamed and restored references updated without overwriting or deleting existing images. A changed workspace is protected from late restore responses.
+- Moved the logo library to the sidebar between Subscriptions & EPG and Settings. Export all downloads every library image regardless of search filters.
+- Improved new-version notifications: click the version number to check for updates and see the result in a speech bubble. A persistent accent-colored dot indicates a newer release and links to the project.
+- Separated frontend state, transport and feature controllers while retaining layout, behavior and browser drafts. The static demo shares application code through explicit adapters.
+- Added outbound address, DNS and redirect checks for remote imports and source probes. Public and home networks remain supported by default; sensitive targets are blocked, with optional strict allowlists for advanced deployments.
+- Established a SQLite schema-version baseline and migration/restore coverage, plus routine CI and browser behavior checks.
+
+**Backup scope:** ZIP excludes accounts, session secrets and publication history, and does not download external logo URLs. Restored images take effect immediately and are not undone with the draft; missing local image references are reported. Back up the entire data directory for complete migration. ZIP limits: 64MB compressed, 128MB expanded and 5,000 logos.
+
+**Upgrade:** Drafts remain in the browser. Home networks need no new allowlist configuration; loopback, link-local and known metadata targets are blocked. Keep a data-directory backup before upgrading, and restore a compatible backup when rolling back across schema versions.
+
+---
+
 # v0.6.2 · 点击复制播放地址 / Click to copy stream URLs · 2026-10-24
 
 ## 中文更新说明
