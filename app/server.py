@@ -14,6 +14,8 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent))
 from probe import probe_http
 from release_updates import ReleaseChecker
+from network_policy import AddressPolicy, AddressBlocked
+from remote_playlist import download_playlist
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 ROOT = Path(__file__).parent
@@ -22,6 +24,8 @@ PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
 USERNAME = os.environ.get('ADMIN_USER', 'admin')
 for directory in ('database', 'logo', 'backup'):
     (DATA / directory).mkdir(parents=True, exist_ok=True)
+import_policy = AddressPolicy.from_environment('IMPORT')
+source_policy = AddressPolicy.from_environment('SOURCE')
 app = Flask(__name__, static_folder=None)
 APP_VERSION = (ROOT / 'VERSION').read_text(encoding='utf-8').strip()
 release_checker = ReleaseChecker(APP_VERSION, DATA / 'update-check.json')
@@ -320,7 +324,7 @@ def source_check():
     if not probe_slots.acquire(blocking=False):
         return jsonify(status='busy'), 429
     try:
-        return jsonify(probe_http(url.strip()))
+        return jsonify(probe_http(url.strip(), policy=source_policy))
     finally:
         probe_slots.release()
 
@@ -557,12 +561,6 @@ def import_file():
     try: return jsonify(parse_playlist(request.get_json().get('text'), 'en' if request.headers.get('Accept-Language', '').startswith('en') else 'zh'))
     except (ValueError, TypeError, AttributeError) as error: return jsonify(error=str(error)), 400
 
-class PlaylistRedirect(HTTPRedirectHandler):
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        if urlsplit(newurl).scheme not in ('http', 'https'):
-            raise ValueError('列表链接仅支持 HTTP/HTTPS')
-        return super().redirect_request(req, fp, code, msg, headers, newurl)
-
 @app.route('/api/import/url', methods=['POST'])
 def import_from_url():
     try:
@@ -577,14 +575,14 @@ def import_from_url():
         if re.search(r'[\x00-\x1f\x7f]', link):
             raise ValueError('请输入有效的列表链接')
         link = urlunsplit((parsed.scheme, parsed.netloc, quote(parsed.path, safe="/%:@!$&'()*+,;="), quote(parsed.query, safe="=&%/:?@!$'()*+,;+"), ''))
-        remote = Request(link, headers={'User-Agent': 'M3U-Studio-Import', 'Accept-Encoding': 'identity'})
-        with build_opener(PlaylistRedirect()).open(remote, timeout=10) as response:
-            data = response.read(app.config['MAX_CONTENT_LENGTH'] + 1)
+        data = download_playlist(link, import_policy, app.config['MAX_CONTENT_LENGTH'])
         if len(data) > app.config['MAX_CONTENT_LENGTH']:
             return jsonify(error='列表文件超过 8MB'), 413
         if data.lstrip().lower().startswith((b'<!doctype html', b'<html', b'<head', b'<body')):
             raise ValueError('链接返回了网页，请使用 M3U/TXT 文件直链')
         return jsonify(parse_playlist(data.decode('utf-8-sig'), 'en' if request.headers.get('Accept-Language', '').startswith('en') else 'zh'))
+    except AddressBlocked:
+        return jsonify(error='目标地址或端口不符合访问策略；内网地址需由管理员配置允许范围'), 403
     except HTTPError as error:
         return jsonify(error='无法读取列表链接，请检查地址或稍后重试', http_status=error.code), 502
     except (URLError, OSError, TimeoutError, HTTPException):

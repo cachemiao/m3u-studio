@@ -1,5 +1,7 @@
 /* Shared UI messages; keep placeholders identical in both languages. */
 window.M3UTranslations = {
+"uiSourceBlocked":{"zh":"策略限制","en":"Blocked by policy"},
+"uiSourceBlockedHint":{"zh":"目标被访问策略限制；内网地址需由管理员配置允许范围。","en":"Target blocked by network policy. Ask the administrator to allow the required private host or network."},
 "uiCopyStreamHint":{"zh":"点击复制完整地址","en":"Click to copy the full URL"},
 "uiCopyStreamFailed":{"zh":"复制失败，请手动复制","en":"Copy failed; please copy manually"},
 "uiSave":{"zh":"保存","en":"Save"},

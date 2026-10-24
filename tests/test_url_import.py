@@ -7,7 +7,9 @@ from test_app import server, auth, client
 M3U = '\ufeff#EXTM3U\n#EXTINF:-1 tvg-id="remote.one" group-title="综合",远程频道\nhttps://example.test/live.m3u8\n'.encode()
 
 @pytest.fixture
-def remote(monkeypatch):
+def remote(monkeypatch, server):
+    from network_policy import AddressPolicy
+    server.import_policy = AddressPolicy(['127.0.0.1/32'])
     monkeypatch.setenv('no_proxy', '127.0.0.1,localhost')
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -53,7 +55,7 @@ def test_invalid_url(server, auth, data):
     response = client(server, auth).post('/api/import/url', json=data, headers=auth)
     assert response.status_code == 400
 
-@pytest.mark.parametrize('path,status', [('/html',400),('/encoding',400),('/large',413),('/missing',502),('/redirect-file',502),('/redirect-ftp',400)])
+@pytest.mark.parametrize('path,status', [('/html',400),('/encoding',400),('/large',413),('/missing',502),('/redirect-file',502),('/redirect-ftp',403)])
 def test_remote_errors(server, auth, remote, path, status):
     c = client(server, auth)
     response = c.post('/api/import/url', json={'url':remote+path}, headers=auth)
@@ -78,7 +80,7 @@ def test_auth_and_csrf(server, auth):
 def test_timeout(server, auth, monkeypatch):
     opener = Mock()
     opener.open.side_effect = TimeoutError()
-    monkeypatch.setattr(server, 'build_opener', lambda *_: opener)
+    monkeypatch.setattr(server, 'download_playlist', lambda *_: opener.open(timeout=10).read())
     response = client(server, auth).post('/api/import/url', json={'url':'https://example.test'}, headers=auth)
     assert response.status_code == 502
     assert opener.open.call_args.kwargs['timeout'] == 10

@@ -73,6 +73,10 @@ services:
       - "8324:8324"
     environment:
       TZ: Asia/Shanghai
+      IMPORT_ALLOWED_NETWORKS: ${IMPORT_ALLOWED_NETWORKS:-}
+      IMPORT_ALLOWED_PORTS: ${IMPORT_ALLOWED_PORTS:-}
+      SOURCE_ALLOWED_NETWORKS: ${SOURCE_ALLOWED_NETWORKS:-}
+      SOURCE_ALLOWED_PORTS: ${SOURCE_ALLOWED_PORTS:-}
     volumes:
       - m3u-studio-data:/data
     restart: unless-stopped

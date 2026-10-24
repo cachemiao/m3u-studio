@@ -2,43 +2,15 @@
 import base64
 import http.client
 import socket
-from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 from time import monotonic
 from urllib.parse import urlsplit, urljoin, unquote
+from network_policy import AddressPolicy, AddressBlocked, connect_checked
 
 TIMEOUT = 5
 MAX_REDIRECTS = 3
-# Bound DNS work too: a resolver stall must not hold an HTTP probe indefinitely.
-resolver = ThreadPoolExecutor(max_workers=4, thread_name_prefix='source-check-dns')
 
-
-def connect_before(address, deadline, source_address=None):
-    host, port = address
-    future = resolver.submit(socket.getaddrinfo, host, port, 0, socket.SOCK_STREAM)
-    try:
-        addresses = future.result(timeout=max(0.001, deadline - monotonic()))
-    except FutureTimeout:
-        future.cancel()
-        raise TimeoutError()
-    last_error = None
-    for family, kind, protocol, _, target in addresses:
-        sock = socket.socket(family, kind, protocol)
-        try:
-            remaining = deadline - monotonic()
-            if remaining <= 0: raise TimeoutError()
-            sock.settimeout(remaining)
-            if source_address: sock.bind(source_address)
-            sock.connect(target)
-            sock.settimeout(max(0.001, deadline - monotonic()))
-            return sock
-        except OSError as error:
-            sock.close()
-            if isinstance(error, TimeoutError): raise
-            last_error = error
-    raise last_error or OSError('No address')
-
-
-def probe_http(url):
+def probe_http(url, policy=None):
+    policy = policy or AddressPolicy.from_environment("SOURCE")
     started = monotonic()
     deadline = started + TIMEOUT
     for redirect in range(MAX_REDIRECTS + 1):
@@ -47,6 +19,7 @@ def probe_http(url):
             parsed = urlsplit(url)
             if parsed.scheme not in ('http', 'https'):
                 return {'status': 'unsupported'}
+            policy.check_url(url)
             if not parsed.hostname or len(url) > 8192:
                 return {'status': 'unavailable'}
             remaining = deadline - monotonic()
@@ -54,7 +27,7 @@ def probe_http(url):
                 return {'status': 'timeout'}
             factory = http.client.HTTPSConnection if parsed.scheme == 'https' else http.client.HTTPConnection
             connection = factory(parsed.hostname, parsed.port, timeout=remaining)
-            connection._create_connection = lambda address, timeout=None, source_address=None: connect_before(address, deadline, source_address)
+            connection._create_connection = lambda address, timeout=None, source_address=None: connect_checked(policy, address, deadline, source_address)
             headers = {'User-Agent': 'M3U-Studio-Source-Check', 'Accept': '*/*',
                        'Accept-Encoding': 'identity', 'Connection': 'close'}
             if parsed.username is not None:
@@ -88,6 +61,8 @@ def probe_http(url):
             if elapsed >= TIMEOUT:
                 return {'status': 'timeout'}
             return {'status': 'ok', 'ms': max(0, round(elapsed * 1000))}
+        except AddressBlocked:
+            return {'status': 'unavailable', 'blocked': True}
         except (TimeoutError, socket.timeout):
             return {'status': 'timeout'}
         except (OSError, ValueError, http.client.HTTPException, UnicodeError):

@@ -19,7 +19,7 @@
       : ctx.model.sourceCheckResults.get(key);
   function sourceBadge(result, item = null) {
     result = result || { status: "idle" };
-    const text =
+    const text = result.blocked ? ctx.t("uiSourceBlocked") :
       result.status === "idle"
         ? "—"
         : result.status === "ok"
@@ -47,12 +47,12 @@
       window.M3UI18n.setAttribute(
         badge,
         "title",
-        window.M3UI18n.dynamic(() => ctx.t("m343", { p0: item.name })),
+        window.M3UI18n.dynamic(() => result.blocked ? ctx.t("uiSourceBlockedHint") : ctx.t("m343", { p0: item.name })),
       );
       window.M3UI18n.setAttribute(
         badge,
         "aria-label",
-        window.M3UI18n.dynamic(() => ctx.t("m343", { p0: item.name })),
+        window.M3UI18n.dynamic(() => result.blocked ? ctx.t("uiSourceBlockedHint") : ctx.t("m343", { p0: item.name })),
       );
     }
     return badge;

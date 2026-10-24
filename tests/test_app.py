@@ -438,7 +438,7 @@ def test_source_check_requires_login_and_request_header(server, auth, monkeypatc
     assert c.post('/api/source-check', json={'url':'http://example.com'}, headers=auth).status_code == 401
     c = client(server, auth)
     assert c.post('/api/source-check', json={'url':'http://example.com'}).status_code == 403
-    monkeypatch.setattr(server, 'probe_http', lambda url: {'status':'ok', 'ms':50})
+    monkeypatch.setattr(server, 'probe_http', lambda url, **kwargs: {'status':'ok', 'ms':50})
     before = server.read_state()
     assert c.post('/api/source-check', json={'url':'http://example.com'}, headers=auth).json == {'status':'ok','ms':50}
     assert server.read_state() == before

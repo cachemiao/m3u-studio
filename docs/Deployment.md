@@ -199,3 +199,7 @@ For source upgrades, retain `data/` and any existing `.env`, update the source, 
 - TXT has no logo or EPG metadata. Unknown M3U extension attributes and comments are not preserved.
 
 For migration from old versions that bundled logo images or used `.env` accounts, see [the legacy migration notes (Chinese)](部署与维护.md#从旧版本升级).
+
+## Server-side target policy
+
+Remote imports and source checks connect only to public targets by default. For private subscriptions or IPTV relays, configure `IMPORT_ALLOWED_NETWORKS` and `SOURCE_ALLOWED_NETWORKS` independently, preferably as individual hosts. Their `*_ALLOWED_PORTS` settings optionally restrict destination ports. These two user-URL features use direct checked connections and do not inherit HTTP proxy variables. See [network access policy](engineering/network-access.md) for configuration and upgrade considerations.

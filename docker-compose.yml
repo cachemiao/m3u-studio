@@ -9,6 +9,10 @@ services:
       ADMIN_USER: ${ADMIN_USER:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       TZ: Asia/Shanghai
+      IMPORT_ALLOWED_NETWORKS: ${IMPORT_ALLOWED_NETWORKS:-}
+      IMPORT_ALLOWED_PORTS: ${IMPORT_ALLOWED_PORTS:-}
+      SOURCE_ALLOWED_NETWORKS: ${SOURCE_ALLOWED_NETWORKS:-}
+      SOURCE_ALLOWED_PORTS: ${SOURCE_ALLOWED_PORTS:-}
     volumes:
       - ./data:/data
     restart: unless-stopped
