@@ -1,3 +1,26 @@
+# v0.6.2 · 点击复制播放地址 / Click to copy stream URLs · 2026-10-24
+
+## 中文更新说明
+
+- 新增点击播放地址复制完整链接，界面截断显示不影响复制内容。
+- 悬停播放地址时显示主题色和复制提示，复制成功后在地址旁短暂显示“已复制 ✓”。
+- 支持 Enter / 空格键复制；拖选地址文字时不触发复制。
+- 兼容内网 HTTP 页面，复制失败时显示手动复制提示。
+- 完善剪贴板兼容处理，同时保留订阅地址的复制功能。
+
+> 源码部署升级提示：Compose 服务名和容器名现已统一为 `m3u-studio`。旧版源码部署请先使用原配置执行 `docker compose down`，再更新代码并重建，保留原有 `./data`。详见 [部署与维护](https://github.com/cachemiao/m3u-studio/blob/v0.6.2/docs/部署与维护.md#从源码构建)。官方镜像部署无需此项改名迁移。
+
+## English release notes
+
+- Click a stream URL to copy the full address, even when it is truncated on screen.
+- Stream URLs use the accent color on hover and show a copy hint. A brief “Copied ✓” message appears beside the address after copying.
+- Supports copying with Enter or Space; selecting URL text does not trigger copying.
+- Includes clipboard fallback support for HTTP pages on local networks, with a manual-copy hint if copying fails.
+- Improved clipboard compatibility while preserving subscription URL copying.
+
+> Source deployment upgrade: Compose service and container names are now both `m3u-studio`. For older source deployments, run `docker compose down` using the original configuration before updating and rebuilding. Keep the existing `./data`. See [Deployment and maintenance](https://github.com/cachemiao/m3u-studio/blob/v0.6.2/docs/Deployment.md#build-from-source). Official image deployments do not require this name migration.
+
+
 # v0.6.1 · 版本提示与橙色主题 / Version indicator and orange theme · 2026-10-23
 
 ## 中文更新说明

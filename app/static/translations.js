@@ -1,5 +1,7 @@
 /* Shared UI messages; keep placeholders identical in both languages. */
 window.M3UTranslations = {
+"uiCopyStreamHint":{"zh":"点击复制完整地址","en":"Click to copy the full URL"},
+"uiCopyStreamFailed":{"zh":"复制失败，请手动复制","en":"Copy failed; please copy manually"},
 "uiSave":{"zh":"保存","en":"Save"},
 "updateNew":{"zh": "有新版本", "en": "Update available"},
 

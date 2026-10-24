@@ -974,3 +974,12 @@ dialog.fixed-action-dialog > form > footer,
 .channel-drag-bundle strong { display:block; color:var(--accent-text); margin-bottom:calc(5px * var(--studio-ui-scale)); }
 .drag-bundle-name { padding:calc(4px * var(--studio-ui-scale)) calc(7px * var(--studio-ui-scale)); background:var(--selected-bg); margin-top:calc(3px * var(--studio-ui-scale)); border-radius:var(--radius-sm); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .channel-drag-bundle small { display:block; color:var(--muted); margin-top:calc(5px * var(--studio-ui-scale)); }
+
+/* Copy full stream URLs without adding another toolbar action. */
+#appShell .stream { display:flex; align-items:baseline; gap:8px; cursor:pointer; user-select:text; }
+.stream-url { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#appShell .stream:hover, #appShell .stream:focus-visible { color:var(--accent-text); opacity:1; }
+#appShell .stream:focus-visible { outline:2px solid var(--selected-border); outline-offset:2px; border-radius:3px; }
+.stream-copy-feedback { flex:none; font-family:var(--font-ui,inherit); font-size:11px; color:var(--accent-text); }
+.stream-copy-feedback:empty { display:none; }
+#appShell .stream.is-copy-error .stream-copy-feedback { color:var(--danger-text); }

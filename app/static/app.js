@@ -43,7 +43,7 @@ if(!channels.length){if(query)$('#empty').append(button(t('studioClearSearch'),(
 channels.forEach(ch=>{const row=el('article',undefined,'channel');row.dataset.id=ch.id;const check=el('input');check.type='checkbox';check.className='channel-select';window.M3UI18n.setAttribute(check,'aria-label',window.M3UI18n.dynamic(()=>t("m14")+ch.name));check.checked=selectedChannels.has(ch.id);check.onchange=()=>{if(check.checked)selectedChannels.add(ch.id);else selectedChannels.delete(ch.id);updateSelection()};const handle=el('span','⠿','handle');handle.draggable=!query;window.M3UI18n.setAttribute(handle,'title',window.M3UI18n.dynamic(()=>query?t("m15"):t("m16")));handle.ondragstart=e=>{beginChannelDrag(ch.id,e);e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',ch.id);const blank=document.createElement('canvas');blank.width=blank.height=1;e.dataTransfer.setDragImage(blank,0,0)};handle.ondragend=finishChannelDrag;bindTouchDrag(handle,ch.id,!query);
 
 const logo=button('',()=>{openLogoPicker({listId:selected,channelId:ch.id},ch)},'logo');window.M3UI18n.setAttribute(logo,'title',window.M3UI18n.dynamic(()=>t("m17")));window.M3UI18n.setAttribute(logo,'aria-label',window.M3UI18n.dynamic(()=>t("m18")+ch.name));if(ch.logo){const img=el('img');img.src=ch.logo;img.alt=ch.name;img.onerror=()=>{img.hidden=true;logo.append(el('small',t("m19")))};logo.append(img)}else window.M3UI18n.setText(logo,'＋Logo');
-const info=el('div',undefined,'channel-info');const title=el('div',undefined,'channel-title');title.append(el('span',ch.name,'channel-name'));const features=el('div',undefined,'channel-features');for(const [enabled,cls,label] of [[ch.catchup_url,'replay',t("m20")],[ch.fcc_url,'fcc',t('studioFcc')]]){if(enabled){const feature=el('span',undefined,'channel-feature '+cls);feature.tabIndex=0;feature.setAttribute('role','img');window.M3UI18n.setAttribute(feature,'aria-label',label);features.append(feature)}else{const slot=el('span',undefined,'channel-feature-slot '+cls);slot.setAttribute('aria-hidden','true');features.append(slot)}}const checkItem=sourceItem(selected,ch),checkedSource=sourceDisplayResult(checkItem.key);const status=el('div',undefined,'channel-status');window.M3UI18n.setAttribute(status,'aria-label',t('studioSourceStatus'));status.append(sourceBadge(checkedSource,checkItem));const stream=el('div',ch.url,'stream');window.M3UI18n.setAttribute(stream,'title',ch.url);info.append(title,stream);
+const info=el('div',undefined,'channel-info');const title=el('div',undefined,'channel-title');title.append(el('span',ch.name,'channel-name'));const features=el('div',undefined,'channel-features');for(const [enabled,cls,label] of [[ch.catchup_url,'replay',t("m20")],[ch.fcc_url,'fcc',t('studioFcc')]]){if(enabled){const feature=el('span',undefined,'channel-feature '+cls);feature.tabIndex=0;feature.setAttribute('role','img');window.M3UI18n.setAttribute(feature,'aria-label',label);features.append(feature)}else{const slot=el('span',undefined,'channel-feature-slot '+cls);slot.setAttribute('aria-hidden','true');features.append(slot)}}const checkItem=sourceItem(selected,ch),checkedSource=sourceDisplayResult(checkItem.key);const status=el('div',undefined,'channel-status');window.M3UI18n.setAttribute(status,'aria-label',t('studioSourceStatus'));status.append(sourceBadge(checkedSource,checkItem));const stream=createCopyableStream(ch.url);info.append(title,stream);
 const actions=el('div',undefined,'actions');actions.append(button(t("m21"),()=>openEditor(ch)),button(t("m22"),async()=>{if(await uiConfirm(t("m23")+ch.name+(window.M3UI18n.language==='zh'?'？':'?'))){list.channels=list.channels.filter(c=>c.id!==ch.id);changed()}},'danger'));const epg=el('div',undefined,'channel-epg');epg.append(el('span',ch.epg_id||'—','epg-value'));epg.title=(ch.epg_id||ch.name)+(ch.epg||list.epg||state.epg?' · '+(ch.epg||list.epg||state.epg):'');const groupCell=el('div',ch.group,'channel-group');groupCell.title=ch.group;row.append(check,handle,logo,info,features,status,groupCell,epg,actions);$('#channels').append(row)})}
 function clearDragMarks(){document.querySelectorAll('.dragover,.touch-dragging').forEach(n=>n.classList.remove('dragover','touch-dragging'))}
 // A drag is one transaction, even when its selection spans several rows.
@@ -384,15 +384,50 @@ function renderAutoLogos(){
 $('#replaceLogos').onchange=renderAutoLogos;
 $('#autoLogoApply').onclick=()=>{if(core.fingerprint(state)!==logoContext.fingerprint)return toast(t("m109"));const list=state.lists.find(l=>l.id===logoContext.listId);const paths=new Map(logoMatches.map(m=>[m.id,m.path]));list.channels.forEach(ch=>{if(paths.has(ch.id))ch.logo=paths.get(ch.id)});$('#autoLogoDialog').close();changed();toast(t("m117",{p0:(logoMatches.length)}),true)};
 function legacyCopy(text){
- const previous=document.activeElement,area=el('textarea');area.className='clipboard-helper';area.value=text;$('#settingsDialog').append(area);area.focus();area.select();
- let ok=false;try{ok=document.execCommand('copy')}finally{area.remove();previous?.focus()}return ok;
+ const previous=document.activeElement,selection=window.getSelection(),ranges=[];
+ if(selection)for(let i=0;i<selection.rangeCount;i++)ranges.push(selection.getRangeAt(i).cloneRange());
+ const area=el('textarea');area.className='clipboard-helper';area.value=text;
+ const dialogs=[...document.querySelectorAll('dialog[open]')];(dialogs.at(-1)||document.body).append(area);
+ let ok=false;try{area.focus({preventScroll:true});area.select();ok=document.execCommand('copy')}finally{
+  area.remove();previous?.focus({preventScroll:true});
+  if(selection){selection.removeAllRanges();for(const range of ranges)try{selection.addRange(range)}catch{}}
+ }return ok;
+}
+async function writeClipboard(text){
+ if(window.isSecureContext&&navigator.clipboard?.writeText){try{await navigator.clipboard.writeText(text);return true}catch{}}
+ try{return legacyCopy(text)}catch{return false}
 }
 async function copySubscription(text,copyButton=null){
- let copied=false;
- if(window.isSecureContext&&navigator.clipboard?.writeText){try{await navigator.clipboard.writeText(text);copied=true}catch{}}
- if(!copied){try{copied=legacyCopy(text)}catch{}}
+ const copied=await writeClipboard(text);
  if(!copied)toast(t("m119"));
  if(copied&&copyButton){clearTimeout(copyButton.copyTimer);window.M3UI18n.setText(copyButton,t('uiCopied'));copyButton.classList.add('is-copied');copyButton.copyTimer=setTimeout(()=>{window.M3UI18n.setText(copyButton,t('m38'));copyButton.classList.remove('is-copied')},1500)}
+}
+function createCopyableStream(url){
+ const stream=el('div',undefined,'stream'),address=el('span',url,'stream-url'),feedback=el('span',undefined,'stream-copy-feedback');
+ stream.tabIndex=0;stream.setAttribute('role','button');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+ window.M3UI18n.setAttribute(stream,'title',window.M3UI18n.dynamic(()=>t('uiCopyStreamHint')+'\n'+url));
+ window.M3UI18n.setAttribute(stream,'aria-label',window.M3UI18n.dynamic(()=>t('uiCopyStreamHint')+': '+url));
+ stream.append(address,feedback);
+ let start=null,dragged=false,busy=false,timer;
+ stream.addEventListener('pointerdown',event=>{if(event.button===0){start={x:event.clientX,y:event.clientY};dragged=false}});
+ stream.addEventListener('pointermove',event=>{if(start&&(event.buttons&1)&&Math.hypot(event.clientX-start.x,event.clientY-start.y)>5)dragged=true});
+ async function copy(){
+  if(busy)return;busy=true;clearTimeout(timer);
+  try{
+   const copied=await writeClipboard(url);if(!stream.isConnected)return;
+   window.M3UI18n.setText(feedback,t(copied?'uiCopied':'uiCopyStreamFailed'));
+   stream.classList.toggle('is-copied',copied);stream.classList.toggle('is-copy-error',!copied);
+   timer=setTimeout(()=>{window.M3UI18n.setText(feedback,'');stream.classList.remove('is-copied','is-copy-error')},copied?1500:4000);
+  }finally{busy=false}
+ }
+ stream.addEventListener('click',event=>{
+  event.stopPropagation();
+  const selection=window.getSelection();
+  if(dragged||(selection&&!selection.isCollapsed&&selection.rangeCount&&selection.getRangeAt(0).intersectsNode(address)))return;
+  copy();
+ });
+ stream.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();copy()}});
+ return stream;
 }
 $('#history').onclick=async()=>{
  $('#historyEntries').replaceChildren();window.M3UI18n.setText($('#historyStatus'),window.M3UI18n.dynamic(()=>t("m120")));$('#historyDialog').showModal();
