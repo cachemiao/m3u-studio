@@ -148,6 +148,7 @@ test("configuration/logo ZIP round trip stays a draft and library exports separa
   const uploaded = await page.request.post("/api/logos", {
     headers,
     multipart: {
+      replace: "1",
       file: {
         name: "Browser backup sample.png",
         mimeType: "image/png",
@@ -155,7 +156,7 @@ test("configuration/logo ZIP round trip stays a draft and library exports separa
       },
     },
   });
-  expect(uploaded.ok()).toBeTruthy();
+  expect(uploaded.ok(), await uploaded.text()).toBeTruthy();
   const published = await (await page.request.get("/api/state")).json();
   await page.locator(".channel").first().hover();
   await page.locator(".channel .actions button").first().click();
@@ -195,11 +196,15 @@ test("configuration/logo ZIP round trip stays a draft and library exports separa
   await page.locator("#manageLogos").click();
   await expect(page.locator("#logoManagerDialog")).toBeVisible();
   await expect(page.locator("#managerLogoGrid img")).toHaveCount(1);
-  await page
-    .locator("#managerLogoGrid img")
-    .evaluateAll((images) =>
-      Promise.all(images.map((image) => image.decode())),
-    );
+  const libraryImage = page.locator("#managerLogoGrid img").first();
+  await libraryImage.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() =>
+      libraryImage.evaluate(
+        (image) => image.complete && image.naturalWidth > 0,
+      ),
+    )
+    .toBe(true);
   await page.screenshot({ path: testInfo.outputPath("logo-library.png") });
   const logosEvent = page.waitForEvent("download");
   await page.locator("#exportLogos").click();
@@ -213,13 +218,11 @@ test("configuration/logo ZIP round trip stays a draft and library exports separa
     expect(bounds.x).toBeGreaterThanOrEqual(0);
     expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
   }
-  await page
-    .locator("#restoreFile")
-    .setInputFiles({
-      name: "legacy.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(JSON.stringify(published)),
-    });
+  await page.locator("#restoreFile").setInputFiles({
+    name: "legacy.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(published)),
+  });
   await page.locator("#interactionConfirm").click();
   await expect(page.locator(".channel-name").first()).toHaveText("Sample 0");
   expect(await (await page.request.get("/api/state")).json()).toEqual(
