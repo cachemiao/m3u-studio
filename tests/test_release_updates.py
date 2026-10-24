@@ -102,3 +102,30 @@ def test_route_requires_login_and_does_not_change_playlists(server, auth, tmp_pa
     assert result['update_available'] and result['latest_version'] == '0.6.1'
     assert c.post('/api/version', headers=auth).status_code == 405
     assert c.get('/api/state').json == before
+
+
+def test_manual_checks_bypass_daily_cache_but_have_a_short_cooldown(tmp_path):
+    now = [1000000]
+    fetch = Mock(side_effect=['0.6.2', '0.6.3', OSError('offline')])
+    checker = ReleaseChecker('0.6.2', tmp_path/'updates.json', fetch, lambda: now[0])
+    assert not checker.check()['update_available']
+    now[0] += 61
+    assert not checker.check()['update_available']  # automatic still uses daily cache
+    assert checker.check(manual=True)['update_available']
+    assert fetch.call_count == 2
+    checker.check(manual=True)
+    assert fetch.call_count == 2
+    now[0] += 61
+    result = checker.check(manual=True)
+    assert result['check_failed'] and result['update_available']
+    assert result['latest_version'] == '0.6.3'
+
+
+def test_manual_check_route_is_authenticated_and_csrf_protected(server, auth, tmp_path):
+    server.release_checker = ReleaseChecker('0.6.2', tmp_path/'updates.json', Mock(return_value='0.6.3'))
+    assert server.app.test_client().post('/api/version/check', headers=auth).status_code == 401
+    c = client(server, auth)
+    before = c.get('/api/state').json
+    assert c.post('/api/version/check').status_code == 403
+    assert c.post('/api/version/check', headers=auth).json['update_available']
+    assert c.get('/api/state').json == before

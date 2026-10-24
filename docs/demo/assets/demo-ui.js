@@ -58,6 +58,7 @@ window.M3UDemo.installUI = function (ctx) {
   const disabled = [
     "backup",
     "backupArchive",
+    "headerVersion",
     "exportLogos",
     "restore",
     "restoreFile",

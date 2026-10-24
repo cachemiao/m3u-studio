@@ -9,6 +9,7 @@ from urllib.request import Request, build_opener, HTTPRedirectHandler
 PROJECT_URL = 'https://github.com/cachemiao/m3u-studio'
 RELEASE_API = 'https://api.github.com/repos/cachemiao/m3u-studio/releases/latest'
 DAY = 24 * 60 * 60
+MANUAL_INTERVAL = 60
 
 
 def version_tuple(value):
@@ -61,12 +62,13 @@ class ReleaseChecker:
         except (OSError, ValueError, KeyError, TypeError):
             pass
 
-    def check(self):
+    def check(self, manual=False):
         with self.lock:
             now = self.clock()
             attempted = self.cache.get('attempted_at', 0)
             # Cache failures too, so offline deployments still check only daily.
-            due = not attempted or now - attempted >= DAY or now < attempted
+            interval = MANUAL_INTERVAL if manual else DAY
+            due = not attempted or now - attempted >= interval or now < attempted
             if due:
                 self.cache['attempted_at'] = now
                 try:

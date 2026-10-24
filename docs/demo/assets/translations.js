@@ -1,5 +1,10 @@
 /* Shared UI messages; keep placeholders identical in both languages. */
 window.M3UTranslations = {
+"updateCheck":{"zh": "检查更新", "en": "Check for updates"},
+"updateLatestMeow":{"zh": "已经是最新版本了喵~", "en": "You're already on the latest version, meow~"},
+"updateAvailableMeow":{"zh": "有新版本可以更新了喵~", "en": "A new version is available, meow~"},
+"updateCheckFailed":{"zh": "检测失败了喵~ 请稍后再试", "en": "Could not check for updates, meow~ Please try again later"},
+
 "archiveWorkspaceChanged":{"zh": "工作区已变化，未替换草稿；已导入的台标会保留，请重新操作。", "en": "The workspace changed; the draft was not replaced. Any imported logos remain in the library. Please try again."},
 "archiveCount":{"zh": "台标数量过多或存在不支持的文件", "en": "Too many logos or unsupported files in the library"},
 "archiveLogosSize":{"zh": "台标库超过备份大小限制", "en": "Logo library exceeds the backup size limit"},

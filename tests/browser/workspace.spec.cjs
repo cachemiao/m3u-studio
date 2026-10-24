@@ -229,3 +229,55 @@ test("configuration/logo ZIP round trip stays a draft and library exports separa
     published,
   );
 });
+
+test("version button checks updates while brand and persistent dot link to project", async ({
+  page,
+}, testInfo) => {
+  await openWorkspace(page);
+  await page.clock.install();
+  const project = "https://github.com/cachemiao/m3u-studio";
+  await expect(page.locator("#projectBrand")).toHaveAttribute("href", project);
+  await expect(page.locator("#projectBrand #headerVersion")).toHaveCount(0);
+  await expect(page.locator("#headerVersion")).toHaveText("v 0.6.2");
+  let available = false,
+    failed = false,
+    calls = 0;
+  await page.route("**/api/version/check", (route) => {
+    expect(route.request().method()).toBe("POST");
+    calls++;
+    return route.fulfill({
+      json: {
+        current_version: "0.6.2",
+        latest_version: available ? "0.6.3" : "0.6.2",
+        update_available: available,
+        check_failed: failed,
+      },
+    });
+  });
+  const before = await (await page.request.get("/api/state")).json();
+  await page.locator("#headerVersion").click();
+  await expect(page.locator("#versionNotice")).toHaveText(
+    "已经是最新版本了喵~",
+  );
+  await expect(page.locator("#headerUpdate")).toBeHidden();
+  await page.clock.fastForward(4100);
+  await expect(page.locator("#versionNotice")).toBeHidden();
+  available = true;
+  await page.locator("#headerVersion").click();
+  await expect(page.locator("#versionNotice")).toHaveText(
+    "有新版本可以更新了喵~",
+  );
+  await expect(page.locator("#headerUpdate")).toBeVisible();
+  await expect(page.locator("#headerUpdate")).toHaveAttribute("href", project);
+  await page.screenshot({ path: testInfo.outputPath("version-update.png") });
+  await page.clock.fastForward(4100);
+  await expect(page.locator("#versionNotice")).toBeHidden();
+  await expect(page.locator("#headerUpdate")).toBeVisible();
+  failed = true;
+  available = false;
+  await page.locator("#headerVersion").click();
+  await expect(page.locator("#versionNotice")).toContainText("检测失败了喵~");
+  await expect(page.locator("#headerUpdate")).toBeVisible();
+  expect(calls).toBe(3);
+  expect(await (await page.request.get("/api/state")).json()).toEqual(before);
+});

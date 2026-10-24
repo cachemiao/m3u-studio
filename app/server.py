@@ -103,6 +103,10 @@ def auth_status():
 def version_status():
     return jsonify(release_checker.check())
 
+@app.route('/api/version/check', methods=['POST'])
+def version_check():
+    return jsonify(release_checker.check(manual=True))
+
 @app.route('/api/auth/setup', methods=['POST'])
 def auth_setup():
     try:

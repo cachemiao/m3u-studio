@@ -1,4 +1,4 @@
-/* The product name and quiet version label share a text baseline and one link. */
+/* Brand link and version controls share a quiet text baseline. */
 #appShell header .brand-lockup { display:inline-flex; align-items:baseline; gap:10px; min-width:0; color:var(--text); text-decoration:none; border-radius:4px; }
 #projectBrand > .brand-icon { align-self:center; flex:none; }
 #projectBrand:focus-visible { outline:2px solid var(--selected-border); outline-offset:5px; }
@@ -10,3 +10,15 @@
  #appShell header .brand-lockup { gap:8px; }
  #versionBadge { font-size:12px; }
 }
+/* Separate destinations while keeping the brand and version visually together. */
+#appShell header .brand-lockup { position:relative; }
+#projectBrand { display:inline-flex; align-items:baseline; gap:10px; color:inherit; text-decoration:none; }
+#appShell #headerVersion { appearance:none; border:0; border-radius:4px; background:transparent; color:inherit; font:inherit; padding:0; min-height:0; line-height:inherit; box-shadow:none; cursor:pointer; }
+#appShell #headerVersion:hover { color:var(--accent-text); }
+#appShell #headerVersion:focus-visible { outline:2px solid var(--selected-border); outline-offset:4px; }
+#appShell #headerVersion:disabled { cursor:progress; opacity:.65; }
+#headerUpdate { padding:8px 5px; margin:-8px -5px; border-radius:4px; }
+#headerUpdate:focus-visible { outline:2px solid var(--selected-border); outline-offset:2px; }
+.version-notice { position:absolute; left:0; top:calc(100% + 12px); z-index:100; padding:8px 12px; border:1px solid var(--border-strong); border-radius:8px; background:var(--surface); color:var(--text); box-shadow:var(--elevation); font-size:12px; font-weight:400; white-space:normal; width:max-content; max-width:min(340px,calc(100vw - 40px)); }
+.version-notice[hidden] { display:none; }
+@media(max-width:600px) { #projectBrand { gap:8px; } }
