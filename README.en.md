@@ -41,7 +41,7 @@ Try channel organization, drag-and-drop sorting and bulk editing online, with no
 - **Bulk editing and source checks:** replace URLs and edit fields in bulk, move or copy channels between playlists, and check channel response times to help identify unresponsive sources.
 - **Multiple playlist subscriptions:** import M3U / TXT from files, pasted text or URLs, then publish separate or combined subscriptions with custom short URLs.
 - **EPG, catch-up and FCC:** configure program guides, catch-up and FCC parameters per channel and include them in subscription exports.
-- **Self-hosted:** keep your data on your own device, with no external frontend CDN dependencies. Chinese/English interfaces, light/dark themes and mobile support are included.
+- **Self-hosted:** lightweight design with AMD64 / ARM64 images for NAS devices, servers and ARM boxes such as the Phicomm N1. Keep your data on your own device, with no external frontend CDN dependencies.
 
 ## Quick start
 
