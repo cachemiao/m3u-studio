@@ -14,12 +14,12 @@
   <a href="https://hub.docker.com/r/cachemiao/m3u-studio"><img src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-F9A8D4?logo=docker&amp;logoColor=white" alt="Docker Architectures"></a>
 </p>
 
-<p align="center"><a href="README.md">简体中文</a> · <strong>English</strong> · <a href="https://cachemiao.github.io/m3u-studio/demo/?lang=en"><strong>Live demo →</strong></a></p>
+<p align="center"><a href="README.md">简体中文</a> · <strong>English</strong></p>
 
 <p align="center">M3U Studio is a self-hosted IPTV channel manager.<br>Organize channels, groups, logos and EPG in your browser, then publish <strong>M3U / TXT subscriptions</strong> for your player.</p>
 
 <p align="center">
-  <a href="#screenshots">Screenshots</a> · <a href="#features">Features</a> · <a href="#quick-start">Quick start</a> · <a href="#get-started">Get started</a> · <a href="#documentation">Docs and development</a> · <a href="#feedback-and-contributions">Contributing</a>
+  <a href="https://cachemiao.github.io/m3u-studio/demo/?lang=en">Live demo</a> · <a href="#screenshots">Screenshots</a> · <a href="#features">Features</a> · <a href="#quick-start">Quick start</a> · <a href="#get-started">Get started</a> · <a href="#documentation">Docs and development</a> · <a href="#feedback-and-contributions">Contributing</a>
 </p>
 
 ## Screenshots
