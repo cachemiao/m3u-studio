@@ -2,7 +2,7 @@
 #appShell header .brand-lockup { display:inline-flex; align-items:baseline; gap:10px; min-width:0; color:var(--text); text-decoration:none; border-radius:4px; }
 #projectBrand > .brand-icon { align-self:center; flex:none; }
 #projectBrand:focus-visible { outline:2px solid var(--selected-border); outline-offset:5px; }
-#versionBadge { display:inline-flex; align-items:baseline; gap:6px; color:var(--muted); font-size:14px; font-weight:400; white-space:nowrap; }
+#versionBadge { position:relative; display:inline-flex; align-items:baseline; gap:6px; color:var(--muted); font-size:14px; font-weight:400; white-space:nowrap; }
 .version-update { display:inline-flex; align-self:center; }
 .version-update i { width:6px; height:6px; border-radius:50%; background:var(--primary); }
 .version-update[hidden] { display:none; }
@@ -19,6 +19,8 @@
 #appShell #headerVersion:disabled { cursor:progress; opacity:.65; }
 #headerUpdate { padding:8px 5px; margin:-8px -5px; border-radius:4px; }
 #headerUpdate:focus-visible { outline:2px solid var(--selected-border); outline-offset:2px; }
-.version-notice { position:absolute; left:0; top:calc(100% + 12px); z-index:100; padding:8px 12px; border:1px solid var(--border-strong); border-radius:8px; background:var(--surface); color:var(--text); box-shadow:var(--elevation); font-size:12px; font-weight:400; white-space:normal; width:max-content; max-width:min(340px,calc(100vw - 40px)); }
+/* The speech bubble's left tip points back to the persistent update dot. */
+.version-notice { position:absolute; left:calc(100% + 14px); top:50%; transform:translateY(calc(-50% + var(--notice-shift,0px))); z-index:100; box-sizing:border-box; padding:8px 12px; border:1px solid var(--border-strong); border-radius:12px; background:var(--surface); color:var(--text); box-shadow:var(--elevation); font-size:12px; font-weight:400; line-height:1.5; white-space:normal; overflow-wrap:anywhere; width:max-content; max-width:var(--notice-space,260px); }
+.version-notice::before { content:""; position:absolute; left:-6px; top:calc(50% - var(--notice-shift,0px)); width:10px; height:10px; background:var(--surface); border-left:1px solid var(--border-strong); border-bottom:1px solid var(--border-strong); transform:translateY(-50%) rotate(45deg); }
 .version-notice[hidden] { display:none; }
 @media(max-width:600px) { #projectBrand { gap:8px; } }

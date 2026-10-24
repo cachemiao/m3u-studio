@@ -269,7 +269,23 @@ test("version button checks updates while brand and persistent dot link to proje
   );
   await expect(page.locator("#headerUpdate")).toBeVisible();
   await expect(page.locator("#headerUpdate")).toHaveAttribute("href", project);
+  const dot = await page.locator("#headerUpdate i").boundingBox();
+  const bubble = await page.locator("#versionNotice").boundingBox();
+  expect(bubble.x).toBeGreaterThan(dot.x + dot.width);
+  expect(
+    Math.abs(bubble.y + bubble.height / 2 - dot.y - dot.height / 2),
+  ).toBeLessThan(2);
   await page.screenshot({ path: testInfo.outputPath("version-update.png") });
+  for (const width of [390, 320]) {
+    await page.setViewportSize({ width, height: 960 });
+    await expect
+      .poll(async () => {
+        const box = await page.locator("#versionNotice").boundingBox();
+        return box.x >= 0 && box.x + box.width <= width && box.y >= 0;
+      })
+      .toBeTruthy();
+  }
+  await page.setViewportSize({ width: 1500, height: 960 });
   await page.clock.fastForward(4100);
   await expect(page.locator("#versionNotice")).toBeHidden();
   await expect(page.locator("#headerUpdate")).toBeVisible();

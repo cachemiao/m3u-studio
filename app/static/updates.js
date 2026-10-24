@@ -10,6 +10,22 @@ window.M3UUpdates = (() => {
     node("headerVersion").textContent = current ? "v " + current : "v —";
     node("headerUpdate").hidden = !available;
   }
+  function positionNotice() {
+    const message = node("versionNotice");
+    if (message.hidden) return;
+    const anchor = node("versionBadge").getBoundingClientRect();
+    message.style.setProperty(
+      "--notice-space",
+      Math.max(40, Math.min(260, innerWidth - anchor.right - 26)) + "px",
+    );
+    const height = message.getBoundingClientRect().height;
+    message.style.setProperty(
+      "--notice-shift",
+      Math.max(0, 8 - (anchor.top + anchor.height / 2 - height / 2)) + "px",
+    );
+  }
+  window.addEventListener("resize", positionNotice);
+  window.addEventListener("m3u-language-change", positionNotice);
   function notice(key) {
     const message = node("versionNotice");
     window.M3UI18n.setText(
@@ -17,6 +33,7 @@ window.M3UUpdates = (() => {
       window.M3UI18n.dynamic(() => window.M3UI18n.t(key)),
     );
     message.hidden = false;
+    positionNotice();
     clearTimeout(noticeTimer);
     noticeTimer = setTimeout(() => {
       message.hidden = true;
