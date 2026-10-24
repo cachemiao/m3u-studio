@@ -14,7 +14,7 @@
   <a href="https://github.com/cachemiao/m3u-studio/stargazers"><img src="https://img.shields.io/github/stars/cachemiao/m3u-studio?style=flat&amp;color=F9A8D4" alt="GitHub Stars"></a>
 </p>
 
-<p align="center"><strong>简体中文</strong> · <a href="README.en.md">English</a></p>
+<p align="center"><strong>简体中文</strong> · <a href="README.en.md">English</a> · <a href="https://cachemiao.github.io/m3u-studio/demo/?lang=zh"><strong>在线体验 →</strong></a></p>
 
 <p align="center">M3U Studio 是一个可自行部署的 IPTV 频道管理工具。<br>通过网页管理频道、分组、台标与 EPG，整理后生成 <strong>M3U / TXT 订阅</strong>，在播放器中使用。</p>
 

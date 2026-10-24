@@ -1,0 +1,173 @@
+/* Color tokens only. No layout, typography or interaction rules. */
+:root, :root[data-accent="pink"] {
+  --primary: #F9A8D4;
+  --primary-hover: #F472B6;
+  --on-primary: #831843;
+  --primary-border: #F472B6;
+  --accent-text: #BE185D;
+  --selected-bg: rgba(249,168,212,0.14);
+  --selected-border: #EC4899;
+  --danger-text: #B91C1C;
+  --logo: #EC4899;
+}
+:root[data-accent="purple"] {
+  --primary: #C4B5FD;
+  --primary-hover: #A78BFA;
+  --on-primary: #4C1D95;
+  --primary-border: #A78BFA;
+  --accent-text: #6D28D9;
+  --selected-bg: rgba(196,181,253,0.14);
+  --selected-border: #8B5CF6;
+  --danger-text: #B91C1C;
+  --logo: #8B5CF6;
+}
+:root[data-accent="blue"] {
+  --primary: #93C5FD;
+  --primary-hover: #60A5FA;
+  --on-primary: #1E3A8A;
+  --primary-border: #60A5FA;
+  --accent-text: #1D4ED8;
+  --selected-bg: rgba(147,197,253,0.14);
+  --selected-border: #3B82F6;
+  --danger-text: #B91C1C;
+  --logo: #3B82F6;
+}
+:root[data-accent="green"] {
+  --primary: #86EFAC;
+  --primary-hover: #4ADE80;
+  --on-primary: #14532D;
+  --primary-border: #4ADE80;
+  --accent-text: #15803D;
+  --selected-bg: rgba(134,239,172,0.14);
+  --selected-border: #22C55E;
+  --danger-text: #B91C1C;
+  --logo: #16A34A;
+}
+:root[data-accent="cyan"] {
+  --primary: #67E8F9;
+  --primary-hover: #22D3EE;
+  --on-primary: #164E63;
+  --primary-border: #22D3EE;
+  --accent-text: #0E7490;
+  --selected-bg: rgba(103,232,249,0.14);
+  --selected-border: #06B6D4;
+  --danger-text: #B91C1C;
+  --logo: #0891B2;
+}
+:root[data-accent="orange"] {
+  --primary: #CC7D5E;
+  --primary-hover: #C06C4C;
+  --on-primary: #29140C;
+  --primary-border: #B46243;
+  --accent-text: #9A4F32;
+  --selected-bg: rgba(204,125,94,0.14);
+  --selected-border: #B46243;
+  --danger-text: #B91C1C;
+  --logo: #CC7D5E;
+}
+:root[data-theme="dark"], :root[data-accent="pink"][data-theme="dark"] {
+  --primary: #F9A8D4;
+  --primary-hover: #FBCFE8;
+  --on-primary: #3B0A24;
+  --primary-border: #F9A8D4;
+  --accent-text: #F9A8D4;
+  --selected-bg: rgba(249,168,212,0.07);
+  --selected-border: #F9A8D4;
+  --danger-text: #FCA5A5;
+  --logo: #F9A8D4;
+}
+:root[data-accent="purple"][data-theme="dark"] {
+  --primary: #C4B5FD;
+  --primary-hover: #DDD6FE;
+  --on-primary: #2E1065;
+  --primary-border: #C4B5FD;
+  --accent-text: #C4B5FD;
+  --selected-bg: rgba(196,181,253,0.07);
+  --selected-border: #C4B5FD;
+  --danger-text: #FCA5A5;
+  --logo: #C4B5FD;
+}
+:root[data-accent="blue"][data-theme="dark"] {
+  --primary: #93C5FD;
+  --primary-hover: #BFDBFE;
+  --on-primary: #172554;
+  --primary-border: #93C5FD;
+  --accent-text: #93C5FD;
+  --selected-bg: rgba(147,197,253,0.07);
+  --selected-border: #93C5FD;
+  --danger-text: #FCA5A5;
+  --logo: #93C5FD;
+}
+:root[data-accent="green"][data-theme="dark"] {
+  --primary: #86EFAC;
+  --primary-hover: #BBF7D0;
+  --on-primary: #052E16;
+  --primary-border: #86EFAC;
+  --accent-text: #86EFAC;
+  --selected-bg: rgba(134,239,172,0.07);
+  --selected-border: #86EFAC;
+  --danger-text: #FCA5A5;
+  --logo: #86EFAC;
+}
+:root[data-accent="cyan"][data-theme="dark"] {
+  --primary: #67E8F9;
+  --primary-hover: #A5F3FC;
+  --on-primary: #083344;
+  --primary-border: #67E8F9;
+  --accent-text: #67E8F9;
+  --selected-bg: rgba(103,232,249,0.07);
+  --selected-border: #67E8F9;
+  --danger-text: #FCA5A5;
+  --logo: #67E8F9;
+}
+:root[data-accent="orange"][data-theme="dark"] {
+  --primary: #CC7D5E;
+  --primary-hover: #D99A80;
+  --on-primary: #29140C;
+  --primary-border: #CC7D5E;
+  --accent-text: #E5A58B;
+  --selected-bg: rgba(204,125,94,0.07);
+  --selected-border: #CC7D5E;
+  --danger-text: #FCA5A5;
+  --logo: #CC7D5E;
+}
+:root {
+ --swatch-pink:#F9A8D4;
+ --swatch-purple:#C4B5FD;
+ --swatch-blue:#93C5FD;
+ --swatch-green:#86EFAC;
+ --swatch-cyan:#67E8F9;
+ --swatch-orange:#CC7D5E;
+}
+:root {
+ --accent:var(--accent-text); --accent-solid:var(--primary); --on-accent:var(--on-primary);
+ --active:var(--selected-bg); --work-selected:var(--selected-bg); --danger:var(--danger-text);
+ --focus:var(--selected-border); --auth-glow:var(--selected-bg); --toast-text:#FFFFFF;
+}
+button.primary { background:var(--primary); border-color:var(--primary-border); color:var(--on-primary); }
+button.primary:hover:not(:disabled) { background:var(--primary-hover); border-color:var(--primary-border); color:var(--on-primary); }
+#appShell .bulk-toolbar #selectionCount, #appShell .bulk-toolbar #clearSelection { color:var(--accent-text); }
+#appShell .channel-epg { color:var(--label); }
+.brand-icon, #appShell header .brand-icon, .auth-brand-row .brand-icon { color:var(--logo); }
+.brand-icon .brand-play { fill:var(--logo); }
+#appShell .channel:has(.channel-select:checked), #appShell .channel:has(.channel-select:checked):hover {
+ background:var(--selected-bg); box-shadow:inset calc(2px * var(--studio-ui-scale)) 0 var(--selected-border);
+}
+#appShell .nav-item.active { background:var(--selected-bg); box-shadow:inset calc(2px * var(--studio-ui-scale)) 0 var(--selected-border); }
+#appShell #batchEdit:not(:disabled), #batchDialog .batch-section.is-selected {
+ background:var(--selected-bg); border-color:var(--selected-border); color:var(--accent-text);
+}
+.logo-tabs [aria-selected="true"], .import-tabs [aria-selected="true"],
+.preference-menu button[aria-checked="true"], #appearanceDialog [role="radio"][aria-checked="true"] {
+ background:var(--selected-bg); border-color:var(--selected-border); color:var(--accent-text);
+}
+
+:root { --row-selected-bg:var(--selected-bg); --list-selected-bg:color-mix(in srgb,var(--primary) 28%,transparent); --group-selected-bg:color-mix(in srgb,var(--primary) 10%,transparent); }
+:root[data-theme="dark"] { --list-selected-bg:color-mix(in srgb,var(--primary) 14%,transparent); --group-selected-bg:color-mix(in srgb,var(--primary) 6%,transparent); }
+#appShell .channel:has(.channel-select:checked), #appShell .channel:has(.channel-select:checked):hover { background:var(--row-selected-bg); box-shadow:inset 3px 0 var(--selected-border); }
+#appShell #groups .nav-item.active { background:var(--group-selected-bg); border-color:transparent; box-shadow:inset 3px 0 var(--selected-border); }
+#appShell #groups .nav-item.active > button:not(.small) { font-weight:650; }
+#appShell #add { background:transparent; border-color:var(--selected-border); color:var(--accent-text); box-shadow:none; }
+#appShell #add:hover:not(:disabled) { background:var(--row-selected-bg); border-color:var(--selected-border); color:var(--accent-text); }
+
+#appShell #lists .nav-item.active { background:var(--list-selected-bg); }
