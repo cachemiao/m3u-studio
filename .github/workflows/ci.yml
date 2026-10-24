@@ -1,0 +1,41 @@
+name: Application checks
+on:
+  push:
+    branches: [main, 'engineering/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: python -m pip install -r requirements.txt pytest
+      - run: npm ci --ignore-scripts
+      - run: python scripts/build-demo.py
+      - run: git diff --exit-code -- docs/demo
+      - run: python -m pytest tests -q
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failure
+          path: test-results/
+          retention-days: 7

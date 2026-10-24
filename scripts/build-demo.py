@@ -26,16 +26,11 @@ names = ['城市综合 HD', '晨间直播 HD', '公共服务 HD', '国际视野 
          '山野行走 HD', '海岸风景 4K', '城市漫步 HD', '乡村慢行 HD', '运动生活 HD', '星空观察 4K']
 groups = ['综合频道', '纪录与探索', '电影与文化', '风景与生活']
 colors = ['#8B87F4', '#58B9B1', '#7F9DCF', '#BC8EBF', '#CBA868', '#73AF92']
-from PIL import Image, ImageDraw, ImageFont
-font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 24) if Path('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf').exists() else ImageFont.load_default()
 logo_paths=[]
 (ASSETS/'logos').mkdir(exist_ok=True)
 for i,name in enumerate(names):
     filename = f'{name}.png'
-    image=Image.new('RGB',(120,80),'#1F2128');draw=ImageDraw.Draw(image)
-    draw.rounded_rectangle((18,16,102,65),radius=10,fill=colors[i%len(colors)])
-    label=f'{i+1:02d}';box=draw.textbbox((0,0),label,font=font);draw.text(((120-box[2])/2,25),label,font=font,fill='white')
-    image.save(ASSETS/'logos'/filename)
+    shutil.copy2(ROOT/'demo/logos'/filename, ASSETS/'logos'/filename)
     logo_paths.append('assets/logos/'+filename)
 
 def channel(i,ident,group,missing=True):
