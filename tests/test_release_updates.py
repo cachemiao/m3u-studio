@@ -5,12 +5,20 @@ from unittest.mock import Mock
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parents[1] / 'app'))
-from release_updates import DAY, PROJECT_URL, ReleaseChecker, fetch_latest, version_tuple
+sys.path.insert(0, str(Path(__file__).parents[1] / "app"))
+from release_updates import (
+    DAY,
+    PROJECT_URL,
+    ReleaseChecker,
+    fetch_latest,
+    version_tuple,
+)
 from test_app import server, auth, client
 
 
-@pytest.mark.parametrize('value', ['v0.6.1-beta', '', None, '0.6', '0.6.1/evil', 'x1.2.3'])
+@pytest.mark.parametrize(
+    "value", ["v0.6.1-beta", "", None, "0.6", "0.6.1/evil", "x1.2.3"]
+)
 def test_reject_non_stable_versions(value):
     with pytest.raises(ValueError):
         version_tuple(value)
@@ -18,18 +26,18 @@ def test_reject_non_stable_versions(value):
 
 def test_numeric_versions_daily_cache_and_restart(tmp_path):
     now = [1000000]
-    fetch = Mock(return_value='0.10.0')
-    path = tmp_path / 'updates.json'
-    checker = ReleaseChecker('0.9.0', path, fetch, lambda: now[0])
+    fetch = Mock(return_value="0.10.0")
+    path = tmp_path / "updates.json"
+    checker = ReleaseChecker("0.9.0", path, fetch, lambda: now[0])
     result = checker.check()
-    assert result['update_available']
-    assert result['release_url'] == PROJECT_URL + '/releases/tag/v0.10.0'
+    assert result["update_available"]
+    assert result["release_url"] == PROJECT_URL + "/releases/tag/v0.10.0"
     now[0] += DAY - 1
     assert checker.check() == result
     assert fetch.call_count == 1
     # Restart does not cause another outbound request within the daily interval.
-    restarted = ReleaseChecker('0.10.0', path, fetch, lambda: now[0])
-    assert not restarted.check()['update_available']
+    restarted = ReleaseChecker("0.10.0", path, fetch, lambda: now[0])
+    assert not restarted.check()["update_available"]
     assert fetch.call_count == 1
     now[0] += 1
     restarted.check()
@@ -38,94 +46,238 @@ def test_numeric_versions_daily_cache_and_restart(tmp_path):
 
 def test_daily_failure_cache_retains_release_and_survives_restart(tmp_path):
     now = [1000000]
-    fetch = Mock(side_effect=['0.6.1', OSError('offline'), '0.6.2'])
-    path = tmp_path/'updates.json'
-    checker = ReleaseChecker('0.6.0', path, fetch, lambda: now[0])
+    fetch = Mock(side_effect=["0.6.1", OSError("offline"), "0.6.2"])
+    path = tmp_path / "updates.json"
+    checker = ReleaseChecker("0.6.0", path, fetch, lambda: now[0])
     checker.check()
     now[0] += DAY - 1
     checker.check()
     assert fetch.call_count == 1
     now[0] += 1
     failed = checker.check()
-    assert failed['check_failed'] and failed['update_available']
-    assert failed['latest_version'] == '0.6.1'
-    assert failed['checked_at'] == 1000000
-    restarted = ReleaseChecker('0.6.0', path, fetch, lambda: now[0])
+    assert failed["check_failed"] and failed["update_available"]
+    assert failed["latest_version"] == "0.6.1"
+    assert failed["checked_at"] == 1000000
+    restarted = ReleaseChecker("0.6.0", path, fetch, lambda: now[0])
     now[0] += DAY - 1
     restarted.check()
     assert fetch.call_count == 2
     now[0] += 1
     recovered = restarted.check()
-    assert recovered['latest_version'] == '0.6.2' and not recovered['check_failed']
+    assert recovered["latest_version"] == "0.6.2" and not recovered["check_failed"]
 
 
 def test_failure_without_prior_result_is_not_up_to_date(tmp_path):
-    checker = ReleaseChecker('0.6.0', tmp_path/'updates.json', Mock(side_effect=TimeoutError))
+    checker = ReleaseChecker(
+        "0.6.0", tmp_path / "updates.json", Mock(side_effect=TimeoutError)
+    )
     result = checker.check()
-    assert result['check_failed'] and result['checked_at'] is None
-    assert result['latest_version'] is None and not result['update_available']
+    assert result["check_failed"] and result["checked_at"] is None
+    assert result["latest_version"] is None and not result["update_available"]
 
 
-@pytest.mark.parametrize('payload', [b'not json', b'[]', json.dumps({'latest_version':'invalid'}).encode()])
+@pytest.mark.parametrize(
+    "payload", [b"not json", b"[]", json.dumps({"latest_version": "invalid"}).encode()]
+)
 def test_corrupt_cache_can_recover(tmp_path, payload):
-    path = tmp_path/'updates.json'
+    path = tmp_path / "updates.json"
     path.write_bytes(payload)
-    checker = ReleaseChecker('0.6.0', path, Mock(return_value='0.6.0'))
-    assert not checker.check()['check_failed']
+    checker = ReleaseChecker("0.6.0", path, Mock(return_value="0.6.0"))
+    assert not checker.check()["check_failed"]
 
 
-@pytest.mark.parametrize('release', [
-    {'tag_name':'v0.6.1-beta','prerelease':True},
-    {'tag_name':'v0.6.1','draft':True},
-    {'tag_name':'https://evil.test'},
-    [],
-])
+@pytest.mark.parametrize(
+    "release",
+    [
+        {"tag_name": "v0.6.1-beta", "prerelease": True},
+        {"tag_name": "v0.6.1", "draft": True},
+        {"tag_name": "https://evil.test"},
+        [],
+    ],
+)
 def test_untrusted_release_rejected(monkeypatch, release):
     import release_updates
+
     response = Mock()
     response.__enter__ = Mock(return_value=response)
     response.__exit__ = Mock(return_value=False)
     response.read.return_value = json.dumps(release).encode()
-    monkeypatch.setattr(release_updates, 'build_opener', Mock(return_value=Mock(open=Mock(return_value=response))))
+    monkeypatch.setattr(
+        release_updates,
+        "build_opener",
+        Mock(return_value=Mock(open=Mock(return_value=response))),
+    )
     with pytest.raises(ValueError):
         fetch_latest()
 
 
 def test_route_requires_login_and_does_not_change_playlists(server, auth, tmp_path):
-    server.release_checker = ReleaseChecker('0.6.0', tmp_path/'updates.json', Mock(return_value='0.6.1'))
+    server.release_checker = ReleaseChecker(
+        "0.6.0", tmp_path / "updates.json", Mock(return_value="0.6.1")
+    )
     anonymous = server.app.test_client()
-    assert anonymous.get('/api/version').status_code == 401
+    assert anonymous.get("/api/version").status_code == 401
     c = client(server, auth)
-    before = c.get('/api/state').json
-    assert c.get('/api/auth/status').json['version'] == server.APP_VERSION
-    result = c.get('/api/version').json
-    assert result['update_available'] and result['latest_version'] == '0.6.1'
-    assert c.post('/api/version', headers=auth).status_code == 405
-    assert c.get('/api/state').json == before
+    before = c.get("/api/state").json
+    assert c.get("/api/auth/status").json["version"] == server.APP_VERSION
+    result = c.get("/api/version").json
+    assert result["update_available"] and result["latest_version"] == "0.6.1"
+    assert c.post("/api/version", headers=auth).status_code == 405
+    assert c.get("/api/state").json == before
 
 
 def test_manual_checks_bypass_daily_cache_but_have_a_short_cooldown(tmp_path):
     now = [1000000]
-    fetch = Mock(side_effect=['0.6.2', '0.6.3', OSError('offline')])
-    checker = ReleaseChecker('0.6.2', tmp_path/'updates.json', fetch, lambda: now[0])
-    assert not checker.check()['update_available']
+    fetch = Mock(side_effect=["0.6.2", "0.6.3", OSError("offline")])
+    checker = ReleaseChecker("0.6.2", tmp_path / "updates.json", fetch, lambda: now[0])
+    assert not checker.check()["update_available"]
     now[0] += 61
-    assert not checker.check()['update_available']  # automatic still uses daily cache
-    assert checker.check(manual=True)['update_available']
+    assert not checker.check()["update_available"]  # automatic still uses daily cache
+    assert checker.check(manual=True)["update_available"]
     assert fetch.call_count == 2
     checker.check(manual=True)
     assert fetch.call_count == 2
     now[0] += 61
     result = checker.check(manual=True)
-    assert result['check_failed'] and result['update_available']
-    assert result['latest_version'] == '0.6.3'
+    assert result["check_failed"] and result["update_available"]
+    assert result["latest_version"] == "0.6.3"
 
 
 def test_manual_check_route_is_authenticated_and_csrf_protected(server, auth, tmp_path):
-    server.release_checker = ReleaseChecker('0.6.2', tmp_path/'updates.json', Mock(return_value='0.6.3'))
-    assert server.app.test_client().post('/api/version/check', headers=auth).status_code == 401
+    server.release_checker = ReleaseChecker(
+        "0.6.2", tmp_path / "updates.json", Mock(return_value="0.6.3")
+    )
+    assert (
+        server.app.test_client().post("/api/version/check", headers=auth).status_code
+        == 401
+    )
     c = client(server, auth)
-    before = c.get('/api/state').json
-    assert c.post('/api/version/check').status_code == 403
-    assert c.post('/api/version/check', headers=auth).json['update_available']
-    assert c.get('/api/state').json == before
+    before = c.get("/api/state").json
+    assert c.post("/api/version/check").status_code == 403
+    assert c.post("/api/version/check", headers=auth).json["update_available"]
+    assert c.get("/api/state").json == before
+
+
+def test_rate_limit_falls_back_to_official_release_redirect(monkeypatch):
+    from urllib.error import HTTPError
+    import release_updates
+
+    limited = HTTPError(
+        release_updates.RELEASE_API,
+        403,
+        "rate limit exceeded",
+        {"X-RateLimit-Remaining": "0"},
+        None,
+    )
+    redirect = HTTPError(
+        PROJECT_URL + "/releases/latest",
+        302,
+        "Found",
+        {"Location": PROJECT_URL + "/releases/tag/v0.6.3"},
+        None,
+    )
+    opener = Mock(open=Mock(side_effect=[limited, redirect]))
+    monkeypatch.setattr(release_updates, "build_opener", Mock(return_value=opener))
+    assert fetch_latest() == "0.6.3"
+    assert opener.open.call_count == 2
+    fallback = opener.open.call_args_list[1]
+    assert fallback.args[0].full_url == PROJECT_URL + "/releases/latest"
+    assert fallback.args[0].get_method() == "HEAD"
+    assert fallback.kwargs["timeout"] <= 4
+
+
+@pytest.mark.parametrize(
+    "target",
+    [
+        "https://evil.test/cachemiao/m3u-studio/releases/tag/v0.6.3",
+        "http://github.com/cachemiao/m3u-studio/releases/tag/v0.6.3",
+        "https://github.com/other/repo/releases/tag/v0.6.3",
+        PROJECT_URL + "/releases/tag/v0.6.3-beta",
+        PROJECT_URL + "/releases/tag/v0.6.3?download=1",
+        PROJECT_URL + "/releases/tag/v0.6.3#fragment",
+        "http://169.254.169.254/latest/meta-data/",
+        "",
+    ],
+)
+def test_fallback_rejects_unexpected_redirect_without_following(monkeypatch, target):
+    from urllib.error import HTTPError
+    import release_updates
+
+    opener = Mock(
+        open=Mock(
+            side_effect=HTTPError(
+                PROJECT_URL + "/releases/latest",
+                302,
+                "Found",
+                {"Location": target},
+                None,
+            )
+        )
+    )
+    monkeypatch.setattr(release_updates, "build_opener", Mock(return_value=opener))
+    with pytest.raises(ValueError):
+        release_updates.fetch_latest_web()
+    assert opener.open.call_count == 1
+
+
+def test_rate_limited_api_and_offline_fallback_are_not_up_to_date(
+    monkeypatch, tmp_path
+):
+    from urllib.error import HTTPError, URLError
+    import release_updates
+
+    opener = Mock(
+        open=Mock(
+            side_effect=[
+                HTTPError(
+                    release_updates.RELEASE_API, 429, "Too Many Requests", {}, None
+                ),
+                URLError(TimeoutError()),
+            ]
+        )
+    )
+    monkeypatch.setattr(release_updates, "build_opener", Mock(return_value=opener))
+    checker = ReleaseChecker("0.6.3", tmp_path / "updates.json", fetch_latest)
+    result = checker.check()
+    assert result["check_failed"] and result["error_code"] == "timeout"
+    assert result["latest_version"] is None and not result["update_available"]
+    assert checker.check() == result
+    assert opener.open.call_count == 2
+
+
+@pytest.mark.parametrize("code", [401, 404, 500])
+def test_other_api_errors_do_not_use_fallback(monkeypatch, code):
+    from urllib.error import HTTPError
+    import release_updates
+
+    opener = Mock(
+        open=Mock(
+            side_effect=HTTPError(release_updates.RELEASE_API, code, "Error", {}, None)
+        )
+    )
+    monkeypatch.setattr(release_updates, "build_opener", Mock(return_value=opener))
+    with pytest.raises(HTTPError):
+        fetch_latest()
+    assert opener.open.call_count == 1
+
+
+def test_classified_failure_survives_restart_and_clears_after_success(tmp_path):
+    from urllib.error import HTTPError
+
+    now = [1000000]
+    path = tmp_path / "updates.json"
+    fetch = Mock(
+        side_effect=HTTPError(
+            "https://github.com", 403, "rate limit exceeded", {}, None
+        )
+    )
+    checker = ReleaseChecker("0.6.3", path, fetch, lambda: now[0])
+    assert checker.check()["error_code"] == "rate_limited"
+    fetch = Mock(return_value="0.6.4")
+    restarted = ReleaseChecker("0.6.3", path, fetch, lambda: now[0])
+    assert restarted.check()["error_code"] == "rate_limited"
+    fetch.assert_not_called()
+    now[0] += 61
+    result = restarted.check(manual=True)
+    assert not result["check_failed"] and result["error_code"] is None
+    assert result["update_available"]

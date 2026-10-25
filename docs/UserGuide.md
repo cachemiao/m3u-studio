@@ -117,3 +117,5 @@ ZIP uploads are limited to 64MB, expanded content to 128MB and logos to 5,000 fi
 The top-left logo and product name link to the project. Click the version number to check for updates. A short notice disappears after about four seconds; the accent-colored update dot stays visible when a newer release is known and links to the project. Failed checks are reported separately, never as “up to date.”
 
 Automatic checks remain daily. Manual checks can refresh sooner, with a 60-second server cooldown against repeated requests. Checks do not upgrade containers or change channel data or drafts. The static demo displays its version without contacting the update service.
+
+Version lookup uses the official GitHub API first. On HTTP 403/429, it falls back to this project’s official `/releases/latest` redirect, without third-party mirrors or a required token. Only an HTTPS stable-release URL for this exact repository is accepted. If both methods fail, the last known result and update dot remain; failures are classified without exposing raw exceptions or private network details.

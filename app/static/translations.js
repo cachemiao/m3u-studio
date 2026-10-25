@@ -1,5 +1,12 @@
 /* Shared UI messages; keep placeholders identical in both languages. */
 window.M3UTranslations = {
+"updateCheckRateLimited":{"zh": "GitHub 限流了喵~ 请稍后再试", "en": "GitHub rate limit reached, meow~ Please try again later"},
+"updateCheckTimeout":{"zh": "检测超时了喵~ 请稍后再试", "en": "Update check timed out, meow~ Please try again later"},
+"updateCheckNetwork":{"zh": "无法连接 GitHub 喵~ 请检查网络", "en": "Cannot connect to GitHub, meow~ Please check the network"},
+"updateCheckTLS":{"zh": "GitHub 证书校验失败了喵~", "en": "GitHub certificate verification failed, meow~"},
+"updateCheckHTTP":{"zh": "GitHub 请求失败了喵~ 请稍后再试", "en": "GitHub request failed, meow~ Please try again later"},
+"updateCheckInvalid":{"zh": "版本信息解析失败了喵~", "en": "Could not read the version information, meow~"},
+
 "updateCheck":{"zh": "检查更新", "en": "Check for updates"},
 "updateLatestMeow":{"zh": "已经是最新版本了喵~", "en": "You're already on the latest version, meow~"},
 "updateAvailableMeow":{"zh": "有新版本可以更新了喵~", "en": "A new version is available, meow~"},

@@ -245,7 +245,8 @@ test("version button checks updates while brand and persistent dot link to proje
   await expect(page.locator("#headerVersion")).toHaveText("v " + version);
   let available = false,
     failed = false,
-    calls = 0;
+    calls = 0,
+    failureCode = null;
   await page.route("**/api/version/check", (route) => {
     expect(route.request().method()).toBe("POST");
     calls++;
@@ -255,6 +256,7 @@ test("version button checks updates while brand and persistent dot link to proje
         latest_version: available ? nextVersion : version,
         update_available: available,
         check_failed: failed,
+        error_code: failureCode,
       },
     });
   });
@@ -298,7 +300,16 @@ test("version button checks updates while brand and persistent dot link to proje
   await page.locator("#headerVersion").click();
   await expect(page.locator("#versionNotice")).toContainText("检测失败了喵~");
   await expect(page.locator("#headerUpdate")).toBeVisible();
-  expect(calls).toBe(3);
+  for (const [code, message] of [
+    ["rate_limited", "GitHub 限流了喵~"],
+    ["timeout", "检测超时了喵~"],
+  ]) {
+    failureCode = code;
+    await page.locator("#headerVersion").click();
+    await expect(page.locator("#versionNotice")).toContainText(message);
+    await expect(page.locator("#headerUpdate")).toBeVisible();
+  }
+  expect(calls).toBe(5);
   expect(await (await page.request.get("/api/state")).json()).toEqual(before);
 });
 

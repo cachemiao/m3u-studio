@@ -10,6 +10,14 @@ window.M3UUpdates = (() => {
     node("headerVersion").textContent = current ? "v " + current : "v —";
     node("headerUpdate").hidden = !available;
   }
+  const failureMessages = {
+    rate_limited: "updateCheckRateLimited",
+    timeout: "updateCheckTimeout",
+    network: "updateCheckNetwork",
+    tls: "updateCheckTLS",
+    http_error: "updateCheckHTTP",
+    invalid_response: "updateCheckInvalid",
+  };
   function positionNotice() {
     const message = node("versionNotice");
     if (message.hidden) return;
@@ -73,7 +81,7 @@ window.M3UUpdates = (() => {
       if (manual)
         notice(
           data.check_failed
-            ? "updateCheckFailed"
+            ? failureMessages[data.error_code] || "updateCheckFailed"
             : available
               ? "updateAvailableMeow"
               : "updateLatestMeow",
