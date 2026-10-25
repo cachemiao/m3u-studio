@@ -1,3 +1,19 @@
+# v0.6.4 · 版本检测与移动端布局修复 / Update checks and mobile layout fixes · 2026-10-25
+
+## 中文更新说明
+
+- 修复 GitHub API 限流导致版本检测失败，自动改从项目官方发布链接读取版本。
+- 细分限流、超时、网络和证书错误提示；升级后自动重试旧版失败缓存。
+- 修复移动端全选框与搜索栏不对齐，并补充 WebKit 布局检查。
+
+## English release notes
+
+- Fixed update checks failing when the GitHub API is rate-limited by falling back to the project's official release link.
+- Added specific messages for rate limits, timeouts, network and certificate errors. After upgrading, failed checks cached by older versions are retried automatically.
+- Fixed mobile alignment between the select-all checkbox and search controls, and added WebKit layout checks.
+
+---
+
 # v0.6.3 · 配置与台标备份、版本检查 / Backup archives and version checks · 2026-10-24
 
 ## 中文更新说明
