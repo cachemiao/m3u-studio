@@ -281,3 +281,24 @@ def test_classified_failure_survives_restart_and_clears_after_success(tmp_path):
     result = restarted.check(manual=True)
     assert not result["check_failed"] and result["error_code"] is None
     assert result["update_available"]
+
+
+def test_legacy_cached_failure_retries_once_after_upgrade(tmp_path):
+    path = tmp_path / "updates.json"
+    path.write_text(
+        json.dumps(
+            {
+                "attempted_at": 1000000,
+                "checked_at": None,
+                "latest_version": None,
+                "error": True,
+            }
+        )
+    )
+    fetch = Mock(return_value="0.6.3")
+    checker = ReleaseChecker("0.6.3", path, fetch, lambda: 1000001)
+    assert not checker.check()["check_failed"]
+    fetch.assert_called_once()
+    restarted = ReleaseChecker("0.6.3", path, fetch, lambda: 1000002)
+    assert not restarted.check()["check_failed"]
+    fetch.assert_called_once()

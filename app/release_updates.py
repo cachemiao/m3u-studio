@@ -153,6 +153,10 @@ class ReleaseChecker:
             if cache.get("latest_version") and not cache.get("checked_at"):
                 raise ValueError("Missing check time")
             self.cache = cache
+            # Old builds saved only a failure flag. Retry once after upgrading
+            # so that a cached API failure does not hide the new fallback all day.
+            if cache.get("error") and not cache.get("error_code"):
+                self.cache["attempted_at"] = 0
         except (OSError, ValueError, KeyError, TypeError):
             pass
 
