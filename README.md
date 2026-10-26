@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/logo.svg" width="96" height="96" alt="M3U Studio Logo">
+  <img src="docs/images/logo-readme.png" width="128" height="128" alt="M3U Studio Logo">
 </p>
 
 <h1 align="center">M3U Studio</h1>
