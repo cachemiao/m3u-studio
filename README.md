@@ -1,7 +1,6 @@
 <p align="center">
   <img src="docs/images/logo-readme.png" width="128" height="128" alt="M3U Studio Logo">
 </p>
-
 <h1 align="center">M3U Studio</h1>
 
 <p align="center">轻松整理 IPTV 频道，生成自己的订阅。</p>
