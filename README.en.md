@@ -1,8 +1,7 @@
-<p align="center">
-  <img src="docs/images/logo-readme.png" width="128" height="128" alt="M3U Studio Logo">
-</p>
-
-<h1 align="center">M3U Studio</h1>
+<h1 align="center">
+  <img src="docs/images/logo-readme.png" width="128" height="128" alt="M3U Studio Logo"><br>
+  M3U Studio
+</h1>
 
 <p align="center">Organize IPTV channels. Publish your own subscriptions.</p>
 
